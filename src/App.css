@@ -1,0 +1,19 @@
+.Quicksand-companyname{
+   font-family: "Quicksand", sans-serif;
+   font-weight: bold;
+   font-size: larger;
+   font-optical-sizing: auto;
+   font-style: normal;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+    opacity: 1;
+    cursor: pointer;
+    align-self: end;
+  }
+
+  input[type="date"]::-webkit-datetime-edit,
+  input[type="date"]::-webkit-inner-spin-button,
+  input[type="date"]::-webkit-clear-button {
+    display: none;
+}

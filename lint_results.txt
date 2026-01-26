@@ -1,0 +1,36 @@
+﻿
+C:\Users\User\Desktop\TECH JOURNEY\Nova Crest\frontend\src\Components\Bookride.jsx
+    8:45  error  'setRideCost' is defined but never used. Allowed unused vars must match /^[A-Z_]/u                     no-unused-vars
+    8:58  error  'setRidersNearby' is defined but never used. Allowed unused vars must match /^[A-Z_]/u                 no-unused-vars
+    8:75  error  'setSelectedRider' is defined but never used. Allowed unused vars must match /^[A-Z_]/u                no-unused-vars
+   37:5   error  'rideCost' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u               no-unused-vars
+   38:5   error  'ridersNearby' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u           no-unused-vars
+   39:5   error  'selectedRider' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u          no-unused-vars
+   42:11  error  'pickupCoordinate' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u       no-unused-vars
+   42:29  error  'destinationCoordinate' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+   43:17  error  'role' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u                   no-unused-vars
+   44:10  error  'showPickRider' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u          no-unused-vars
+   44:25  error  'setShowPickRider' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u       no-unused-vars
+   46:10  error  'showRecent' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u             no-unused-vars
+  110:9   error  'setValueAndMark' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u        no-unused-vars
+
+C:\Users\User\Desktop\TECH JOURNEY\Nova Crest\frontend\src\Components\ClickReveal.jsx
+   1:10  error  'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u                     no-unused-vars
+   2:10  error  'useState' is defined but never used. Allowed unused vars must match /^[A-Z_]/u                   no-unused-vars
+  14:11  error  'user' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u              no-unused-vars
+  16:9   error  'handlePayForRide' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+C:\Users\User\Desktop\TECH JOURNEY\Nova Crest\frontend\src\Components\Mapcontainer.jsx
+   5:45  error  'setRideCost' is defined but never used. Allowed unused vars must match /^[A-Z_]/u                   no-unused-vars
+   5:58  error  'setRidersNearby' is defined but never used. Allowed unused vars must match /^[A-Z_]/u               no-unused-vars
+   5:75  error  'setSelectedRider' is defined but never used. Allowed unused vars must match /^[A-Z_]/u              no-unused-vars
+  10:8   error  'markerIcon2x' is defined but never used. Allowed unused vars must match /^[A-Z_]/u                  no-unused-vars
+  11:8   error  'markerIcon' is defined but never used. Allowed unused vars must match /^[A-Z_]/u                    no-unused-vars
+  12:8   error  'markerShadow' is defined but never used. Allowed unused vars must match /^[A-Z_]/u                  no-unused-vars
+  17:10  error  'showPickRider' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u        no-unused-vars
+  17:25  error  'setShowPickRider' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u     no-unused-vars
+  18:9   error  'destinationInputRef' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+  32:10  error  'pickupLocation' is not defined                                                                      no-undef
+
+Γ£û 27 problems (27 errors, 0 warnings)
+

@@ -5,16 +5,10 @@ import tailwindcss from '@tailwindcss/vite'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react(),
-       tailwindcss(),
+  tailwindcss(),
   ],
   server: {
     proxy: {
-      '/api': {
-        target: 'http://localhost:5000',
-        changeOrigin: true,
-        secure: false,
-        rewrite: (path) => path.replace(/^\/api/, '')
-      },
       '/api/locationiq': {
         target: 'https://us1.locationiq.com',
         changeOrigin: true,
@@ -30,6 +24,12 @@ export default defineConfig({
           }
           return path.replace(/^\/api\/locationiq/, '/v1');
         }
+      },
+      '/api': {
+        target: 'http://localhost:5000',
+        changeOrigin: true,
+        secure: false,
+        rewrite: (path) => path.replace(/^\/api/, '')
       }
     }
   }

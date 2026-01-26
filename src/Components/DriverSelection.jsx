@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
+import axios from 'axios';
 import Navbar from './Navbar';
 import OtherNav from './VerifiedNav';
 import Button from './Button';
@@ -49,57 +50,54 @@ const DriverSelection = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { pickupLocation, destination, rideCost } = useSelector(state => state.getRide);
+  const { pickupCoordinate } = useSelector(state => state.location);
 
   const [selectedDriver, setSelectedDriver] = useState(null);
+  const [drivers, setDrivers] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // Mock driver data - in real app this would come from API
-  const mockDrivers = [
-    {
-      id: 1,
-      name: 'John Adebayo',
-      rating: 4.8,
-      totalRides: 1247,
-      fare: rideCost || 2500,
-      distance: 1.2,
-      eta: 5,
-      profilePic: '/placeholderProfile.jpg',
-      vehicle: {
-        model: 'Toyota Camry',
-        color: 'White',
-        plate: 'ABC 123 XY'
+  useEffect(() => {
+    const fetchNearbyDrivers = async () => {
+      try {
+        const response = await axios.get('http://localhost:5000/rider/nearby-drivers', {
+          params: {
+            lat: pickupCoordinate.lat,
+            lng: pickupCoordinate.lng,
+            maxDistance: 5000 // 5km radius
+          }
+        });
+
+        // Transform the data to match the expected format
+        const transformedDrivers = response.data.drivers.map((driver, index) => ({
+          id: driver._id,
+          name: `${driver.riderInfo.firstname} ${driver.riderInfo.lastname}`,
+          rating: 4.5, // Default rating, could be calculated from reviews
+          totalRides: 100, // Default, could be from driver stats
+          fare: rideCost || 2500,
+          distance: driver.distance || 1.0,
+          eta: Math.ceil((driver.distance || 1.0) * 3), // Rough ETA calculation
+          profilePic: driver.riderInfo.profilePic || '/placeholderProfile.jpg',
+          vehicle: {
+            model: driver.vehicleType,
+            color: 'Unknown', // Not in schema
+            plate: driver.plateNumber
+          }
+        }));
+
+        setDrivers(transformedDrivers);
+      } catch (error) {
+        console.error('Error fetching drivers:', error);
+        // Fallback to empty array or show error
+        setDrivers([]);
+      } finally {
+        setLoading(false);
       }
-    },
-    {
-      id: 2,
-      name: 'Sarah Okafor',
-      rating: 4.9,
-      totalRides: 892,
-      fare: rideCost || 2600,
-      distance: 2.1,
-      eta: 8,
-      profilePic: '/placeholderProfile.jpg',
-      vehicle: {
-        model: 'Honda Civic',
-        color: 'Black',
-        plate: 'DEF 456 ZW'
-      }
-    },
-    {
-      id: 3,
-      name: 'Michael Johnson',
-      rating: 4.7,
-      totalRides: 2156,
-      fare: rideCost || 2400,
-      distance: 0.8,
-      eta: 3,
-      profilePic: '/placeholderProfile.jpg',
-      vehicle: {
-        model: 'Nissan Altima',
-        color: 'Silver',
-        plate: 'GHI 789 UV'
-      }
+    };
+
+    if (pickupCoordinate.lat && pickupCoordinate.lng) {
+      fetchNearbyDrivers();
     }
-  ];
+  }, [pickupCoordinate, rideCost]);
 
   const handleDriverSelect = (driver) => {
     setSelectedDriver(driver);
@@ -138,14 +136,24 @@ const DriverSelection = () => {
           </div>
 
           <div className="space-y-4">
-            {mockDrivers.map(driver => (
-              <DriverCard
-                key={driver.id}
-                driver={driver}
-                onSelect={handleDriverSelect}
-                selected={selectedDriver?.id === driver.id}
-              />
-            ))}
+            {loading ? (
+              <div className="text-center py-8">
+                <p className="text-gray-600">Loading nearby drivers...</p>
+              </div>
+            ) : drivers.length > 0 ? (
+              drivers.map(driver => (
+                <DriverCard
+                  key={driver.id}
+                  driver={driver}
+                  onSelect={handleDriverSelect}
+                  selected={selectedDriver?.id === driver.id}
+                />
+              ))
+            ) : (
+              <div className="text-center py-8">
+                <p className="text-gray-600">No drivers available in your area at the moment.</p>
+              </div>
+            )}
           </div>
 
           {selectedDriver && (

@@ -1,0 +1,12 @@
+﻿
+C:\Users\User\Desktop\TECH JOURNEY\Nova Crest\frontend\src\Components\Bookride.jsx
+  41:10  error  'showRecent' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+C:\Users\User\Desktop\TECH JOURNEY\Nova Crest\frontend\src\Components\ClickReveal.jsx
+  1:10  error  'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+C:\Users\User\Desktop\TECH JOURNEY\Nova Crest\frontend\src\Components\Mapcontainer.jsx
+  15:5  error  'destination' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+Γ£û 3 problems (3 errors, 0 warnings)
+

@@ -35,6 +35,7 @@ const Bookride = () => {
     pickupLocation,
     destination,
   } = useSelector((state) => state.getRide);
+  const { user, isAuthenticated } = useSelector((state) => state.verifiedUser);
   const { loading } = useSelector(state => state.loader)
   const [showCostDist, setShowCostDist] = useState(false);
   const [distance, setdistance] = useState('')
@@ -68,7 +69,7 @@ const Bookride = () => {
     } else if (!token) {
       navigate('/login');
     }
-  }, [dispatch, navigate, user]);
+  }, [dispatch, navigate]);
 
   //  Function that marks location on map when user leaves the pickup input field
 

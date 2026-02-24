@@ -10,8 +10,9 @@ const loadInitialState = () => {
       return {
         user: parsedUserData.user,
         role: parsedUserData.role,
-        isAuthenticated: true,
+        isAuthenticated: false, // Force verification on load
         profileCompleted: parsedUserData.profileCompleted || false,
+        isOnline: parsedUserData.isOnline || false,
       };
     }
   } catch (error) {
@@ -22,6 +23,7 @@ const loadInitialState = () => {
     role: null,
     isAuthenticated: false,
     profileCompleted: false,
+    isOnline: false,
   };
 };
 
@@ -32,16 +34,23 @@ export const verifiedUserSlice = createSlice({
   initialState,
   reducers: {
     setUser(state, action) {
-      state.user = action.payload.user;
-      state.role = action.payload.role;
+      const { user } = action.payload;
+      state.user = user;
+      state.role = user?.role;
       state.isAuthenticated = true;
-      state.profileCompleted = action.payload.profileCompleted || false;
-      // Persist to localStorage
+      state.profileCompleted = user?.profileCompleted || false;
       localStorage.setItem('userData', JSON.stringify({
-        user: action.payload.user,
-        role: action.payload.role,
-        profileCompleted: action.payload.profileCompleted || false,
+        user: user,
+        role: user?.role,
+        profileCompleted: user?.profileCompleted || false,
+        isOnline: state.isOnline,
       }));
+    },
+    setOnlineStatus(state, action) {
+      state.isOnline = action.payload;
+      const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+      userData.isOnline = action.payload;
+      localStorage.setItem('userData', JSON.stringify(userData));
     },
     setProfileCompleted(state) {
       state.profileCompleted = true;
@@ -55,6 +64,7 @@ export const verifiedUserSlice = createSlice({
       state.role = null;
       state.isAuthenticated = false;
       state.profileCompleted = false;
+      state.isOnline = false;
       // Clear localStorage
       localStorage.removeItem('userData');
       localStorage.removeItem('nvcr_tk');
@@ -62,5 +72,5 @@ export const verifiedUserSlice = createSlice({
   },
 });
 
-export const {setUser, setProfileCompleted, logout } = verifiedUserSlice.actions;
+export const { setUser, setProfileCompleted, logout, setOnlineStatus } = verifiedUserSlice.actions;
 export default verifiedUserSlice.reducer;

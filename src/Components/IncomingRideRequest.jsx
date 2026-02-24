@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import Navbar from './Navbar';
 import OtherNav from './VerifiedNav';
@@ -10,39 +10,36 @@ import 'leaflet/dist/leaflet.css';
 
 const IncomingRideRequest = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const rideId = queryParams.get('rideId');
 
-  const [timeLeft, setTimeLeft] = useState(30); // 30 seconds countdown
+  const [timeLeft, setTimeLeft] = useState(30);
   const [isAccepted, setIsAccepted] = useState(false);
   const [isDeclined, setIsDeclined] = useState(false);
+  const [rideDetails, setRideDetails] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  // Mock ride request data
-  const rideRequest = {
-    id: 'ride_123',
-    passenger: {
-      name: 'Sarah Johnson',
-      phone: '+2348012345678',
-      rating: 4.8,
-      profilePic: '/placeholderProfile.jpg'
-    },
-    pickup: {
-      address: 'Ikeja City Mall, Ikeja',
-      coordinates: [6.5244, 3.3792]
-    },
-    destination: {
-      address: 'Lekki Phase 1, Lekki',
-      coordinates: [6.4698, 3.5852]
-    },
-    distance: 15.2,
-    duration: 25,
-    fare: 3200,
-    paymentMethod: 'Wallet',
-    notes: 'Please help with luggage'
-  };
+  useEffect(() => {
+    const fetchRide = async () => {
+      try {
+        const token = localStorage.getItem('nvcr_tk');
+        const response = await fetch(`/api/ride/${rideId}`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (response.ok) {
+          const data = await response.json();
+          setRideDetails(data.ride);
+        }
+      } catch (error) {
+        console.error('Error fetching ride:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const routeCoordinates = [
-    rideRequest.pickup.coordinates,
-    rideRequest.destination.coordinates
-  ];
+    if (rideId) fetchRide();
+  }, [rideId]);
 
   useEffect(() => {
     if (timeLeft > 0 && !isAccepted && !isDeclined) {
@@ -50,26 +47,61 @@ const IncomingRideRequest = () => {
         setTimeLeft(timeLeft - 1);
       }, 1000);
       return () => clearTimeout(timer);
-    } else if (timeLeft === 0 && !isAccepted && !isDeclined) {
-      // Auto-decline if not responded
-      handleDecline();
     }
   }, [timeLeft, isAccepted, isDeclined]);
 
-  const handleAccept = () => {
-    setIsAccepted(true);
-    // In real app, send acceptance to API
-    setTimeout(() => {
-      navigate('/rider-live-tracking');
-    }, 2000);
+  const handleAcceptRide = async () => {
+    try {
+      const token = localStorage.getItem('nvcr_tk');
+      const response = await fetch('/api/ride/accept-ride', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ rideId })
+      });
+
+      if (response.ok) {
+        setIsAccepted(true);
+        setTimeout(() => {
+          navigate(`/live-tracking?rideId=${rideId}`);
+        }, 2000);
+      } else {
+        const errorData = await response.json();
+        alert(errorData.message || 'Failed to accept ride');
+      }
+    } catch (error) {
+      console.error('Error accepting ride:', error);
+      alert('An error occurred while accepting the ride');
+    }
   };
 
-  const handleDecline = () => {
-    setIsDeclined(true);
-    // In real app, send decline to API
-    setTimeout(() => {
-      navigate('/riderdashboard');
-    }, 2000);
+  const handleDecline = async () => {
+    try {
+      const token = localStorage.getItem('nvcr_tk');
+      const response = await fetch('/api/ride/reject-ride', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ rideId })
+      });
+
+      if (response.ok) {
+        setIsDeclined(true);
+        setTimeout(() => {
+          navigate('/riderdashboard');
+        }, 2000);
+      } else {
+        const errorData = await response.json();
+        alert(errorData.message || 'Failed to reject ride');
+      }
+    } catch (error) {
+      console.error('Error rejecting ride:', error);
+      alert('An error occurred while rejecting the ride');
+    }
   };
 
   const formatTime = (seconds) => {
@@ -106,9 +138,36 @@ const IncomingRideRequest = () => {
     );
   }
 
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-black text-white">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-orange-500 mx-auto mb-4"></div>
+          <p>Fetching ride details...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!rideDetails) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-black text-white">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold mb-4">Ride Not Found</h2>
+          <Button text="Go Back" onClick={() => navigate('/riderdashboard')} />
+        </div>
+      </div>
+    );
+  }
+
+  const routeCoordinates = [
+    [rideDetails.pickupCoordinates.coordinates[1], rideDetails.pickupCoordinates.coordinates[0]],
+    [rideDetails.destinationCoordinates.coordinates[1], rideDetails.destinationCoordinates.coordinates[0]]
+  ];
+
   return (
     <div className="min-h-screen">
-      <Navbar userrole="rider" userverified={true} profilePic="/placeholderProfile.jpg" nav={<OtherNav userrole="rider" />} />
+      <Navbar userrole="rider" userverified={true} profilePic={rideDetails.user?.profilePic || "/placeholderProfile.jpg"} nav={<OtherNav userrole="rider" />} />
 
       <div className="mt-24 px-8">
         <div className="max-w-6xl mx-auto">
@@ -116,26 +175,24 @@ const IncomingRideRequest = () => {
             {/* Ride Request Card */}
             <div className="bg-black text-white rounded-lg shadow-lg p-6">
               <div className="flex items-center justify-between mb-6">
-                <h1 className="text-2xl font-bold">New Ride Request</h1>
+                <h1 className="text-2xl font-bold">Ride Recommendation</h1>
                 <div className="text-center">
-                  <div className="text-3xl font-bold text-yellow-400">{formatTime(timeLeft)}</div>
-                  <div className="text-sm text-gray-300">Time left</div>
+                  <div className="text-sm text-gray-300">Status</div>
+                  <div className="text-xl font-bold text-yellow-400 uppercase">{rideDetails.rideStatus}</div>
                 </div>
               </div>
 
               {/* Passenger Info */}
               <div className="flex items-center space-x-4 mb-6">
                 <img
-                  src={rideRequest.passenger.profilePic}
-                  alt={rideRequest.passenger.name}
+                  src={rideDetails.user?.profilePic || "/placeholderProfile.jpg"}
+                  alt={rideDetails.user?.firstname}
                   className="w-16 h-16 rounded-full"
                 />
                 <div>
-                  <h3 className="text-xl font-semibold">{rideRequest.passenger.name}</h3>
+                  <h3 className="text-xl font-semibold">{rideDetails.user?.firstname} {rideDetails.user?.lastname}</h3>
                   <div className="flex items-center space-x-2 text-sm text-gray-300">
-                    <span>⭐ {rideRequest.passenger.rating}</span>
-                    <span>•</span>
-                    <span>{rideRequest.passenger.phone}</span>
+                    <span>⭐ 4.8</span>
                   </div>
                 </div>
               </div>
@@ -149,9 +206,9 @@ const IncomingRideRequest = () => {
                     <FaMapMarkerAlt className="text-red-400" />
                   </div>
                   <div className="flex-1">
-                    <div className="font-medium">{rideRequest.pickup.address}</div>
+                    <div className="font-medium">{rideDetails.pickupLocation}</div>
                     <div className="text-sm text-gray-300 mb-2">Pickup location</div>
-                    <div className="font-medium">{rideRequest.destination.address}</div>
+                    <div className="font-medium">{rideDetails.destination}</div>
                     <div className="text-sm text-gray-300">Destination</div>
                   </div>
                 </div>
@@ -164,14 +221,14 @@ const IncomingRideRequest = () => {
                     <FaRoute />
                     <span className="text-sm">Distance</span>
                   </div>
-                  <div className="font-semibold">{rideRequest.distance} km</div>
+                  <div className="font-semibold">{rideDetails.distance} km</div>
                 </div>
                 <div className="text-center">
                   <div className="flex items-center justify-center space-x-1 text-gray-300 mb-1">
                     <FaClock />
                     <span className="text-sm">Duration</span>
                   </div>
-                  <div className="font-semibold">{rideRequest.duration} min</div>
+                  <div className="font-semibold">{rideDetails.eta} min</div>
                 </div>
               </div>
 
@@ -179,41 +236,43 @@ const IncomingRideRequest = () => {
               <div className="flex justify-between items-center mb-6">
                 <div>
                   <div className="text-sm text-gray-300">Fare</div>
-                  <div className="text-2xl font-bold text-yellow-400">₦{rideRequest.fare}</div>
+                  <div className="text-2xl font-bold text-yellow-400">₦{rideDetails.fare}</div>
                 </div>
                 <div className="text-right">
                   <div className="text-sm text-gray-300">Payment</div>
-                  <div className="font-semibold">{rideRequest.paymentMethod}</div>
+                  <div className="font-semibold">Wallet</div>
                 </div>
               </div>
 
-              {/* Special Notes */}
-              {rideRequest.notes && (
-                <div className="mb-6">
-                  <div className="text-sm text-gray-300 mb-1">Notes</div>
-                  <div className="bg-gray-800 p-3 rounded text-sm">{rideRequest.notes}</div>
-                </div>
-              )}
-
               {/* Action Buttons */}
               <div className="flex space-x-4">
-                <Button
-                  text="Accept Ride"
-                  classes="flex-1 bg-yellow-400 text-black py-3 px-4 rounded font-semibold hover:bg-yellow-500"
-                  onClick={handleAccept}
-                />
-                <Button
-                  text="Decline"
-                  classes="flex-1 bg-gray-600 text-white py-3 px-4 rounded font-semibold hover:bg-gray-700"
-                  onClick={handleDecline}
-                />
+                {rideDetails.rideStatus === 'waiting_for_acceptance' ? (
+                  <>
+                    <Button
+                      text="Accept Ride"
+                      classes="flex-1 bg-yellow-400 text-black py-3 px-4 rounded font-semibold hover:bg-yellow-500"
+                      onClick={handleAcceptRide}
+                    />
+                    <Button
+                      text="Decline"
+                      classes="flex-1 bg-red-600 text-white py-3 px-4 rounded font-semibold hover:bg-red-700"
+                      onClick={handleDecline}
+                    />
+                  </>
+                ) : (
+                  <Button
+                    text="Go to Dashboard"
+                    classes="flex-1 bg-gray-600 text-white py-3 px-4 rounded font-semibold hover:bg-gray-700"
+                    onClick={() => navigate('/riderdashboard')}
+                  />
+                )}
               </div>
             </div>
 
             {/* Map */}
             <div className="bg-white rounded-lg shadow h-96 lg:h-auto">
               <MapContainer
-                center={[6.5244, 3.3792]}
+                center={[rideDetails.pickupCoordinates.coordinates[1], rideDetails.pickupCoordinates.coordinates[0]]}
                 zoom={12}
                 style={{ height: '100%', width: '100%' }}
                 className="rounded-lg"
@@ -224,13 +283,13 @@ const IncomingRideRequest = () => {
                 />
 
                 {/* Pickup location */}
-                <Marker position={rideRequest.pickup.coordinates}>
-                  <Popup>Pickup: {rideRequest.pickup.address}</Popup>
+                <Marker position={[rideDetails.pickupCoordinates.coordinates[1], rideDetails.pickupCoordinates.coordinates[0]]}>
+                  <Popup>Pickup: {rideDetails.pickupLocation}</Popup>
                 </Marker>
 
                 {/* Destination */}
-                <Marker position={rideRequest.destination.coordinates}>
-                  <Popup>Destination: {rideRequest.destination.address}</Popup>
+                <Marker position={[rideDetails.destinationCoordinates.coordinates[1], rideDetails.destinationCoordinates.coordinates[0]]}>
+                  <Popup>Destination: {rideDetails.destination}</Popup>
                 </Marker>
 
                 {/* Route line */}

@@ -5,7 +5,7 @@ import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import Loader from "./Loader";
 
 function ForgotPassword() {
@@ -64,7 +64,6 @@ function ForgotPassword() {
           <Link to="/login" className="text-blue-600 hover:underline">Back to Login</Link>
         </p>
       </form>
-      <ToastContainer />
     </div>
   );
 }

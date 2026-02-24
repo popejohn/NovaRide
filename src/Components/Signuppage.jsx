@@ -1,31 +1,25 @@
-import React, {useState, useRef, useEffect} from "react";  
-import Button from "./Button";  // Reusable Button component
-import Input from "./Input";  // Reusable Input component
+import React, { useState } from "react";
+import Button from "./Button";
+import Input from "./Input";
 import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
-import { useSelector, useDispatch } from "react-redux";  
-import { signupStart, signupFailure, signupSuccess } from "../Redux/authslice"; // Redux actions for signup
-import { useFormik } from "formik";   // Formik for form handling
-import * as Yup from "yup";   // Yup for form validation
-import { BiHide, BiShow } from "react-icons/bi";
-import { ToastContainer, toast } from 'react-toastify';  // Toast notifications
-import { ImSpinner6 } from "react-icons/im"; // Spinner icon for loading state
-import 'react-toastify/dist/ReactToastify.css';  // Toast styles
-import Loader from "./Loader";  // Loader component
-
-
-
-
+import { useSelector, useDispatch } from "react-redux";
+import { signupStart, signupFailure, signupSuccess } from "../Redux/authslice";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import { BiHide, BiShow, BiCheck } from "react-icons/bi";
+import { toast } from 'react-toastify';
+import Loader from "./Loader";
+import novaLogo from '../assets/nova.png';
+import signupBg from '../assets/maruwa_passenger.png';
+import { motion } from 'framer-motion';
 
 function SignUp() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const {isLoading, user, error} = useSelector((state) => state.auth);
+  const { isLoading } = useSelector((state) => state.auth);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
-
-  const passwordRef = useRef()
-  const confirmPasswordRef = useRef()
 
   const formik = useFormik({
     initialValues: {
@@ -37,104 +31,176 @@ function SignUp() {
       role: ""
     },
     validationSchema: Yup.object({
-      firstname: Yup.string().required("Please provide your first name"),
-      lastname: Yup.string().required("Please provide your last name"),
+      firstname: Yup.string().required("First name is required"),
+      lastname: Yup.string().required("Last name is required"),
       phone: Yup.string().matches(/^0\d{10}$/, "Please enter a valid phone number").required("Phone number is required"),
-      password: Yup.string().required('Password is required').matches(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/, "password must contain numbers and letters and not less than 8 characters"),
-      confirmpassword: Yup.string().oneOf([Yup.ref("password"), null], "Passwords do not match").required('Please confirm your password'),
-      role: Yup.string().oneOf(["passenger", "rider", "installment"], "Please select a valid role")
-  .required("Please select a role"),
-  }),
-  onSubmit: (values) =>{
-    dispatch(signupStart());
-    const {firstname, lastname, phone, password, role} = values;
-    axios.post("http://localhost:5000/auth/signup", values)
-  .then(res => {
-    toast.success('Signup successful')
-    setTimeout(() => {
-      dispatch(signupSuccess(res.data));
-      navigate('/login')
-    }, 3000);
-  })
-  .catch(err => {
-    dispatch(signupFailure('Signup failed, please try again'));
-
-    const msg = err?.response?.data?.message || 'Signup failed, please try again';
-    toast.error(msg);
-
-    // RESET FORM FIELDS
-    formik.resetForm();
-
-    // RESET PASSWORD FIELD TYPES + ICON STATES
-    setShowPassword(false);
-    setShowConfirm(false);
-
-    if (passwordRef.current) passwordRef.current.type = "password";
-    if (confirmPasswordRef.current) confirmPasswordRef.current.type = "password";
+      password: Yup.string().required('Password is required').matches(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/, "Must be 8+ chars with letters & numbers"),
+      confirmpassword: Yup.string().oneOf([Yup.ref("password"), null], "Passwords do not match").required('Please confirm password'),
+      role: Yup.string().required("Please select your role"),
+    }),
+    onSubmit: (values) => {
+      dispatch(signupStart());
+      axios.post("http://localhost:5000/auth/signup", values)
+        .then(res => {
+          toast.success('Welcome to the Nova family!');
+          setTimeout(() => {
+            dispatch(signupSuccess(res.data));
+            navigate('/login');
+          }, 2000);
+        })
+        .catch(err => {
+          const msg = err?.response?.data?.message || 'Something went wrong';
+          toast.error(msg);
+          dispatch(signupFailure(msg));
+        });
+    }
   });
 
-  }
-})
-
-const toggleShow = (inputRef, setState, currentState) => {
-  if (inputRef.current.value.length === 0) return;
-  if (inputRef.current) {
-    inputRef.current.type = currentState ? "password" : "text";    
-    setState(!currentState);
-  }
-};
+  const roles = [
+    { id: 'passenger', label: 'Passenger', desc: 'I want to ride' },
+    { id: 'rider', label: 'Rider', desc: 'I want to drive' },
+    { id: 'installment', label: 'Partner', desc: 'Installment plans' }
+  ];
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 px-4">
-      <form onSubmit={formik.handleSubmit} className="w-full max-w-md bg-white rounded-2xl shadow-lg p-8 my-7">
-        <h2 className="text-2xl font-bold mb-6 text-center text-gray-900 dark:text-white">Create Account</h2>
-        <Input label='First name' name="firstname" value={formik.values.firstname} onChange={formik.handleChange} onBlur={formik.handleBlur} required/>
-        {formik.touched.firstname && formik.errors.firstname && <div className="italic text-red-600 text-sm -mt-2">{formik.errors.firstname}</div>}
-        <Input label="Last name" name="lastname" value={formik.values.lastname} onChange={formik.handleChange} onBlur={formik.handleBlur} required />
-        {formik.touched.lastname && formik.errors.lastname && <div className="italic text-red-600 text-sm -mt-2">{formik.errors.lastname}</div>}
-        <Input label="Phone number" name="phone" value={formik.values.phone} onChange={formik.handleChange} onBlur={formik.handleBlur} required />
-        {formik.touched.phone && formik.errors.phone && <div className="italic text-red-600 text-sm -mt-2">{formik.errors.phone}</div>}
-        <label className="relative block mb-4 text-left w-full">
-          <span className="block mb-1 font-medium text-gray-700 dark:text-gray-300">Password</span>
-          <input name= 'password' type={passwordRef.current ?passwordRef.current.type :"password"} ref={passwordRef} onBlur = {formik.handleBlur} onChange={formik.handleChange} value={formik.values.password} className="w-full px-4 py-2 rounded-lg border border-teal-600 outline-0 shadow-md  focus:ring-1 focus:ring-blue-300"/>
-          <span className="absolute top-3/5 end-4" onClick={()=>toggleShow(passwordRef, setShowPassword, showPassword)}>{showPassword ?<BiHide /> :<BiShow />}</span>
-        </label>
-        {formik.touched.password && formik.errors.password && <div className="italic text-red-600 text-sm -mt-2">{formik.errors.password}</div>}
-        <label className="relative block mb-4 text-left w-full">
-          <span className="block mb-1 font-medium text-gray-700 dark:text-gray-300">Confirm password</span>
-          <input name= 'confirmpassword' type={confirmPasswordRef.current ?confirmPasswordRef.current.type :"password"} ref={confirmPasswordRef} value={formik.values.confirmpassword} onBlur = {formik.handleBlur} onChange={formik.handleChange} className="w-full px-4 py-2 rounded-lg border border-teal-600 outline-0 shadow-md  focus:ring-1 focus:ring-blue-300"/>
-          <span className="absolute top-3/5 end-4" onClick={() => toggleShow(confirmPasswordRef, setShowConfirm, showConfirm)}>{showConfirm ?<BiHide /> :<BiShow />}</span>
-        </label>
-        {formik.touched.confirmpassword && formik.errors.confirmpassword && <div className="italic text-red-600 text-sm -mt-2">{formik.errors.confirmpassword}</div>}
-        <label className="block mb-6">
-          <span className="block mb-1 font-medium text-gray-700 dark:text-gray-300">Register as</span>
-          <select
-            name="role"
-            onChange={formik.handleChange}
-            value={formik.values.role}
-            onBlur={formik.handleBlur}
-            className="w-full px-4 py-2 rounded-lg border border-teal-600 shadow-md outline-0 focus:ring ring-blue-600"
-          >
-            <option value="">Select an option</option>
-            <option value="passenger">Passenger</option>
-            <option value="rider">Rider (Driver)</option>
-            <option value="installment">Installment buyer</option>
-          </select>
-        </label>
-        {formik.touched.role && formik.errors.role && <div className="italic text-red-600 text-sm -mt-2">{formik.errors.role}</div>}
-        <div className="mx-auto w-3/4">
-            <Button type="submit" text={isLoading ? <Loader color='#ffffff' /> : "Sign Up"} classes={'rounded-md flex justify-center align-center bg-gradient-to-r text-white from-teal-600 to-teal-900 font-semibold py-3 px-6 w-full shadow-lg hover:scale-105'} disabled={isLoading} />
-        </div>
-        <p className="mt-6 text-sm text-center text-gray-600 dark:text-gray-400">
-          Already have an account? <Link to="/login" className="text-blue-600 hover:underline">Log in</Link>
-        </p>
-      </form>
-      <ToastContainer />
-    </div>
+    <div className="min-h-screen flex bg-neutral-950 font-sans selection:bg-orange-500/30">
+      {/* Hero Section - Split View (LG+) */}
+      <div className="hidden lg:flex w-[40%] relative items-center justify-center p-20 overflow-hidden border-r border-neutral-800 bg-neutral-900">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_40%,rgba(249,115,22,0.15),transparent_70%)]" />
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.8 }}
+          className="relative z-10"
+        >
+          <h1 className="text-[9rem] xl:text-[11rem] font-black leading-none tracking-tighter text-transparent bg-clip-text bg-gradient-to-tr from-white via-white to-neutral-700 pointer-events-none select-none">
+            NOVA<br /><span className="text-orange-500">RIDE</span>
+          </h1>
+        </motion.div>
+      </div>
 
+      {/* Form Section */}
+      <div className="flex-1 flex flex-col justify-center items-center p-6 md:p-12 bg-neutral-900 lg:bg-neutral-950">
+        <div className="w-full max-w-md space-y-10">
+          {/* Mobile Text Header */}
+          <div className="lg:hidden text-center mb-10">
+            <h1 className="text-4xl font-black tracking-tighter text-white">NOVA<span className="text-orange-500">RIDE</span></h1>
+          </div>
+
+          <div className="space-y-2 text-center lg:text-left">
+            <h2 className="text-4xl font-black text-white tracking-tight">Create Account</h2>
+            <p className="text-neutral-500 font-bold text-sm tracking-wide">Enter your details to get started.</p>
+          </div>
+
+          <form onSubmit={formik.handleSubmit} className="space-y-6">
+            <div className="grid grid-cols-2 gap-4">
+              <Input
+                label="First Name"
+                name="firstname"
+                placeholder="John"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.firstname}
+                error={formik.touched.firstname && formik.errors.firstname}
+              />
+              <Input
+                label="Last Name"
+                name="lastname"
+                placeholder="Doe"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.lastname}
+                error={formik.touched.lastname && formik.errors.lastname}
+              />
+            </div>
+
+            <Input
+              label="Phone number"
+              name="phone"
+              placeholder="08012345678"
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              value={formik.values.phone}
+              error={formik.touched.phone && formik.errors.phone}
+            />
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="relative group/pass">
+                <Input
+                  label="Password"
+                  name="password"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="••••••••"
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  value={formik.values.password}
+                  error={formik.touched.password && formik.errors.password}
+                />
+                <button type="button" className="absolute right-5 top-[44px] text-neutral-600 hover:text-orange-500 transition-colors" onClick={() => setShowPassword(!showPassword)}>
+                  {showPassword ? <BiHide size={20} /> : <BiShow size={20} />}
+                </button>
+              </div>
+              <div className="relative group/pass">
+                <Input
+                  label="Confirm Password"
+                  name="confirmpassword"
+                  type={showConfirm ? "text" : "password"}
+                  placeholder="••••••••"
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  value={formik.values.confirmpassword}
+                  error={formik.touched.confirmpassword && formik.errors.confirmpassword}
+                />
+                <button type="button" className="absolute right-5 top-[44px] text-neutral-600 hover:text-orange-500 transition-colors" onClick={() => setShowConfirm(!showConfirm)}>
+                  {showConfirm ? <BiHide size={20} /> : <BiShow size={20} />}
+                </button>
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-neutral-500 ml-1">Account Role</label>
+              <div className="grid grid-cols-3 gap-3">
+                {roles.map((r) => (
+                  <button
+                    key={r.id}
+                    type="button"
+                    onClick={() => formik.setFieldValue('role', r.id)}
+                    className={`relative p-4 rounded-2xl border-2 transition-all duration-300 text-left overflow-hidden ${formik.values.role === r.id
+                      ? 'border-orange-500 bg-orange-500/5'
+                      : 'border-neutral-800 hover:border-neutral-700 bg-neutral-900'
+                      }`}
+                  >
+                    {formik.values.role === r.id && (
+                      <div className="absolute top-2 right-2 text-orange-500"><BiCheck size={20} /></div>
+                    )}
+                    <p className={`text-[10px] font-black uppercase tracking-tight ${formik.values.role === r.id ? 'text-white' : 'text-neutral-500'}`}>{r.label}</p>
+                    <p className="text-[9px] font-bold text-neutral-600 leading-tight mt-1">{r.desc}</p>
+                  </button>
+                ))}
+              </div>
+              {formik.touched.role && formik.errors.role && <p className="mt-2 text-[10px] font-bold text-red-400 italic px-1">● {formik.errors.role}</p>}
+            </div>
+
+            <Button
+              type="submit"
+              text={isLoading ? <Loader color='#ffffff' /> : "Create Account"}
+              classes={'w-full py-5 bg-orange-500 hover:bg-white hover:text-neutral-950 text-white rounded-2xl font-black text-[11px] uppercase tracking-[0.3em] shadow-2xl shadow-orange-500/20 transition-all duration-500 mt-6 active:scale-95 border-2 border-transparent hover:border-white'}
+              disabled={isLoading}
+            />
+          </form>
+
+          <footer className="pt-10 border-t border-neutral-800 text-center">
+            <p className="text-[10px] font-black text-neutral-600 uppercase tracking-[0.2em]">
+              Already registered?
+              <Link to="/login" className="text-orange-500 hover:text-white transition-all ml-2 underline decoration-orange-500/30 underline-offset-4">
+                Login
+              </Link>
+            </p>
+          </footer>
+        </div>
+      </div>
+    </div>
   );
 }
 
-
-
-export default SignUp
+export default SignUp;

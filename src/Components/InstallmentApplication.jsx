@@ -85,19 +85,18 @@ const InstallmentApplication = () => {
       }
 
       try {
+        const token = localStorage.getItem('nvcr_tk');
         const applicationData = {
           vehicle: selectedVehicle,
           installmentPlan: installmentPlan,
-          application: values,
-          applicant: user
+          application: values
         };
 
-        console.log('Submitting installment application:', applicationData);
+        await axios.post('/api/user/installment-application', applicationData, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
 
-        // Mock API call
-        await new Promise(resolve => setTimeout(resolve, 3000));
-
-        toast.success('Application submitted successfully! You will be notified once approved.');
+        toast.success('Application submitted successfully! Your vehicle dashboard is now active.');
         navigate('/installment-dashboard');
       } catch (error) {
         console.error('Application submission error:', error);
@@ -148,11 +147,10 @@ const InstallmentApplication = () => {
                   {availableVehicles.map(vehicle => (
                     <div
                       key={vehicle.id}
-                      className={`border rounded-lg p-4 cursor-pointer transition-all ${
-                        selectedVehicle?.id === vehicle.id
+                      className={`border rounded-lg p-4 cursor-pointer transition-all ${selectedVehicle?.id === vehicle.id
                           ? 'border-yellow-400 bg-yellow-50'
                           : 'border-gray-200 hover:border-yellow-300'
-                      }`}
+                        }`}
                       onClick={() => handleVehicleSelect(vehicle)}
                     >
                       <div className="flex items-center space-x-4">
@@ -179,11 +177,10 @@ const InstallmentApplication = () => {
                     {installmentPlans.map(plan => (
                       <div
                         key={plan.months}
-                        className={`border rounded-lg p-4 cursor-pointer transition-all ${
-                          installmentPlan?.months === plan.months
+                        className={`border rounded-lg p-4 cursor-pointer transition-all ${installmentPlan?.months === plan.months
                             ? 'border-yellow-400 bg-yellow-50'
                             : 'border-gray-200 hover:border-yellow-300'
-                        }`}
+                          }`}
                         onClick={() => handlePlanSelect(plan)}
                       >
                         <div className="flex justify-between items-center">

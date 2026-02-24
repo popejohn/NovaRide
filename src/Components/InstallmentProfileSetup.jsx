@@ -114,18 +114,17 @@ const InstallmentProfileSetup = () => {
     }),
     onSubmit: async (values) => {
       try {
+        const token = localStorage.getItem('nvcr_tk');
         const profileData = {
           personal: personalFormik.values,
           employment: employmentFormik.values,
           documents: documentsFormik.values,
           references: values,
-          profilePicture
         };
 
-        console.log('Submitting installment profile:', profileData);
-
-        // Mock API call
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        await axios.post('/api/user/installment-profile', profileData, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
 
         dispatch(setProfileCompleted());
         toast.success('Profile setup completed successfully!');
@@ -507,22 +506,19 @@ const InstallmentProfileSetup = () => {
             <div className="flex items-center justify-between">
               {steps.map((step, index) => (
                 <div key={step.id} className="flex items-center">
-                  <div className={`flex items-center justify-center w-10 h-10 rounded-full ${
-                    step.id <= currentStep ? 'bg-yellow-400 text-black' : 'bg-gray-200 text-gray-400'
-                  }`}>
+                  <div className={`flex items-center justify-center w-10 h-10 rounded-full ${step.id <= currentStep ? 'bg-yellow-400 text-black' : 'bg-gray-200 text-gray-400'
+                    }`}>
                     <step.icon className="text-sm" />
                   </div>
                   <div className="ml-3">
-                    <div className={`text-sm font-medium ${
-                      step.id <= currentStep ? 'text-black' : 'text-gray-400'
-                    }`}>
+                    <div className={`text-sm font-medium ${step.id <= currentStep ? 'text-black' : 'text-gray-400'
+                      }`}>
                       {step.title}
                     </div>
                   </div>
                   {index < steps.length - 1 && (
-                    <div className={`w-16 h-0.5 mx-4 ${
-                      step.id < currentStep ? 'bg-yellow-400' : 'bg-gray-200'
-                    }`} />
+                    <div className={`w-16 h-0.5 mx-4 ${step.id < currentStep ? 'bg-yellow-400' : 'bg-gray-200'
+                      }`} />
                   )}
                 </div>
               ))}
@@ -539,11 +535,10 @@ const InstallmentProfileSetup = () => {
                 <Button
                   type="button"
                   text="Previous"
-                  classes={`px-6 py-2 rounded font-semibold ${
-                    currentStep === 1
+                  classes={`px-6 py-2 rounded font-semibold ${currentStep === 1
                       ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
                       : 'bg-gray-600 text-white hover:bg-gray-700'
-                  }`}
+                    }`}
                   onClick={() => setCurrentStep(prev => prev - 1)}
                   disabled={currentStep === 1}
                 />

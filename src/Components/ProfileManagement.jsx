@@ -1,461 +1,210 @@
-import React, { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
-import { Formik, Form, Field, ErrorMessage } from 'formik';
-import * as Yup from 'yup';
+import React from 'react';
+import { useProfileManagement } from '../hooks/useProfileManagement';
+import { motion, AnimatePresence } from 'framer-motion';
+import { FaUser, FaLock, FaBell, FaShieldAlt, FaCamera } from 'react-icons/fa';
 import Navbar from './Navbar';
 import OtherNav from './VerifiedNav';
 import Button from './Button';
-import Input from './Input';
-import { FaUser, FaEdit, FaLock, FaBell, FaShieldAlt, FaCamera } from 'react-icons/fa';
-import axios from 'axios';
-import { toast } from 'react-toastify';
 
-const SidebarButton = ({ active, onClick, children }) => (
-  <button
-    onClick={onClick}
-    className={`w-full text-left px-4 py-3 rounded-md mb-2 ${active ? 'bg-yellow-400 text-black' : 'hover:bg-gray-100 text-white/90'}`}
-  >
-    {children}
-  </button>
-);
-
-const ProfileForm = ({ initialValues, onSubmit, validationSchema }) => (
-  <Formik
-    initialValues={initialValues}
-    validationSchema={validationSchema}
-    onSubmit={onSubmit}
-  >
-    {({ isSubmitting }) => (
-      <Form className="space-y-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">First Name</label>
-            <Field
-              name="firstname"
-              as={Input}
-              placeholder="Enter first name"
-              classes="w-full"
-            />
-            <ErrorMessage name="firstname" component="div" className="text-red-500 text-sm mt-1" />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
-            <Field
-              name="lastname"
-              as={Input}
-              placeholder="Enter last name"
-              classes="w-full"
-            />
-            <ErrorMessage name="lastname" component="div" className="text-red-500 text-sm mt-1" />
-          </div>
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-          <Field
-            name="email"
-            type="email"
-            as={Input}
-            placeholder="Enter email address"
-            classes="w-full"
-          />
-          <ErrorMessage name="email" component="div" className="text-red-500 text-sm mt-1" />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
-          <Field
-            name="phone"
-            as={Input}
-            placeholder="Enter phone number"
-            classes="w-full"
-          />
-          <ErrorMessage name="phone" component="div" className="text-red-500 text-sm mt-1" />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Date of Birth</label>
-          <Field
-            name="dateOfBirth"
-            type="date"
-            as={Input}
-            classes="w-full"
-          />
-          <ErrorMessage name="dateOfBirth" component="div" className="text-red-500 text-sm mt-1" />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Address</label>
-          <Field
-            name="address"
-            as="textarea"
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-1 focus:ring-yellow-400"
-            placeholder="Enter your address"
-            rows="3"
-          />
-          <ErrorMessage name="address" component="div" className="text-red-500 text-sm mt-1" />
-        </div>
-
-        <Button
-          type="submit"
-          text={isSubmitting ? "Updating..." : "Update Profile"}
-          classes="bg-yellow-400 text-black py-2 px-6 rounded hover:bg-yellow-500"
-          disabled={isSubmitting}
-        />
-      </Form>
-    )}
-  </Formik>
-);
-
-const PasswordForm = ({ onSubmit }) => (
-  <Formik
-    initialValues={{
-      currentPassword: '',
-      newPassword: '',
-      confirmPassword: ''
-    }}
-    validationSchema={Yup.object({
-      currentPassword: Yup.string().required('Current password is required'),
-      newPassword: Yup.string()
-        .min(8, 'Password must be at least 8 characters')
-        .required('New password is required'),
-      confirmPassword: Yup.string()
-        .oneOf([Yup.ref('newPassword'), null], 'Passwords must match')
-        .required('Confirm password is required')
-    })}
-    onSubmit={onSubmit}
-  >
-    {({ isSubmitting }) => (
-      <Form className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Current Password</label>
-          <Field
-            name="currentPassword"
-            type="password"
-            as={Input}
-            placeholder="Enter current password"
-            classes="w-full"
-          />
-          <ErrorMessage name="currentPassword" component="div" className="text-red-500 text-sm mt-1" />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">New Password</label>
-          <Field
-            name="newPassword"
-            type="password"
-            as={Input}
-            placeholder="Enter new password"
-            classes="w-full"
-          />
-          <ErrorMessage name="newPassword" component="div" className="text-red-500 text-sm mt-1" />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Confirm New Password</label>
-          <Field
-            name="confirmPassword"
-            type="password"
-            as={Input}
-            placeholder="Confirm new password"
-            classes="w-full"
-          />
-          <ErrorMessage name="confirmPassword" component="div" className="text-red-500 text-sm mt-1" />
-        </div>
-
-        <Button
-          type="submit"
-          text={isSubmitting ? "Changing..." : "Change Password"}
-          classes="bg-yellow-400 text-black py-2 px-6 rounded hover:bg-yellow-500"
-          disabled={isSubmitting}
-        />
-      </Form>
-    )}
-  </Formik>
-);
-
-const NotificationSettings = () => {
-  const [settings, setSettings] = useState({
-    rideRequests: true,
-    paymentAlerts: true,
-    promotions: false,
-    securityAlerts: true,
-    rideUpdates: true
-  });
-
-  const handleToggle = (setting) => {
-    setSettings(prev => ({
-      ...prev,
-      [setting]: !prev[setting]
-    }));
-  };
-
-  const SettingToggle = ({ label, value, onChange }) => (
-    <div className="flex items-center justify-between py-3">
-      <span className="text-gray-700">{label}</span>
-      <button
-        onClick={onChange}
-        className={`w-12 h-6 rounded-full transition-colors ${value ? 'bg-yellow-400' : 'bg-gray-300'}`}
-      >
-        <div className={`w-5 h-5 bg-white rounded-full transition-transform ${value ? 'translate-x-6' : 'translate-x-1'}`} />
-      </button>
-    </div>
-  );
-
-  return (
-    <div className="space-y-4">
-      <h4 className="font-medium">Notification Preferences</h4>
-      <div className="space-y-2">
-        <SettingToggle
-          label="Ride Requests"
-          value={settings.rideRequests}
-          onChange={() => handleToggle('rideRequests')}
-        />
-        <SettingToggle
-          label="Payment Alerts"
-          value={settings.paymentAlerts}
-          onChange={() => handleToggle('paymentAlerts')}
-        />
-        <SettingToggle
-          label="Promotional Offers"
-          value={settings.promotions}
-          onChange={() => handleToggle('promotions')}
-        />
-        <SettingToggle
-          label="Security Alerts"
-          value={settings.securityAlerts}
-          onChange={() => handleToggle('securityAlerts')}
-        />
-        <SettingToggle
-          label="Ride Updates"
-          value={settings.rideUpdates}
-          onChange={() => handleToggle('rideUpdates')}
-        />
-      </div>
-      <Button
-        text="Save Preferences"
-        classes="bg-yellow-400 text-black py-2 px-6 rounded hover:bg-yellow-500"
-      />
-    </div>
-  );
-};
+// Sub-components
+import SidebarButton from './Profile/SidebarButton';
+import ProfileForm from './Profile/ProfileForm';
+import PasswordForm from './Profile/PasswordForm';
+import NotificationSettings from './Profile/NotificationSettings';
 
 const ProfileManagement = () => {
-  const { user } = useSelector(state => state.verifiedUser);
-  const [activeTab, setActiveTab] = useState('profile');
-  const [profileImage, setProfileImage] = useState(user?.profilePic || '/placeholderProfile.jpg');
-
-  // Update profile image when user data changes
-  useEffect(() => {
-    if (user?.profilePic && profileImage === '/placeholderProfile.jpg') {
-      setProfileImage(user.profilePic);
-    }
-  }, [user, profileImage]);
-
-  const getUserRole = () => {
-    return user?.role || 'passenger';
-  };
-
-  const getRoleDisplay = () => {
-    const role = getUserRole();
-    switch(role) {
-      case 'rider': return 'Rider';
-      case 'installment': return 'Installment Customer';
-      default: return 'Passenger';
-    }
-  };
-
-  const profileValidationSchema = Yup.object({
-    firstname: Yup.string().required('First name is required'),
-    lastname: Yup.string().required('Last name is required'),
-    email: Yup.string().email('Invalid email address').required('Email is required'),
-    phone: Yup.string().required('Phone number is required'),
-    dateOfBirth: Yup.date().required('Date of birth is required'),
-    address: Yup.string().required('Address is required')
-  });
-
-  const handleProfileUpdate = (values) => {
-    // Handle profile update logic here
-    console.log('Updating profile:', values);
-    // dispatch(updateUserProfile(values));
-  };
-
-  const handlePasswordChange = (values) => {
-    // Handle password change logic here
-    console.log('Changing password:', values);
-    // dispatch(changePassword(values));
-  };
-
-  const handleImageUpload = async (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      // Show preview immediately
-      const reader = new FileReader();
-      reader.onload = (e) => setProfileImage(e.target.result);
-      reader.readAsDataURL(file);
-
-      // Upload to backend
-      await uploadProfilePicture(file);
-    }
-  };
-
-  const uploadProfilePicture = async (file) => {
-    const token = localStorage.getItem('nvcr_tk');
-    if (!token) {
-      toast.error('Please login first');
-      return;
-    }
-
-    const formData = new FormData();
-    formData.append('profilePic', file);
-
-    try {
-      const response = await axios.post('http://localhost:5000/auth/upload-profile-pic', formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'multipart/form-data'
-        }
-      });
-
-      if (response.data.success) {
-        toast.success('Profile picture uploaded successfully');
-        // Update the profile image with the URL from backend
-        setProfileImage(response.data.data.profilePic);
-      }
-    } catch (error) {
-      console.error('Error uploading profile picture:', error);
-      toast.error('Failed to upload profile picture');
-    }
-  };
-
-  const mockUserData = {
-    firstname: user?.firstname || 'John',
-    lastname: user?.lastname || 'Doe',
-    email: user?.email || 'john.doe@example.com',
-    phone: user?.phone || '+234 123 456 7890',
-    dateOfBirth: '1990-01-01',
-    address: '123 Main Street, Lagos, Nigeria'
-  };
+  const {
+    user,
+    activeTab,
+    setActiveTab,
+    profileImage,
+    privacySettings,
+    isSavingPrivacy,
+    getUserRole,
+    getRoleDisplay,
+    profileValidationSchema,
+    handleProfileUpdate,
+    handlePasswordChange,
+    handleSmsToggle,
+    handleNotificationUpdate,
+    handlePrivacyToggle,
+    handlePrivacyUpdate,
+    handleImageUpload,
+    initialProfileValues
+  } = useProfileManagement();
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-neutral-50/50">
       <Navbar userrole={getUserRole()} userverified={true} profilePic={profileImage} nav={<OtherNav userrole={getUserRole()} />} />
 
-      <div className="mt-24 px-8">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          <aside className="col-span-1 bg-black text-white rounded p-4">
-            <div className="mb-6 text-center">
-              <div className="relative inline-block">
+      <div className="mt-20 pt-12 px-6 lg:px-20 pb-20">
+        <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-8">
+          {/* Sidebar */}
+          <aside className="w-full lg:w-80 space-y-8">
+            <div className="bg-neutral-900 rounded-[2.5rem] p-8 text-center relative overflow-hidden shadow-2xl">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-orange-500/10 rounded-full blur-3xl -mr-16 -mt-16" />
+              <div className="absolute bottom-0 left-0 w-24 h-24 bg-orange-500/5 rounded-full blur-2xl -ml-12 -mb-12" />
+
+              <div className="relative inline-block group">
+                <div className="absolute inset-0 bg-orange-500 rounded-full blur-lg opacity-0 group-hover:opacity-40 transition-opacity duration-500" />
                 <img
                   src={profileImage}
                   alt="Profile"
-                  className="w-20 h-20 rounded-full object-cover border-4 border-yellow-400"
+                  className="w-24 h-24 rounded-full object-cover border-4 border-neutral-800 relative z-10 shadow-xl"
                 />
-                <label className="absolute bottom-0 right-0 bg-yellow-400 p-1 rounded-full cursor-pointer">
-                  <FaCamera className="text-black text-sm" />
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageUpload}
-                    className="hidden"
-                  />
+                <label className="absolute bottom-0 right-0 bg-orange-500 p-2 rounded-full cursor-pointer shadow-lg hover:scale-110 active:scale-90 transition-transform z-20">
+                  <FaCamera className="text-white text-xs" />
+                  <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
                 </label>
               </div>
-              <div className="mt-3">
-                <div className="text-sm text-gray-300">{getRoleDisplay()}</div>
-                <div className="text-xl font-bold text-orange-400">{user?.firstname || 'User'}</div>
-                <div className="text-sm text-gray-400">{mockUserData.email}</div>
+
+              <div className="mt-6 relative z-10">
+                <div className="text-[10px] font-black uppercase tracking-[0.2em] text-orange-500/80 mb-1">{getRoleDisplay()}</div>
+                <div className="text-2xl font-black text-white tracking-tight">{user?.firstname || 'User'} {user?.lastname || ''}</div>
+                <div className="text-sm text-neutral-500 font-medium mt-1 truncate">{user?.phone || user?.email}</div>
               </div>
             </div>
 
-            <SidebarButton active={activeTab === 'profile'} onClick={() => setActiveTab('profile')}>
-              <FaUser className="inline mr-2" /> Profile Info
-            </SidebarButton>
-            <SidebarButton active={activeTab === 'security'} onClick={() => setActiveTab('security')}>
-              <FaLock className="inline mr-2" /> Security
-            </SidebarButton>
-            <SidebarButton active={activeTab === 'notifications'} onClick={() => setActiveTab('notifications')}>
-              <FaBell className="inline mr-2" /> Notifications
-            </SidebarButton>
-            <SidebarButton active={activeTab === 'privacy'} onClick={() => setActiveTab('privacy')}>
-              <FaShieldAlt className="inline mr-2" /> Privacy
-            </SidebarButton>
+            <div className="bg-white/80 backdrop-blur-3xl rounded-[2.5rem] p-4 border border-white/20 shadow-xl">
+              <SidebarButton active={activeTab === 'profile'} onClick={() => setActiveTab('profile')} icon={FaUser}>
+                Profile Info
+              </SidebarButton>
+              <SidebarButton active={activeTab === 'security'} onClick={() => setActiveTab('security')} icon={FaLock}>
+                Security
+              </SidebarButton>
+              <SidebarButton active={activeTab === 'notifications'} onClick={() => setActiveTab('notifications')} icon={FaBell}>
+                Notifications
+              </SidebarButton>
+              <SidebarButton active={activeTab === 'privacy'} onClick={() => setActiveTab('privacy')} icon={FaShieldAlt}>
+                Privacy & Data
+              </SidebarButton>
+            </div>
           </aside>
 
-          <main className="col-span-1 md:col-span-3">
-            <div className="p-6 bg-white rounded shadow">
-              {activeTab === 'profile' && (
-                <div>
-                  <h3 className="font-semibold mb-6">Personal Information</h3>
-                  <ProfileForm
-                    initialValues={mockUserData}
-                    onSubmit={handleProfileUpdate}
-                    validationSchema={profileValidationSchema}
-                  />
-                </div>
-              )}
-
-              {activeTab === 'security' && (
-                <div>
-                  <h3 className="font-semibold mb-6">Change Password</h3>
-                  <PasswordForm onSubmit={handlePasswordChange} />
-
-                  <div className="mt-8 pt-6 border-t">
-                    <h4 className="font-medium mb-4">Two-Factor Authentication</h4>
-                    <div className="flex items-center justify-between">
+          {/* Main Content Area */}
+          <main className="flex-1 bg-white/80 backdrop-blur-3xl rounded-[2.5rem] p-8 md:p-12 shadow-2xl border border-white/20 relative overflow-hidden">
+            <div className="relative z-10">
+              <AnimatePresence mode="wait">
+                <Motion.div
+                  key={activeTab}
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  {activeTab === 'profile' && (
+                    <div className="space-y-8">
                       <div>
-                        <div className="font-medium">SMS Authentication</div>
-                        <div className="text-sm text-gray-500">Receive codes via SMS</div>
+                        <h3 className="text-2xl font-black text-neutral-900 tracking-tight">Personal Details</h3>
+                        <p className="text-sm text-neutral-500 mt-1">Manage your account information and preferences.</p>
                       </div>
-                      <Button
-                        text="Enable"
-                        classes="bg-yellow-400 text-black py-2 px-4 rounded hover:bg-yellow-500"
-                      />
+                      <ProfileForm initialValues={initialProfileValues} onSubmit={handleProfileUpdate} validationSchema={profileValidationSchema} />
                     </div>
-                  </div>
-                </div>
-              )}
+                  )}
 
-              {activeTab === 'notifications' && (
-                <div>
-                  <h3 className="font-semibold mb-6">Notification Settings</h3>
-                  <NotificationSettings />
-                </div>
-              )}
+                  {activeTab === 'security' && (
+                    <div className="space-y-8">
+                      <div>
+                        <h3 className="text-2xl font-black text-neutral-900 tracking-tight">Access & Security</h3>
+                        <p className="text-sm text-neutral-500 mt-1">Update your password and protect your account.</p>
+                      </div>
+                      <PasswordForm onSubmit={handlePasswordChange} />
 
-              {activeTab === 'privacy' && (
-                <div>
-                  <h3 className="font-semibold mb-6">Privacy Settings</h3>
-                  <div className="space-y-6">
-                    <div>
-                      <h4 className="font-medium mb-4">Data Sharing</h4>
-                      <div className="space-y-3">
-                        <div className="flex items-center justify-between">
-                          <span className="text-gray-700">Share ride history with partners</span>
-                          <input type="checkbox" className="rounded" />
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <span className="text-gray-700">Allow location tracking for better service</span>
-                          <input type="checkbox" defaultChecked className="rounded" />
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <span className="text-gray-700">Marketing communications</span>
-                          <input type="checkbox" className="rounded" />
+                      <div className="mt-12 pt-10 border-t border-neutral-100">
+                        <h4 className="font-black text-sm uppercase tracking-widest text-neutral-400 mb-6">Two-Factor Authentication</h4>
+                        <div className="p-8 bg-neutral-900 rounded-[2.5rem] border border-neutral-800 flex items-center justify-between group transition-all shadow-2xl relative overflow-hidden">
+                          <div className="absolute top-0 right-0 w-32 h-32 bg-orange-500/5 rounded-full blur-3xl" />
+                          <div className="relative z-10 space-y-1">
+                            <div className="font-bold text-white group-hover:text-orange-500 transition-colors">SMS Protection</div>
+                            <p className="text-xs text-neutral-500 font-medium">Extra layer of security for your account</p>
+                          </div>
+
+                          <button
+                            onClick={handleSmsToggle}
+                            className={`w-14 h-7 rounded-full transition-all duration-300 relative z-10 ${user?.isSmsProtectionEnabled ? 'bg-orange-500 shadow-lg shadow-orange-500/20' : 'bg-neutral-800'}`}
+                          >
+                            <Motion.div
+                              animate={{ x: user?.isSmsProtectionEnabled ? 32 : 4 }}
+                              transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                              className="w-5 h-5 bg-white rounded-full shadow-lg absolute top-1"
+                            />
+                          </button>
                         </div>
                       </div>
                     </div>
+                  )}
 
-                    <div className="pt-6 border-t">
-                      <h4 className="font-medium mb-4 text-red-600">Danger Zone</h4>
-                      <Button
-                        text="Delete Account"
-                        classes="bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600"
+                  {activeTab === 'notifications' && (
+                    <div className="space-y-8">
+                      <div>
+                        <h3 className="text-2xl font-black text-neutral-900 tracking-tight">Notifications</h3>
+                        <p className="text-sm text-neutral-500 mt-1">Control how you want to be notified about activity.</p>
+                      </div>
+                      <NotificationSettings
+                        initialSettings={user?.notificationSettings}
+                        onSave={handleNotificationUpdate}
                       />
                     </div>
-                  </div>
-                </div>
-              )}
+                  )}
+
+                  {activeTab === 'privacy' && (
+                    <div className="space-y-8">
+                      <div>
+                        <h3 className="text-2xl font-black text-neutral-900 tracking-tight">Privacy Center</h3>
+                        <p className="text-sm text-neutral-500 mt-1">Manage your data and visibility settings.</p>
+                      </div>
+                      <div className="space-y-6">
+                        <div className="bg-neutral-50/50 rounded-3xl p-6 border border-neutral-100">
+                          <h4 className="font-bold text-neutral-800 mb-6 flex items-center gap-2">
+                            Data Management
+                          </h4>
+                          <div className="space-y-4">
+                            {[
+                              { label: "Share ride history with analytics partners", key: "shareRideHistory" },
+                              { label: "Allow location tracking for better ETA", key: "allowLocationTracking" },
+                              { label: "Receive marketing and promotional emails", key: "receiveMarketingEmails" }
+                            ].map((item) => (
+                              <label key={item.key} className="flex items-center justify-between p-4 hover:bg-white/80 rounded-2xl transition-all cursor-pointer group">
+                                <span className="text-sm text-neutral-600 font-medium group-hover:text-neutral-900">{item.label}</span>
+                                <input
+                                  type="checkbox"
+                                  checked={privacySettings[item.key]}
+                                  onChange={() => handlePrivacyToggle(item.key)}
+                                  className="w-5 h-5 rounded-lg border-neutral-300 text-orange-500 focus:ring-orange-500/20 cursor-pointer"
+                                />
+                              </label>
+                            ))}
+                          </div>
+                        </div>
+
+                        <Motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="pt-2">
+                          <Button
+                            onClick={handlePrivacyUpdate}
+                            disabled={isSavingPrivacy}
+                            text={isSavingPrivacy ? "Saving..." : "Save Privacy Settings"}
+                            classes="bg-neutral-900 text-white py-4 px-10 rounded-2xl font-bold uppercase tracking-widest text-xs shadow-lg hover:bg-black transition-all disabled:opacity-50"
+                          />
+                        </Motion.div>
+
+                        <div className="pt-10 border-t border-neutral-100">
+                          <div className="p-6 bg-red-50/50 rounded-3xl border border-red-100 flex flex-col md:flex-row items-center justify-between gap-6">
+                            <div className="space-y-1 text-center md:text-left">
+                              <h4 className="font-black text-sm uppercase tracking-widest text-red-600">Danger Zone</h4>
+                              <p className="text-xs text-neutral-500 font-medium leading-relaxed">Permanently delete your account and all associated data. <br className="hidden md:block" /> This action is irreversible.</p>
+                            </div>
+                            <Motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                              <Button
+                                text="Delete Account"
+                                classes="bg-red-500 text-white py-3 px-8 rounded-2xl font-bold uppercase tracking-widest text-[10px] shadow-lg shadow-red-500/20 hover:bg-red-600 transition-all"
+                              />
+                            </Motion.div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </Motion.div>
+              </AnimatePresence>
             </div>
           </main>
         </div>

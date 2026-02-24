@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import axios from 'axios';
+import client from '../api/client';
 import { GiPathDistance } from "react-icons/gi";
 import { IoMdTimer } from "react-icons/io";
 import Button from './Button';
@@ -14,15 +14,12 @@ const ClickToReveal = ({ distance, duration, cancelRide }) => {
 
   const handlePickRider = async () => {
     try {
-      console.log(pickupCoordinate);
-
-      const token = localStorage.getItem('nvcr_tk');
       const rideData = {
         pickupLocation,
         destination,
         eta: duration,
-        fare: distance * 150, // Assuming fare calculation
-        distance: distance / 1000, // Convert meters to km
+        fare: distance * 150,
+        distance: distance,
         pickupCoordinates: {
           type: 'Point',
           coordinates: [pickupCoordinate.lng, pickupCoordinate.lat]
@@ -33,18 +30,20 @@ const ClickToReveal = ({ distance, duration, cancelRide }) => {
         }
       };
 
-      const response = await axios.post('http://localhost:5000/ride/create-ride', rideData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await client.post('/ride/create-ride', rideData);
 
       if (response.status === 200) {
-        navigate('/driver-selection');
+        navigate(`/driver-selection?rideId=${response.data.ride._id}`);
       }
     } catch (error) {
       console.error('Error creating ride:', error);
-      // Handle error (maybe show a toast or alert)
+      const errorMessage = error.response?.data?.message || error.message;
+      alert(`Error creating ride: ${errorMessage}`);
+
+      if (errorMessage.toLowerCase().includes('expired') || error.response?.status === 401) {
+        localStorage.removeItem('nvcr_tk');
+        navigate('/login');
+      }
     }
   };
 
@@ -52,29 +51,57 @@ const ClickToReveal = ({ distance, duration, cancelRide }) => {
     <div className="mt-5 w-full">
 
       <AnimatePresence>
-        (
         <motion.div
-          initial={{ opacity: 0, y: 50 }}
+          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: 50 }}
-          transition={{ duration: 0.6, ease: 'easeOut' }}
-          className="mt-4 bg-gray-100 p-4 rounded shadow-lg shadow-neutral-700 w-full font-mono"
+          exit={{ opacity: 0, y: 20 }}
+          transition={{ duration: 0.4, ease: 'easeOut' }}
+          className="mt-6 bg-black/85 backdrop-blur-xl p-6 rounded-2xl border border-white/10 shadow-2xl w-full text-white"
         >
-          {distance && <div className='flex justify-start items-center text-stone-700 gap-3'>
-            <GiPathDistance className='text-xl' />
-            <span>{distance} meters</span>
-          </div>}
-          {duration && <div className='flex justify-start items-center text-stone-700 gap-3 mt-2'>
-            <IoMdTimer className='text-xl' />
-            <span>{duration} minutes</span>
-          </div>}
-          <div className='text-neutral-800 mt-2'><span>Fare:</span> #{distance && distance * 150}</div>
-          <div>
-            <Button text={'Pick rider'} classes={'rounded-sm bg-black py-2 px-3 text-white mt-4 hover:bg-stone-900'} onClick={handlePickRider} />
-            <Button text={'Cancel'} classes={'rounded-sm bg-orange-300 text-black ms-5 shadow-md py-2 px-3 mt-4 hover:bg-orange-200'} onClick={cancelRide} />
+          <div className='flex flex-col gap-4'>
+            <div className='flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/5'>
+              <div className='flex items-center gap-3'>
+                <div className='p-2 bg-orange-500/20 rounded-lg'>
+                  <GiPathDistance className='text-orange-400 text-xl' />
+                </div>
+                <div className='flex flex-col'>
+                  <span className='text-xs text-neutral-400 uppercase tracking-wider font-bold'>Distance</span>
+                  <span className='text-lg font-semibold'>{distance} KM</span>
+                </div>
+              </div>
+            </div>
+
+            <div className='flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/5'>
+              <div className='flex items-center gap-3'>
+                <div className='p-2 bg-blue-500/20 rounded-lg'>
+                  <IoMdTimer className='text-blue-400 text-xl' />
+                </div>
+                <div className='flex flex-col'>
+                  <span className='text-xs text-neutral-400 uppercase tracking-wider font-bold'>Duration</span>
+                  <span className='text-lg font-semibold'>{duration} minutes</span>
+                </div>
+              </div>
+            </div>
+
+            <div className='mt-2 flex items-center justify-between px-2'>
+              <span className='text-neutral-400 font-medium'>Estimated Fare</span>
+              <span className='text-2xl font-bold text-orange-400'>#{distance && distance * 150}</span>
+            </div>
+
+            <div className='flex gap-4 mt-2'>
+              <Button
+                text={'Pick rider'}
+                classes={'flex-1 h-12 rounded-xl bg-orange-500 text-white font-bold hover:bg-orange-600 transition-all active:scale-95 shadow-lg'}
+                onClick={handlePickRider}
+              />
+              <Button
+                text={'Cancel'}
+                classes={'px-6 h-12 rounded-xl bg-white/10 text-white font-semibold hover:bg-white/20 transition-all border border-white/10'}
+                onClick={cancelRide}
+              />
+            </div>
           </div>
         </motion.div>
-        )
       </AnimatePresence>
     </div>
   );

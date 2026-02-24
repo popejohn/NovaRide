@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import Navbar from './Navbar';
 import OtherNav from './VerifiedNav';
 import Button from './Button';
+import axios from 'axios';
 import { FaWallet, FaCreditCard, FaMoneyBillWave, FaArrowUp, FaArrowDown, FaHistory } from 'react-icons/fa';
 
 const SidebarButton = ({ active, onClick, children }) => (
@@ -26,7 +27,7 @@ const TransactionItem = ({ transaction }) => (
       </div>
       <div>
         <div className="font-medium">{transaction.description}</div>
-        <div className="text-sm text-gray-500">{transaction.date}</div>
+        <div className="text-sm text-gray-500">{new Date(transaction.createdAt).toLocaleDateString()}</div>
         <div className="text-xs text-gray-400">{transaction.reference}</div>
       </div>
     </div>
@@ -39,79 +40,37 @@ const TransactionItem = ({ transaction }) => (
 const Wallet = () => {
   const { user } = useSelector(state => state.verifiedUser);
   const [activeTab, setActiveTab] = useState('overview');
+  const [walletBalance, setWalletBalance] = useState(0);
+  const [transactions, setTransactions] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // Mock wallet data
-  const walletData = {
-    balance: 45250,
-    totalEarned: 125000,
-    totalSpent: 79750,
-    transactions: [
-      {
-        id: 1,
-        type: 'credit',
-        amount: 8500,
-        description: 'Ride Payment - Lagos to Abuja',
-        date: '2025-12-15',
-        reference: 'RIDE-2025-001234'
-      },
-      {
-        id: 2,
-        type: 'debit',
-        amount: 2500,
-        description: 'Service Fee',
-        date: '2025-12-14',
-        reference: 'FEE-2025-001233'
-      },
-      {
-        id: 3,
-        type: 'credit',
-        amount: 12000,
-        description: 'Installment Payment',
-        date: '2025-12-13',
-        reference: 'INST-2025-001232'
-      },
-      {
-        id: 4,
-        type: 'debit',
-        amount: 1500,
-        description: 'Platform Fee',
-        date: '2025-12-12',
-        reference: 'FEE-2025-001231'
-      },
-      {
-        id: 5,
-        type: 'credit',
-        amount: 6500,
-        description: 'Ride Payment - Port Harcourt',
-        date: '2025-12-11',
-        reference: 'RIDE-2025-001230'
-      },
-      {
-        id: 6,
-        type: 'debit',
-        amount: 3200,
-        description: 'Withdrawal to Bank',
-        date: '2025-12-10',
-        reference: 'WDL-2025-001229'
-      },
-      {
-        id: 7,
-        type: 'credit',
-        amount: 9500,
-        description: 'Bonus Payment',
-        date: '2025-12-09',
-        reference: 'BONUS-2025-001228'
-      },
-      {
-        id: 8,
-        type: 'debit',
-        amount: 1800,
-        description: 'Insurance Premium',
-        date: '2025-12-08',
-        reference: 'INS-2025-001227'
+  useEffect(() => {
+    const fetchWalletData = async () => {
+      try {
+        const token = localStorage.getItem('nvcr_tk');
+        const response = await axios.get('/api/user/wallet-data', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        setWalletBalance(response.data.walletBalance);
+        setTransactions(response.data.transactions);
+      } catch (error) {
+        console.error('Error fetching wallet data:', error);
+      } finally {
+        setLoading(false);
       }
-    ]
-  };
+    };
+
+    fetchWalletData();
+  }, []);
+
+  // Calculate stats from transactions for overview
+  const totalEarned = transactions
+    .filter(t => t.type === 'credit')
+    .reduce((sum, t) => sum + t.amount, 0);
+
+  const totalSpent = transactions
+    .filter(t => t.type === 'debit')
+    .reduce((sum, t) => sum + t.amount, 0);
 
   const getUserRole = () => {
     // This would come from user state/role
@@ -120,7 +79,7 @@ const Wallet = () => {
 
   const getRoleDisplay = () => {
     const role = getUserRole();
-    switch(role) {
+    switch (role) {
       case 'rider': return 'Rider';
       case 'installment': return 'Installment Customer';
       default: return 'Passenger';
@@ -152,7 +111,7 @@ const Wallet = () => {
 
             <div className="mt-6 p-3 bg-yellow-400 text-black rounded-lg">
               <div className="text-sm">Available Balance</div>
-              <div className="text-2xl font-bold">₦{walletData.balance.toLocaleString()}</div>
+              <div className="text-2xl font-bold">₦{walletBalance.toLocaleString()}</div>
             </div>
           </aside>
 
@@ -166,7 +125,7 @@ const Wallet = () => {
                       <FaWallet className="text-2xl text-yellow-600" />
                       <div>
                         <div className="text-sm text-gray-500">Current Balance</div>
-                        <div className="text-2xl font-bold">₦{walletData.balance.toLocaleString()}</div>
+                        <div className="text-2xl font-bold">₦{walletBalance.toLocaleString()}</div>
                       </div>
                     </div>
                   </div>
@@ -176,7 +135,7 @@ const Wallet = () => {
                       <FaMoneyBillWave className="text-2xl text-green-600" />
                       <div>
                         <div className="text-sm text-gray-500">Total Earned</div>
-                        <div className="text-2xl font-bold text-green-600">₦{walletData.totalEarned.toLocaleString()}</div>
+                        <div className="text-2xl font-bold text-green-600">₦{totalEarned.toLocaleString()}</div>
                       </div>
                     </div>
                   </div>
@@ -186,7 +145,7 @@ const Wallet = () => {
                       <FaCreditCard className="text-2xl text-red-600" />
                       <div>
                         <div className="text-sm text-gray-500">Total Spent</div>
-                        <div className="text-2xl font-bold text-red-600">₦{walletData.totalSpent.toLocaleString()}</div>
+                        <div className="text-2xl font-bold text-red-600">₦{totalSpent.toLocaleString()}</div>
                       </div>
                     </div>
                   </div>
@@ -227,8 +186,8 @@ const Wallet = () => {
                     </button>
                   </div>
                   <div className="space-y-2">
-                    {walletData.transactions.slice(0, 5).map((transaction) => (
-                      <TransactionItem key={transaction.id} transaction={transaction} />
+                    {transactions.slice(0, 5).map((transaction) => (
+                      <TransactionItem key={transaction._id} transaction={transaction} />
                     ))}
                   </div>
                 </div>
@@ -239,8 +198,8 @@ const Wallet = () => {
               <div className="p-6 bg-white rounded shadow">
                 <h3 className="font-semibold mb-4">Transaction History</h3>
                 <div className="space-y-0">
-                  {walletData.transactions.map((transaction) => (
-                    <TransactionItem key={transaction.id} transaction={transaction} />
+                  {transactions.map((transaction) => (
+                    <TransactionItem key={transaction._id} transaction={transaction} />
                   ))}
                 </div>
               </div>

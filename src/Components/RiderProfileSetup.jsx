@@ -10,7 +10,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import * as Yup from 'yup';
 import axios from 'axios';
 import { FaCar, FaIdCard, FaCreditCard, FaUser } from 'react-icons/fa';
-import { toast, ToastContainer } from 'react-toastify';
+import { toast } from 'react-toastify';
 import { setProfileCompleted, setUser } from '../Redux/verifiedUserslice';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -28,37 +28,37 @@ const RiderProfileSetup = () => {
   const canvasRef = React.useRef(null);
 
   //get request to fetch existing profile data could be implemented here. Attach token to header
-  
+
   const token = localStorage.getItem('nvcr_tk');
 
   useEffect(() => {
     if (!token) {
       navigate('/login');
-    }else{
+    } else {
       axios.get('http://localhost:5000/rider/get-details', {
         headers: {
           Authorization: `Bearer ${token}`
         }
       })
-      .then(response => {
-        // Assuming the response has user data, update the store
-        if (response.data) {
-          dispatch(setUser({ user: response.data.rider, role: 'rider', profileCompleted: response.data.profileCompleted || false }));
-        }
-      })
-      .catch(error => {
-        console.error('Error fetching user details:', error);
-        
-        // Handle authentication errors (invalid/expired token)
-        if (error.response && error.response.status === 401) {
-          localStorage.removeItem('nvcr_tk');
-          toast.error('Your session has expired. Please login again.');
-          navigate('/login');
-          return;
-        }
-        
-        // For other errors, just log them (don't show toast to avoid spam)
-      });
+        .then(response => {
+          // Assuming the response has user data, update the store
+          if (response.data) {
+            dispatch(setUser({ user: response.data.rider, role: 'rider', profileCompleted: response.data.profileCompleted || false }));
+          }
+        })
+        .catch(error => {
+          console.error('Error fetching user details:', error);
+
+          // Handle authentication errors (invalid/expired token)
+          if (error.response && error.response.status === 401) {
+            localStorage.removeItem('nvcr_tk');
+            toast.error('Your session has expired. Please login again.');
+            navigate('/login');
+            return;
+          }
+
+          // For other errors, just log them (don't show toast to avoid spam)
+        });
     }
   }, [token, navigate, dispatch]);
 
@@ -69,7 +69,7 @@ const RiderProfileSetup = () => {
     }
   }, [user, profilePicture]);
 
-  
+
 
   const steps = [
     { id: 1, title: 'Personal Info', icon: FaUser },
@@ -188,7 +188,7 @@ const RiderProfileSetup = () => {
         }
       } catch (error) {
         console.error('Profile setup error:', error);
-        
+
         // Handle authentication errors (invalid/expired token)
         if (error.response && error.response.status === 401) {
           localStorage.removeItem('nvcr_tk');
@@ -196,7 +196,7 @@ const RiderProfileSetup = () => {
           navigate('/login');
           return;
         }
-        
+
         // Handle other API errors
         if (error.response && error.response.data && error.response.data.message) {
           toast.error(error.response.data.message);
@@ -242,7 +242,7 @@ const RiderProfileSetup = () => {
       }
     } catch (error) {
       console.error('Error uploading profile picture:', error);
-      
+
       // Handle authentication errors (invalid/expired token)
       if (error.response && error.response.status === 401) {
         localStorage.removeItem('nvcr_tk');
@@ -250,7 +250,7 @@ const RiderProfileSetup = () => {
         navigate('/login');
         return;
       }
-      
+
       toast.error('Failed to upload profile picture');
     }
   };
@@ -507,16 +507,16 @@ const RiderProfileSetup = () => {
                 </select>
               </div>
               <Input
-              label="Plate Number*"
-              value={vehicleFormik.values.plateNumber}
-              onChange={vehicleFormik.handleChange}
-              onBlur={vehicleFormik.handleBlur}
-              name="plateNumber"
-              placeholder="ABC 123 XY"
-            />
+                label="Plate Number*"
+                value={vehicleFormik.values.plateNumber}
+                onChange={vehicleFormik.handleChange}
+                onBlur={vehicleFormik.handleBlur}
+                name="plateNumber"
+                placeholder="ABC 123 XY"
+              />
             </div>
 
-            
+
           </div>
         );
 
@@ -657,22 +657,19 @@ const RiderProfileSetup = () => {
             <div className="flex items-center justify-between">
               {steps.map((step, index) => (
                 <div key={step.id} className="flex items-center">
-                  <div className={`flex items-center justify-center w-8 md:w-10 h-8 md:h-10 rounded-full ${
-                    step.id <= currentStep ? 'bg-yellow-400 text-black' : 'bg-gray-200 text-gray-400'
-                  }`}>
+                  <div className={`flex items-center justify-center w-8 md:w-10 h-8 md:h-10 rounded-full ${step.id <= currentStep ? 'bg-yellow-400 text-black' : 'bg-gray-200 text-gray-400'
+                    }`}>
                     <step.icon className="text-xs md:text-sm" />
                   </div>
                   <div className="ml-2 md:ml-3">
-                    <div className={`text-xs md:text-sm font-medium hidden md:block ${
-                      step.id <= currentStep ? 'text-black' : 'text-gray-400'
-                    }`}>
+                    <div className={`text-xs md:text-sm font-medium hidden md:block ${step.id <= currentStep ? 'text-black' : 'text-gray-400'
+                      }`}>
                       {step.title}
                     </div>
                   </div>
                   {index < steps.length - 1 && (
-                    <div className={`w-8 md:w-16 h-0.5 mx-2 md:mx-4 ${
-                      step.id < currentStep ? 'bg-yellow-400' : 'bg-gray-200'
-                    }`} />
+                    <div className={`w-8 md:w-16 h-0.5 mx-2 md:mx-4 ${step.id < currentStep ? 'bg-yellow-400' : 'bg-gray-200'
+                      }`} />
                   )}
                 </div>
               ))}
@@ -689,11 +686,10 @@ const RiderProfileSetup = () => {
                 <Button
                   type="button"
                   text="Previous"
-                  classes={`px-4 md:px-6 py-2 rounded font-semibold text-sm md:text-base ${
-                    currentStep === 1
-                      ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                      : 'bg-gray-600 text-white hover:bg-gray-700'
-                  }`}
+                  classes={`px-4 md:px-6 py-2 rounded font-semibold text-sm md:text-base ${currentStep === 1
+                    ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                    : 'bg-gray-600 text-white hover:bg-gray-700'
+                    }`}
                   onClick={() => setCurrentStep(prev => prev - 1)}
                   disabled={currentStep === 1}
                 />
@@ -709,7 +705,6 @@ const RiderProfileSetup = () => {
           </div>
         </div>
       </div>
-      <ToastContainer position="top-right" autoClose={5000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
     </div>
   );
 };

@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import Navbar from './Navbar';
 import OtherNav from './VerifiedNav';
 import Button from './Button';
+import axios from 'axios';
 import { FaCar, FaCalculator, FaClock, FaMoneyBillWave, FaChartLine } from 'react-icons/fa';
 
 const SidebarButton = ({ active, onClick, children }) => (
@@ -179,9 +180,8 @@ const PaymentHistory = ({ payments }) => (
               <div className="font-medium">₦{payment.amount.toLocaleString()}</div>
               <div className="text-sm text-gray-500">{payment.date}</div>
             </div>
-            <div className={`px-2 py-1 rounded text-xs ${
-              payment.status === 'completed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
-            }`}>
+            <div className={`px-2 py-1 rounded text-xs ${payment.status === 'completed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+              }`}>
               {payment.status}
             </div>
           </div>
@@ -193,41 +193,35 @@ const PaymentHistory = ({ payments }) => (
 
 const InstallmentDashboard = () => {
   const { user } = useSelector(state => state.verifiedUser);
+  const [activeTab, setActiveTab] = useState('overview');
+  const [installmentData, setInstallmentData] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  const [view, setView] = useState('overview');
-
-  // Mock installment data
-  const installmentData = {
-    vehicle: {
-      id: 1,
-      name: 'Toyota Camry 2024',
-      plateNumber: 'ABC 123 XY',
-      color: 'White',
-      image: '/placeholderProfile.jpg',
-      specs: {
-        engine: '2.5L 4-Cylinder',
-        transmission: 'Automatic',
-        fuelType: 'Petrol',
-        mileage: '1,250 km'
+  useEffect(() => {
+    const fetchInstallmentData = async () => {
+      try {
+        const token = localStorage.getItem('nvcr_tk');
+        const response = await axios.get('/api/user/installment-data', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        setInstallmentData(response.data.installment);
+      } catch (error) {
+        console.error('Error fetching installment data:', error);
+      } finally {
+        setLoading(false);
       }
-    },
-    installment: {
-      totalAmount: 9200000,
-      paidAmount: 3680000,
-      remainingMonths: 24,
-      monthlyPayment: 184000,
-      nextPaymentDate: '2025-01-15',
-      startDate: '2024-01-15',
-      endDate: '2026-01-15'
-    },
-    payments: [
-      { amount: 184000, date: '2024-12-15', status: 'completed' },
-      { amount: 184000, date: '2024-11-15', status: 'completed' },
-      { amount: 184000, date: '2024-10-15', status: 'completed' },
-      { amount: 184000, date: '2024-09-15', status: 'completed' },
-      { amount: 184000, date: '2024-08-15', status: 'pending' }
-    ]
-  };
+    };
+
+    fetchInstallmentData();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-black text-white">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-orange-500"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen">
@@ -242,66 +236,101 @@ const InstallmentDashboard = () => {
               <div className="text-sm text-gray-400">Vehicle Owner</div>
             </div>
 
-            <SidebarButton active={view === 'overview'} onClick={() => setView('overview')}>Overview</SidebarButton>
-            <SidebarButton active={view === 'vehicle'} onClick={() => setView('vehicle')}>Vehicle Details</SidebarButton>
-            <SidebarButton active={view === 'payments'} onClick={() => setView('payments')}>Payment History</SidebarButton>
-            <SidebarButton active={view === 'calculator'} onClick={() => setView('calculator')}>Finance Calculator</SidebarButton>
+            <SidebarButton active={activeTab === 'overview'} onClick={() => setActiveTab('overview')}>Overview</SidebarButton>
+            <SidebarButton active={activeTab === 'vehicle'} onClick={() => setActiveTab('vehicle')}>Vehicle Details</SidebarButton>
+            <SidebarButton active={activeTab === 'history'} onClick={() => setActiveTab('history')}>Payment History</SidebarButton>
+            <SidebarButton active={activeTab === 'calculator'} onClick={() => setActiveTab('calculator')}>Finance Calculator</SidebarButton>
 
-            <div className="mt-6">
-              <div className="text-xs text-gray-400">Monthly Payment</div>
-              <div className="text-2xl font-bold">₦{installmentData.installment.monthlyPayment.toLocaleString()}</div>
-            </div>
+            {installmentData && (
+              <div className="mt-6">
+                <div className="text-xs text-gray-400">Monthly Payment</div>
+                <div className="text-2xl font-bold">₦{installmentData.monthlyPayment.toLocaleString()}</div>
+              </div>
+            )}
           </aside>
 
           <main className="col-span-1 md:col-span-3 space-y-4">
-            {view === 'overview' && (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <PaymentProgress
-                  totalAmount={installmentData.installment.totalAmount}
-                  paidAmount={installmentData.installment.paidAmount}
-                  nextPaymentDate={installmentData.installment.nextPaymentDate}
+            {!installmentData ? (
+              <div className="p-12 text-center bg-white rounded-lg shadow">
+                <FaCar className="text-6xl text-gray-200 mx-auto mb-4" />
+                <h3 className="text-xl font-bold mb-2">No Active Installment Plan</h3>
+                <p className="text-gray-500 mb-6">You don't have any active vehicle installment plans at the moment.</p>
+                <Button
+                  text="View Available Vehicles"
+                  classes="bg-yellow-400 text-black py-3 px-6 rounded hover:bg-yellow-500 font-bold"
                 />
-                <VehicleDetails vehicle={installmentData.vehicle} />
-
-                <div className="md:col-span-2 p-4 bg-white rounded shadow">
-                  <div className="flex items-center justify-between">
-                    <h3 className="font-semibold">Installment Summary</h3>
-                    <div className="text-sm text-gray-500">
-                      {installmentData.installment.remainingMonths} months remaining
-                    </div>
-                  </div>
-                  <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <div className="text-center">
-                      <div className="text-lg font-bold text-blue-600">₦{installmentData.installment.totalAmount.toLocaleString()}</div>
-                      <div className="text-xs text-gray-500">Total Amount</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-lg font-bold text-green-600">₦{installmentData.installment.paidAmount.toLocaleString()}</div>
-                      <div className="text-xs text-gray-500">Amount Paid</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-lg font-bold text-red-600">₦{(installmentData.installment.totalAmount - installmentData.installment.paidAmount).toLocaleString()}</div>
-                      <div className="text-xs text-gray-500">Amount Left</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-lg font-bold text-yellow-600">{installmentData.installment.remainingMonths}</div>
-                      <div className="text-xs text-gray-500">Months Left</div>
-                    </div>
-                  </div>
-                </div>
               </div>
-            )}
+            ) : (
+              <>
+                {activeTab === 'overview' && (
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <PaymentProgress
+                        totalAmount={installmentData.totalAmount}
+                        paidAmount={installmentData.paidAmount}
+                        nextPaymentDate={installmentData.nextPaymentDate}
+                      />
+                      <VehicleDetails
+                        vehicle={{
+                          name: installmentData.vehicleName,
+                          plateNumber: installmentData.vehiclePlate,
+                          image: installmentData.vehicleImage || '/placeholderVehicle.jpg',
+                          color: 'N/A', // Could add to schema
+                          specs: installmentData.specs
+                        }}
+                      />
+                    </div>
 
-            {view === 'vehicle' && (
-              <VehicleDetails vehicle={installmentData.vehicle} />
-            )}
+                    {/* Finance Highlights */}
+                    <div className="p-6 bg-white rounded shadow">
+                      <h3 className="font-semibold mb-4">Finance Highlights</h3>
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div className="p-4 bg-blue-50 rounded">
+                          <div className="text-sm text-blue-600">Total Credit</div>
+                          <div className="text-xl font-bold">₦{installmentData.totalAmount.toLocaleString()}</div>
+                        </div>
+                        <div className="p-4 bg-green-50 rounded">
+                          <div className="text-sm text-green-600">Plan Type</div>
+                          <div className="text-lg font-bold">{installmentData.installmentPlan}</div>
+                        </div>
+                        <div className="p-4 bg-orange-50 rounded">
+                          <div className="text-sm text-orange-600">Monthly Pmt</div>
+                          <div className="text-xl font-bold">₦{installmentData.monthlyPayment.toLocaleString()}</div>
+                        </div>
+                        <div className="p-4 bg-purple-50 rounded">
+                          <div className="text-sm text-purple-600">Date Started</div>
+                          <div className="text-lg font-bold">{new Date(installmentData.createdAt).toLocaleDateString()}</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
 
-            {view === 'payments' && (
-              <PaymentHistory payments={installmentData.payments} />
-            )}
+                {activeTab === 'vehicle' && (
+                  <VehicleDetails
+                    vehicle={{
+                      name: installmentData.vehicleName,
+                      plateNumber: installmentData.vehiclePlate,
+                      image: installmentData.vehicleImage || '/placeholderVehicle.jpg',
+                      color: 'N/A',
+                      specs: installmentData.specs
+                    }}
+                  />
+                )}
 
-            {view === 'calculator' && (
-              <FinanceCalculator installment={installmentData.installment} />
+                {activeTab === 'history' && (
+                  <div className="p-6 bg-white rounded shadow">
+                    <h3 className="font-semibold mb-4">Payment History</h3>
+                    <div className="text-center py-8 text-gray-400">
+                      Payment history will be available soon.
+                    </div>
+                  </div>
+                )}
+
+                {activeTab === 'calculator' && (
+                  <FinanceCalculator installment={installmentData} />
+                )}
+              </>
             )}
           </main>
         </div>

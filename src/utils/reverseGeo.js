@@ -2,12 +2,24 @@ import axios from 'axios';
 
 const LOCATIONIQ_API_KEY = import.meta.env.VITE_LOCATIONIQ;
 
+const locationCache = {
+  forward: {},
+  reverse: {}
+};
+
 export const reverseGeocode = async (lat, lon) => {
+  const cacheKey = `${lat},${lon}`;
+  if (locationCache.reverse[cacheKey]) {
+    return locationCache.reverse[cacheKey];
+  }
+
   try {
     const response = await axios.get(
       `/api/locationiq/reverse.php?key=${LOCATIONIQ_API_KEY}&lat=${lat}&lon=${lon}&format=json`
     );
-    return response.data.display_name; // Full address
+    const address = response.data.display_name;
+    locationCache.reverse[cacheKey] = address;
+    return address;
   } catch (error) {
     console.error('Reverse geocoding failed:', error);
     return 'Unable to retrieve address';
@@ -15,16 +27,25 @@ export const reverseGeocode = async (lat, lon) => {
 };
 
 export const forwardGeocode = async (address) => {
+  const cacheKey = address.toLowerCase().trim();
+  if (locationCache.forward[cacheKey]) {
+    return locationCache.forward[cacheKey];
+  }
+
   try {
     const response = await axios.get(
       `/api/locationiq/search.php?key=${LOCATIONIQ_API_KEY}&q=${encodeURIComponent(address)}&format=json`
     );
-    const result = response.data[0]; // Take the first result
-    return {
+    const result = response.data[0];
+    if (!result) return null;
+
+    const data = {
       lat: parseFloat(result.lat),
       lng: parseFloat(result.lon),
       display_name: result.display_name,
     };
+    locationCache.forward[cacheKey] = data;
+    return data;
   } catch (error) {
     console.error('Forward geocoding failed:', error);
     return null;

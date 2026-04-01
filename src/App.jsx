@@ -22,17 +22,20 @@ import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
 
-function App() {
-  useSessionTimeout(); // Enable global session timeout
+import { useSelector } from 'react-redux'
 
-  const [verified, setVerified] = useState(false)
+
+function App() {
+  const { isAuthenticated } = useSelector(state => state.verifiedUser);
+  useSessionTimeout(isAuthenticated); // Enable conditional session timeout
+
   const [pickupCoordinate, setPickupCoordinate] = useState({})
   const [destinationCoordinate, setDestinationCoordinate] = useState({})
   return (
     <>
       <ToastContainer position="bottom-right" autoClose={3000} hideProgressBar theme="dark" />
       <Routes>
-        <Route path='/' element={!verified ? <LandingPage verified={verified} setverified={setVerified} /> : <Bookride pickupCoordinate={pickupCoordinate} destinationCoordinate={destinationCoordinate} setPickupCoordinate={setPickupCoordinate} setDestinationCoordinate={setDestinationCoordinate} />} />
+        <Route path='/' element={!isAuthenticated ? <LandingPage /> : <Bookride pickupCoordinate={pickupCoordinate} destinationCoordinate={destinationCoordinate} setPickupCoordinate={setPickupCoordinate} setDestinationCoordinate={setDestinationCoordinate} />} />
         <Route path='signup' element={<SignUp />} />
         <Route path='login' element={<Login />} />
         <Route path='forgot-password' element={<ForgotPassword />} />

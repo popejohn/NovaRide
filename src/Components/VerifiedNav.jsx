@@ -41,11 +41,12 @@ const NavItem = ({ to, children, icon: Icon, isHash = false, userverified = true
   return <Link to={to} className={classes}>{content}</Link>;
 };
 
-const OtherNav = ({ userrole, name = "My Account" }) => {
+const OtherNav = ({ userrole, name = "My Account", userverified = true }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const location = useLocation();
   const path = location.pathname;
   const isAccountSection = ['/profile', '/wallet'].includes(path);
+  const roles = Array.isArray(userrole) ? userrole : [userrole].filter(Boolean);
 
   return (
     <nav>
@@ -53,9 +54,14 @@ const OtherNav = ({ userrole, name = "My Account" }) => {
         <li>
           <NavItem to='/bookride'>Book a Ride</NavItem>
         </li>
-        {userrole !== 'rider' && (
+        {userverified && !roles.includes('rider') && (
           <li>
             <NavItem to='/rider'>Earn as a Rider</NavItem>
+          </li>
+        )}
+        {userverified && !roles.includes('installment') && (
+          <li>
+            <NavItem to='/installment-profile-setup'>Own a maruwa</NavItem>
           </li>
         )}
         <li

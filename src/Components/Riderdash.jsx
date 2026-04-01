@@ -51,14 +51,6 @@ const Riderdash = () => {
         userverified={true}
         nav={<OtherNav userrole={role} />}
         profilePic={user?.profilePic}
-        button={
-          <Link to={'/installment-profile-setup'}>
-            <Button
-              text={'Own a Ride'}
-              classes={'h-11 py-1 px-5 rounded-2xl bg-neutral-900 text-white hover:bg-black transition-all font-bold text-[10px] uppercase tracking-widest shadow-xl shadow-neutral-900/10'}
-            />
-          </Link>
-        }
       />
 
       <main className="mt-32 px-4 md:px-8 lg:px-12 max-w-[1600px] mx-auto pb-20">
@@ -102,6 +94,15 @@ const Riderdash = () => {
                 <SidebarButton active={view === 'journeys'} onClick={() => setView('journeys')} icon={FaRoute}>Journeys</SidebarButton>
                 <SidebarButton active={view === 'available'} onClick={() => setView('available')} icon={FaUsers}>Incoming Requests</SidebarButton>
               </nav>
+
+              <div className="mt-6">
+                <Link to="/bookride">
+                  <Button
+                    text="Book a Ride"
+                    classes="w-full py-4 rounded-[1.5rem] bg-orange-500 text-white font-black uppercase tracking-[0.15em] text-[10px] shadow-lg shadow-orange-500/20 hover:bg-orange-600 hover:scale-[1.02] transition-all flex items-center justify-center gap-2"
+                  />
+                </Link>
+              </div>
 
               <div className="mt-8 pt-8 border-t border-neutral-50">
                 <p className="text-[10px] font-black uppercase tracking-[0.2em] text-neutral-400 mb-1">Lifetime Stats</p>

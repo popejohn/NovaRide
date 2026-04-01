@@ -12,6 +12,8 @@ import ProfileForm from './Profile/ProfileForm';
 import PasswordForm from './Profile/PasswordForm';
 import NotificationSettings from './Profile/NotificationSettings';
 
+const Motion = motion;
+
 const ProfileManagement = () => {
   const {
     user,

@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import Button from '../Button';
 import { ClipLoader } from 'react-spinners';
 import LocationSearch from './LocationSearch';
+import { FaMapMarkedAlt } from 'react-icons/fa';
 
 const RideBookingSidebar = ({
     user,
@@ -18,6 +19,7 @@ const RideBookingSidebar = ({
     handleUseMyLocation,
     clearInput,
     cancelRide,
+    onOpenMap,
     children
 }) => {
     const Motion = motion;
@@ -32,6 +34,19 @@ const RideBookingSidebar = ({
                 <div className='font-bold text-3xl text-white leading-tight'>
                     <span className='text-orange-400'>Hello {user?.firstname || 'User'}</span>, <br />
                     where are you going today?
+                </div>
+
+                {/* Map Trigger (Mobile & Tablet) */}
+                <div className="lg:hidden mt-6">
+                    <button
+                        onClick={onOpenMap}
+                        className="w-full h-14 bg-white/5 border border-white/10 rounded-xl flex items-center justify-between px-6 hover:bg-white/10 transition-all group"
+                    >
+                        <div className="flex items-center gap-3">
+                            <FaMapMarkedAlt className="text-orange-400 text-lg group-hover:scale-110 transition-transform" />
+                            <span className="text-white font-semibold">Set location on map</span>
+                        </div>
+                    </button>
                 </div>
 
                 <LocationSearch

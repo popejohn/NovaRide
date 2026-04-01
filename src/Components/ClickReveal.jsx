@@ -1,51 +1,14 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import client from '../api/client';
 import { GiPathDistance } from "react-icons/gi";
 import { IoMdTimer } from "react-icons/io";
 import Button from './Button';
+import { useRidePayment } from '../hooks/useRidePayment';
 
 const ClickToReveal = ({ distance, duration, cancelRide }) => {
-  const navigate = useNavigate();
   const { pickupLocation, destination } = useSelector((state) => state.getRide);
   const { pickupCoordinate, destinationCoordinate } = useSelector((state) => state.location);
-
-
-  const handlePickRider = async () => {
-    try {
-      const rideData = {
-        pickupLocation,
-        destination,
-        eta: duration,
-        fare: distance * 150,
-        distance: distance,
-        pickupCoordinates: {
-          type: 'Point',
-          coordinates: [pickupCoordinate.lng, pickupCoordinate.lat]
-        },
-        destinationCoordinates: {
-          type: 'Point',
-          coordinates: [destinationCoordinate.lng, destinationCoordinate.lat]
-        }
-      };
-
-      const response = await client.post('/ride/create-ride', rideData);
-
-      if (response.status === 200) {
-        navigate(`/driver-selection?rideId=${response.data.ride._id}`);
-      }
-    } catch (error) {
-      console.error('Error creating ride:', error);
-      const errorMessage = error.response?.data?.message || error.message;
-      alert(`Error creating ride: ${errorMessage}`);
-
-      if (errorMessage.toLowerCase().includes('expired') || error.response?.status === 401) {
-        localStorage.removeItem('nvcr_tk');
-        navigate('/login');
-      }
-    }
-  };
+  const { checkBalanceAndPay, isProcessing } = useRidePayment(distance, duration, pickupLocation, destination, pickupCoordinate, destinationCoordinate);
 
   return (
     <div className="mt-5 w-full">
@@ -90,9 +53,10 @@ const ClickToReveal = ({ distance, duration, cancelRide }) => {
 
             <div className='flex gap-4 mt-2'>
               <Button
-                text={'Pick rider'}
-                classes={'flex-1 h-12 rounded-xl bg-orange-500 text-white font-bold hover:bg-orange-600 transition-all active:scale-95 shadow-lg'}
-                onClick={handlePickRider}
+                text={isProcessing ? 'Processing...' : 'Pick rider'}
+                classes={`flex-1 h-12 rounded-xl text-white font-bold transition-all active:scale-95 shadow-lg ${isProcessing ? 'bg-orange-400' : 'bg-orange-500 hover:bg-orange-600'}`}
+                onClick={checkBalanceAndPay}
+                disabled={isProcessing}
               />
               <Button
                 text={'Cancel'}

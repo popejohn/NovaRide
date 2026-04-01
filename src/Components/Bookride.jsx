@@ -1,6 +1,8 @@
-import React from 'react'
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
+import { IoClose } from "react-icons/io5"
+import { FaMapMarkedAlt } from "react-icons/fa"
 import Navbar from './Navbar'
 import OtherNav from './VerifiedNav'
 import Button from './Button'
@@ -42,6 +44,7 @@ const Bookride = () => {
     clearInput
   } = useRideBooking();
 
+  const [isMapModalOpen, setIsMapModalOpen] = useState(false);
   const Motion = motion;
 
 
@@ -62,7 +65,7 @@ const Bookride = () => {
           </Link>
         }
       />
-      <div className='mt-20 pt-12 px-6 lg:px-20 flex flex-col lg:flex-row pb-10 gap-12 bg-neutral-50 min-h-screen items-start'>
+      <div className='mt-20 pt-12 px-6 lg:px-20 flex flex-col lg:flex-row pb-10 gap-12 bg-neutral-50 min-h-screen items-stretch'>
         <RideBookingSidebar
           user={user}
           loading={loading}
@@ -81,6 +84,7 @@ const Bookride = () => {
           showCostDist={showCostDist}
           distance={distance}
           eta={eta}
+          onOpenMap={() => setIsMapModalOpen(true)}
         >
           {distance && eta && showCostDist && (
             <ClickToReveal
@@ -91,15 +95,51 @@ const Bookride = () => {
           )}
         </RideBookingSidebar>
 
+        {/* Desktop side-by-side Map */}
         <Motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.5, delay: 0.2 }}
-          className='flex-1 h-[500px] lg:h-auto lg:self-stretch min-h-[500px] rounded-2xl overflow-hidden shadow-2xl border border-neutral-200'
+          className='hidden lg:block flex-1 min-h-[500px] rounded-2xl overflow-hidden shadow-2xl border border-neutral-200'
         >
           <Mapcontainer />
         </Motion.div>
       </div>
+
+      {/* Mobile Map Modal */}
+      <AnimatePresence>
+        {isMapModalOpen && (
+          <Motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[6000] bg-black/80 backdrop-blur-lg flex items-center justify-center p-4 lg:hidden"
+          >
+            <Motion.div
+              initial={{ scale: 0.9, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.9, y: 20 }}
+              className="bg-white w-full h-[85vh] rounded-[2.5rem] overflow-hidden relative shadow-2xl"
+            >
+              <div className="absolute top-0 left-0 right-0 p-6 flex justify-between items-center z-[7000] bg-gradient-to-b from-black/20 to-transparent">
+                <div className="bg-white/90 backdrop-blur-md px-4 py-2 rounded-full flex items-center gap-2 shadow-lg">
+                  <FaMapMarkedAlt className="text-orange-500" />
+                  <span className="text-[10px] font-black uppercase tracking-widest text-neutral-800">Set Location on Map</span>
+                </div>
+                <button
+                  onClick={() => setIsMapModalOpen(false)}
+                  className="bg-white/90 backdrop-blur-md text-neutral-900 p-2 rounded-full hover:bg-white transition-all shadow-lg"
+                >
+                  <IoClose className="text-xl" />
+                </button>
+              </div>
+              <div className="w-full h-full pt-4">
+                <Mapcontainer />
+              </div>
+            </Motion.div>
+          </Motion.div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }

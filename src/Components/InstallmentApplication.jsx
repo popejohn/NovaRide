@@ -100,7 +100,9 @@ const InstallmentApplication = () => {
         navigate('/installment-dashboard');
       } catch (error) {
         console.error('Application submission error:', error);
-        toast.error('Failed to submit application. Please try again.');
+        if (error.response?.status !== 401) {
+          toast.error('Failed to submit application. Please try again.');
+        }
       }
     }
   });
@@ -148,8 +150,8 @@ const InstallmentApplication = () => {
                     <div
                       key={vehicle.id}
                       className={`border rounded-lg p-4 cursor-pointer transition-all ${selectedVehicle?.id === vehicle.id
-                          ? 'border-yellow-400 bg-yellow-50'
-                          : 'border-gray-200 hover:border-yellow-300'
+                        ? 'border-yellow-400 bg-yellow-50'
+                        : 'border-gray-200 hover:border-yellow-300'
                         }`}
                       onClick={() => handleVehicleSelect(vehicle)}
                     >
@@ -178,8 +180,8 @@ const InstallmentApplication = () => {
                       <div
                         key={plan.months}
                         className={`border rounded-lg p-4 cursor-pointer transition-all ${installmentPlan?.months === plan.months
-                            ? 'border-yellow-400 bg-yellow-50'
-                            : 'border-gray-200 hover:border-yellow-300'
+                          ? 'border-yellow-400 bg-yellow-50'
+                          : 'border-gray-200 hover:border-yellow-300'
                           }`}
                         onClick={() => handlePlanSelect(plan)}
                       >

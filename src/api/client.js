@@ -1,4 +1,6 @@
 import axios from 'axios';
+import StorageService from '../utils/storageService.js';
+import ErrorHandler from '../utils/errorHandler.js';
 
 // Simple API client that can run in MOCK mode so the frontend can be
 // developed independently of the backend. Switch USE_MOCK to false
@@ -6,12 +8,23 @@ import axios from 'axios';
 const USE_MOCK = false;
 const BASE_URL = 'http://localhost:5000';
 
+// Add response interceptor to handle auth errors globally
+axios.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response && error.response.status === 401) {
+      ErrorHandler.handleUnauthorized();
+    }
+    return ErrorHandler.handleError(error);
+  }
+);
+
 const delay = (ms) => new Promise((res) => setTimeout(res, ms));
 
 const client = {
   get: async (url) => {
     if (!USE_MOCK) {
-      const token = localStorage.getItem('nvcr_tk');
+      const token = StorageService.getToken();
       return axios.get(`${BASE_URL}${url}`, {
         headers: {
           Authorization: `Bearer ${token}`
@@ -22,16 +35,16 @@ const client = {
     await delay(500);
     // Mock for verify-token
     if (url.includes('/verify-token')) {
-      const userData = localStorage.getItem('userData');
-      if (userData) {
-        return { data: { success: true, data: JSON.parse(userData).user } };
+      const user = StorageService.getUser();
+      if (user) {
+        return { data: { success: true, data: user } };
       }
     }
     return { data: { success: false } };
   },
   post: async (url, data) => {
     if (!USE_MOCK) {
-      const token = localStorage.getItem('nvcr_tk');
+      const token = StorageService.getToken();
       return axios.post(`${BASE_URL}${url}`, data, {
         headers: {
           Authorization: `Bearer ${token}`
@@ -65,7 +78,7 @@ const client = {
   },
   put: async (url, data) => {
     if (!USE_MOCK) {
-      const token = localStorage.getItem('nvcr_tk');
+      const token = StorageService.getToken();
       return axios.put(`${BASE_URL}${url}`, data, {
         headers: {
           Authorization: `Bearer ${token}`

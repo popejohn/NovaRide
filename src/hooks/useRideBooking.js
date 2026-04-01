@@ -33,15 +33,8 @@ export const useRideBooking = () => {
                 .then((res) => {
                     dispatch(setUser({ user: res.data.data, isAuthenticated: true }));
                 })
-                .catch((err) => {
-                    console.error('Verification failed:', err.response?.data?.message || err.message);
-                    dispatch(logout());
-                    navigate('/login');
-                });
-        } else {
-            navigate('/login');
         }
-    }, [dispatch, navigate]);
+    }, [dispatch]);
 
     const handleFare = async () => {
         dispatch(itemLoading());

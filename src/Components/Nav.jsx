@@ -22,7 +22,7 @@ const NavItem = ({ to, children, icon: Icon, isHash = false, userverified = fals
     isActive = riderRoutes.includes(path);
   }
 
-  const classes = `flex items-center gap-2 px-4 py-2 rounded-full transition-all duration-300 font-bold text-xs uppercase tracking-widest ${isActive ? 'text-orange-500 bg-orange-50' : 'text-neutral-500 hover:text-neutral-900 hover:bg-neutral-50'
+  const classes = `flex items-center gap-2 px-4 py-2 rounded-full transition-all duration-300 font-bold text-[10px] md:text-xs uppercase tracking-widest ${isActive ? 'text-orange-500 bg-orange-50' : 'text-neutral-500 hover:text-neutral-900 hover:bg-neutral-50'
     }`;
 
   const content = (
@@ -66,7 +66,7 @@ const Nav = ({ userrole = 'passenger', userverified = false }) => {
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className={`flex items-center gap-2 px-4 py-2 rounded-full font-bold text-xs uppercase tracking-widest transition-all duration-300 ${isFaqPage ? 'text-orange-500 bg-orange-50' : 'text-neutral-500 hover:text-neutral-900 hover:bg-neutral-50'} ${isFaqOpen ? 'bg-neutral-50 text-neutral-900' : ''}`}
+            className={`flex items-center gap-2 px-4 py-2 rounded-full font-bold text-[10px] md:text-xs uppercase tracking-widest transition-all duration-300 ${isFaqPage ? 'text-orange-500 bg-orange-50' : 'text-neutral-500 hover:text-neutral-900 hover:bg-neutral-50'} ${isFaqOpen ? 'bg-neutral-50 text-neutral-900' : ''}`}
           >
             FAQ <FaAngleDown className={`transition-transform duration-300 ${isFaqOpen ? 'rotate-180' : ''}`} />
           </motion.button>
@@ -91,7 +91,7 @@ const Nav = ({ userrole = 'passenger', userverified = false }) => {
                       <HashLink
                         smooth
                         to={item.to}
-                        className="block px-4 py-2 text-xs font-bold text-neutral-500 hover:text-orange-500 hover:bg-orange-50 rounded-xl transition-all"
+                        className="block px-4 py-2 text-[10px] md:text-xs font-bold text-neutral-500 hover:text-orange-500 hover:bg-orange-50 rounded-xl transition-all"
                       >
                         {item.label}
                       </HashLink>

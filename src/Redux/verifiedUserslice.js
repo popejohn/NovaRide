@@ -1,30 +1,19 @@
 import { createSlice } from '@reduxjs/toolkit';
+import PersistenceService from '../utils/persistenceService.js';
+import RoleService from '../utils/roleService.js';
 
-// Function to load initial state from localStorage
+// Function to load initial state from persistence layer
 const loadInitialState = () => {
-  try {
-    const token = localStorage.getItem('nvcr_tk');
-    const userData = localStorage.getItem('userData');
-    if (token && userData) {
-      const parsedUserData = JSON.parse(userData);
-      return {
-        user: parsedUserData.user,
-        role: parsedUserData.role,
-        isAuthenticated: false, // Force verification on load
-        profileCompleted: parsedUserData.profileCompleted || false,
-        isOnline: parsedUserData.isOnline || false,
-      };
-    }
-  } catch (error) {
-    console.error('Error loading user data from localStorage:', error);
+  const userData = PersistenceService.loadUserState();
+  if (userData.user) {
+    const originalRoles = userData.user.role;
+    const predominantRole = RoleService.getPredominantRole(originalRoles);
+    return {
+      ...userData,
+      role: predominantRole,
+    };
   }
-  return {
-    user: null,
-    role: null,
-    isAuthenticated: false,
-    profileCompleted: false,
-    isOnline: false,
-  };
+  return userData;
 };
 
 const initialState = loadInitialState();
@@ -35,29 +24,25 @@ export const verifiedUserSlice = createSlice({
   reducers: {
     setUser(state, action) {
       const { user } = action.payload;
-      state.user = user;
-      state.role = user?.role;
+      const originalRoles = user?.role;
+      const predominantRole = RoleService.getPredominantRole(originalRoles);
+      const updatedUser = user ? { ...user, role: originalRoles } : null;
+
+      state.user = updatedUser;
+      state.role = predominantRole;
       state.isAuthenticated = true;
       state.profileCompleted = user?.profileCompleted || false;
-      localStorage.setItem('userData', JSON.stringify({
-        user: user,
-        role: user?.role,
-        profileCompleted: user?.profileCompleted || false,
-        isOnline: state.isOnline,
-      }));
+
+      // Persist to storage
+      PersistenceService.saveUserState(state);
     },
     setOnlineStatus(state, action) {
       state.isOnline = action.payload;
-      const userData = JSON.parse(localStorage.getItem('userData') || '{}');
-      userData.isOnline = action.payload;
-      localStorage.setItem('userData', JSON.stringify(userData));
+      PersistenceService.saveUserState(state);
     },
     setProfileCompleted(state) {
       state.profileCompleted = true;
-      // Update localStorage
-      const userData = JSON.parse(localStorage.getItem('userData') || '{}');
-      userData.profileCompleted = true;
-      localStorage.setItem('userData', JSON.stringify(userData));
+      PersistenceService.saveUserState(state);
     },
     logout(state) {
       state.user = null;
@@ -65,9 +50,9 @@ export const verifiedUserSlice = createSlice({
       state.isAuthenticated = false;
       state.profileCompleted = false;
       state.isOnline = false;
-      // Clear localStorage
-      localStorage.removeItem('userData');
-      localStorage.removeItem('nvcr_tk');
+      // Clear storage
+      PersistenceService.clearUserState();
+      // Note: token clearing should be handled by auth slice or service
     },
   },
 });

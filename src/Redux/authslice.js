@@ -1,8 +1,9 @@
 // src/features/auth/authSlice.js
 import { createSlice } from '@reduxjs/toolkit';
+import StorageService from '../utils/storageService.js';
 
 const initialState = {
-  token: null,       // JWT or session token
+  token: StorageService.getToken(), // Load token from storage
   isLoading: false,  // drives “Signing Up…” button text
   error: null,       // last error message, if any
 };
@@ -26,6 +27,7 @@ export const authSlice = createSlice({
     loginSuccess: (state, action) => {
       state.isLoading = false;
       state.token = action.payload.token;
+      StorageService.setToken(action.payload.token); // Persist token
     },
     loginFailure: (state, action) => {
       state.isLoading = false;
@@ -33,7 +35,10 @@ export const authSlice = createSlice({
     },
 
     /* generic */
-    logout: (state) => { Object.assign(state, initialState); },
+    logout: (state) => {
+      Object.assign(state, initialState);
+      StorageService.clearToken(); // Clear token on logout
+    },
   },
 });
 

@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import Button from "./Button";
 import Input from "./Input";
 import { useNavigate, Link } from "react-router-dom";
-import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
 import { loginStart, loginFailure, loginSuccess } from "../Redux/authslice";
 import { setUser } from "../Redux/verifiedUserslice";
@@ -14,6 +13,8 @@ import Loader from "./Loader";
 import novaLogo from '../assets/nova.png';
 import loginBg from '../assets/night-5137487_1920.jpg';
 import { motion } from 'framer-motion';
+import AuthService from "../utils/authService.js";
+import RoleService from "../utils/roleService.js";
 
 function Login() {
   const navigate = useNavigate();
@@ -30,26 +31,30 @@ function Login() {
       phone: Yup.string().matches(/^0\d{10}$/, "Please enter a valid phone number").required("Phone number is required"),
       password: Yup.string().required('Password is required'),
     }),
-    onSubmit: (values) => {
+    onSubmit: async (values) => {
       dispatch(loginStart());
-      axios.post("http://localhost:5000/auth/login", values)
-        .then((res) => {
-          localStorage.setItem('nvcr_tk', res.data.data.token);
-          toast.success('Welcome back to Nova!');
-          setTimeout(() => {
-            dispatch(loginSuccess({ token: res.data.data.token }));
-            dispatch(setUser({ user: res.data.data.user }));
-            if (res.data.data.user.role.includes('rider')) {
-              navigate(res.data.data.user.profileCompleted ? '/riderdashboard' : '/rider-profile-setup');
-            } else {
-              navigate('/bookride');
-            }
-          }, 1500);
-        })
-        .catch((err) => {
-          toast.error(err?.response?.data?.message || 'Invalid credentials');
-          dispatch(loginFailure(err));
-        })
+      try {
+        const result = await AuthService.login(values);
+        toast.success('Welcome back to Nova!');
+
+        const { token, user, role } = result;
+
+        setTimeout(() => {
+          dispatch(loginSuccess({ token }));
+          dispatch(setUser({ user }));
+
+          if (role === RoleService.ROLES.RIDER) {
+            navigate(user.profileCompleted ? '/riderdashboard' : '/rider-profile-setup');
+          } else if (role === RoleService.ROLES.INSTALLMENT) {
+            navigate(user.profileCompleted ? '/installment-dashboard' : '/installment-profile-setup');
+          } else {
+            navigate('/bookride');
+          }
+        }, 1500);
+      } catch (error) {
+        toast.error(error.message);
+        dispatch(loginFailure(error));
+      }
     }
   });
 

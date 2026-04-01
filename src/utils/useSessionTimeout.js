@@ -5,9 +5,10 @@ import { logout } from '../Redux/verifiedUserslice';
 
 /**
  * Custom hook to manage session inactivity timeout.
+ * @param {boolean} isAuthenticated - Whether the user is currently authenticated.
  * @param {number} timeoutMs - Timeout duration in milliseconds (default: 30 minutes).
  */
-const useSessionTimeout = (timeoutMs = 30 * 60 * 1000) => {
+const useSessionTimeout = (isAuthenticated, timeoutMs = 30 * 60 * 1000) => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
@@ -17,6 +18,8 @@ const useSessionTimeout = (timeoutMs = 30 * 60 * 1000) => {
     }, [dispatch, navigate]);
 
     useEffect(() => {
+        if (!isAuthenticated) return;
+
         let timeoutId;
 
         const resetTimeout = () => {
@@ -40,7 +43,7 @@ const useSessionTimeout = (timeoutMs = 30 * 60 * 1000) => {
                 window.removeEventListener(event, resetTimeout);
             });
         };
-    }, [handleLogout, timeoutMs]);
+    }, [handleLogout, timeoutMs, isAuthenticated]);
 };
 
 export default useSessionTimeout;

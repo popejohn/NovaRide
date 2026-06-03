@@ -1,11 +1,29 @@
 import React from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { FaShieldAlt } from 'react-icons/fa';
 import Button from './Button';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
-const BookingConfirmation = ({ selectedDriver, bookingStatus, handleConfirmBooking }) => {
+const BookingConfirmation = ({ selectedDriver, bookingStatus, handleConfirmBooking, rideId, rideDetails }) => {
+  const navigate = useNavigate();
+  const [isProcessing, setIsProcessing] = React.useState(false);
+
+  React.useEffect(() => {
+    if (bookingStatus === 'accepted') {
+      toast.success("Driver accepted! Redirecting to live tracking...");
+      navigate(`/live-tracking?rideId=${rideId}`);
+    }
+  }, [bookingStatus, navigate, rideId]);
+
+  const handleConfirmClick = async () => {
+    setIsProcessing(true);
+    await handleConfirmBooking();
+  };
+
   return (
     <AnimatePresence>
-      {selectedDriver && (
+      {selectedDriver && bookingStatus !== 'rejected' && (
         <motion.div
           initial={{ y: 100, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -23,12 +41,31 @@ const BookingConfirmation = ({ selectedDriver, bookingStatus, handleConfirmBooki
                   <p className="text-xs text-neutral-400">Total: ₦{selectedDriver.fare.toLocaleString()}</p>
                 </div>
               </div>
-              <Button
-                text={bookingStatus === 'waiting' ? "Waiting for Driver..." : "Confirm Booking"}
-                disabled={bookingStatus === 'waiting'}
-                classes={`${bookingStatus === 'waiting' ? 'bg-neutral-600' : 'bg-orange-500 hover:bg-orange-600'} text-white px-8 py-4 rounded-2xl font-black text-sm transition-all active:scale-95 shadow-lg shadow-orange-500/20`}
-                onClick={handleConfirmBooking}
-              />
+              
+              {bookingStatus === 'idle' && (
+                <Button
+                  text={isProcessing ? "Confirming..." : "Confirm Booking"}
+                  disabled={isProcessing}
+                  classes={`${isProcessing ? 'bg-neutral-600' : 'bg-orange-500 hover:bg-orange-600'} text-white px-8 py-4 rounded-2xl font-black text-sm transition-all active:scale-95 shadow-lg shadow-orange-500/20`}
+                  onClick={handleConfirmClick}
+                />
+              )}
+
+              {bookingStatus === 'waiting' && (
+                <Button
+                  text="Waiting for Rider..."
+                  disabled={true}
+                  classes="bg-neutral-600 text-white px-8 py-4 rounded-2xl font-black text-sm transition-all shadow-lg"
+                />
+              )}
+
+              {bookingStatus === 'accepted' && (
+                <Button
+                  text="Redirecting..."
+                  disabled={true}
+                  classes="bg-green-600 text-white px-8 py-4 rounded-2xl font-black text-sm transition-all shadow-lg"
+                />
+              )}
             </div>
           </div>
         </motion.div>

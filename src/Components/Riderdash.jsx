@@ -14,7 +14,6 @@ import { useRiderDashboard } from '../hooks/useRiderDashboard';
 import SidebarButton from './Profile/SidebarButton'; // Reusing the same styled button
 import KilometersChart from './Rider/KilometersChart';
 import WalletPanel from './Rider/WalletPanel';
-import RecentTransactions from './Rider/RecentTransactions';
 import Journeys from './Rider/Journeys';
 import AvailablePassengers from './Rider/AvailablePassengers';
 import RideRequestModal from './Rider/RideRequestModal';
@@ -90,7 +89,7 @@ const Riderdash = () => {
               <nav className="space-y-1">
                 <SidebarButton active={view === 'overview'} onClick={() => setView('overview')} icon={MdSpaceDashboard}>Overview</SidebarButton>
                 <SidebarButton active={view === 'kilometers'} onClick={() => setView('kilometers')} icon={FaChartLine}>Kilometers</SidebarButton>
-                <SidebarButton active={view === 'wallet'} onClick={() => setView('wallet')} icon={FaWallet}>Wallet</SidebarButton>
+                <SidebarButton onClick={() => navigate('/wallet')} icon={FaWallet}>Wallet</SidebarButton>
                 <SidebarButton active={view === 'journeys'} onClick={() => setView('journeys')} icon={FaRoute}>Journeys</SidebarButton>
                 <SidebarButton active={view === 'available'} onClick={() => setView('available')} icon={FaUsers}>Incoming Requests</SidebarButton>
               </nav>
@@ -142,12 +141,6 @@ const Riderdash = () => {
                   </div>
                 )}
                 {view === 'kilometers' && <KilometersChart monthly={monthlyKm} />}
-                {view === 'wallet' && (
-                  <div className="space-y-8">
-                    <WalletPanel balance={walletBalance} />
-                    <RecentTransactions items={transactions} />
-                  </div>
-                )}
                 {view === 'journeys' && <Journeys items={journeys} />}
                 {view === 'available' && <AvailablePassengers list={availableRides} onViewRequest={setSelectedRide} />}
               </motion.div>

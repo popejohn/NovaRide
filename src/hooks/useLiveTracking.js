@@ -4,6 +4,13 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
+// Exponential backoff for reconnection
+const getReconnectDelay = (attempt) => {
+  const baseDelay = 1000; // 1 second
+  const maxDelay = 30000; // 30 seconds
+  return Math.min(baseDelay * Math.pow(2, attempt), maxDelay);
+};
+
 export const useLiveTracking = (rideId, user, userRoles) => {
   const navigate = useNavigate();
 
@@ -12,18 +19,13 @@ export const useLiveTracking = (rideId, user, userRoles) => {
   const [rideStatus, setRideStatus] = useState('Waiting for driver to accept...');
   const [driverLocation, setDriverLocation] = useState(null);
   const [showCompletionModal, setShowCompletionModal] = useState(false);
+  const [showStartRideModal, setShowStartRideModal] = useState(false);
 
   // Derived role flags
   const isPassenger = rideDetails?.user?._id === user?._id || rideDetails?.user === user?._id;
   const isRider = rideDetails?.assignedDriver?.riderInfo?._id === user?._id || rideDetails?.assignedDriver?.riderInfo === user?._id;
 
-  const isPassengerRef = useRef(false);
-  const isRiderRef = useRef(false);
-
-  useEffect(() => {
-    isPassengerRef.current = isPassenger;
-    isRiderRef.current = isRider;
-  }, [isPassenger, isRider]);
+  const reconnectAttemptRef = useRef(0);
 
   const fetchRideStatus = useCallback(async () => {
     if (!rideId) return;
@@ -38,6 +40,7 @@ export const useLiveTracking = (rideId, user, userRoles) => {
         setRideDetails(ride);
 
         const statusMap = {
+          'pending': 'Ride cancelled',
           'accepted': 'Driver is on the way',
           'at_pickup': 'Driver is at pickup location',
           'starting': 'Awaiting driver agreement',
@@ -48,14 +51,35 @@ export const useLiveTracking = (rideId, user, userRoles) => {
         };
         setRideStatus(statusMap[ride.rideStatus] || ride.rideStatus);
 
-        if (ride.rideStatus === 'awaiting_completion' && isPassengerRef.current) {
+        const currentIsPassenger = ride.user?._id === user?._id || ride.user === user?._id;
+        const currentIsRider = ride.assignedDriver?.riderInfo?._id === user?._id || ride.assignedDriver?.riderInfo === user?._id;
+
+        if (ride.rideStatus === 'pending') {
+          if (currentIsPassenger) {
+            toast.info("Ride cancelled. Redirecting to driver selection...");
+            navigate(`/driver-selection?rideId=${rideId}`);
+          } else if (currentIsRider) {
+            toast.info("Ride cancelled by passenger.");
+            navigate('/riderdashboard');
+          }
+        }
+
+        if (ride.rideStatus === 'starting' && currentIsRider) {
+          setShowStartRideModal(true);
+        } else {
+          setShowStartRideModal(false);
+        }
+
+        if (ride.rideStatus === 'awaiting_completion' && currentIsPassenger) {
           setShowCompletionModal(true);
+        } else {
+          setShowCompletionModal(false);
         }
 
         if (ride.rideStatus === 'completed') {
           setTimeout(() => {
             navigate(`/ride-completion?rideId=${rideId}`);
-          }, 3000);
+          }, 2000);
         }
       }
     } catch (error) {
@@ -63,70 +87,94 @@ export const useLiveTracking = (rideId, user, userRoles) => {
     } finally {
       setLoading(false);
     }
-  }, [rideId, navigate]);
+  }, [rideId, navigate, user]);
 
   useEffect(() => {
     let socket;
     let locationInterval;
-    let interval;
+    let statusPollInterval;
     const token = localStorage.getItem('nvcr_tk');
 
     if (user && user._id && token && rideId) {
-      socket = io('http://localhost:5000', { auth: { token } });
-
-      socket.on('connect', () => {
-        socket.emit('join', user._id);
-        socket.emit('joinRide', rideId);
-      });
-
-      if (userRoles?.includes('rider') && isRider) {
-        locationInterval = setInterval(() => {
-          if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition((position) => {
-              const { latitude, longitude } = position.coords;
-              socket.emit('updateLocation', {
-                rideId,
-                location: { lat: latitude, lng: longitude }
-              });
-              setDriverLocation({ lat: latitude, lng: longitude });
-            });
-          }
-        }, 4000);
-      } else if (isPassenger) {
-        socket.on('driverLocationUpdate', (data) => {
-          setDriverLocation(data.location);
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+      
+      const connectSocket = () => {
+        socket = io(apiUrl, { 
+          auth: { token },
+          reconnection: true,
+          reconnectionDelay: getReconnectDelay(reconnectAttemptRef.current),
+          reconnectionDelayMax: 30000,
+          reconnectionAttempts: 10
         });
+
+        socket.on('connect', () => {
+          console.log('[Socket] Connected');
+          reconnectAttemptRef.current = 0; // Reset on successful connection
+          socket.emit('join', user._id);
+          socket.emit('joinRide', rideId);
+        });
+
+        socket.on('connect_error', (error) => {
+          console.warn('[Socket] Connection error:', error);
+          reconnectAttemptRef.current += 1;
+        });
+
+        socket.on('disconnect', (reason) => {
+          console.log('[Socket] Disconnected:', reason);
+        });
+
+        if (userRoles?.includes('rider') && isRider) {
+          // For riders: send location updates every 8 seconds
+          const minDistanceMeters = 10;
+          let lastLocation = null;
+          
+          locationInterval = setInterval(() => {
+            if (navigator.geolocation && socket?.connected) {
+              navigator.geolocation.getCurrentPosition(
+                (position) => {
+                  const { latitude, longitude } = position.coords;
+                  const currentLocation = { lat: latitude, lng: longitude };
+                  
+                  if (!lastLocation || getDistance(lastLocation, currentLocation) > minDistanceMeters) {
+                    socket.emit('updateLocation', {
+                      rideId,
+                      location: currentLocation
+                    });
+                    lastLocation = currentLocation;
+                    setDriverLocation(currentLocation);
+                  }
+                },
+                (error) => console.warn('Geolocation error:', error),
+                { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
+              );
+            }
+          }, 8000);
+        } else if (isPassenger) {
+          socket.on('driverLocationUpdate', (data) => {
+            setDriverLocation(data.location);
+          });
+        }
+
+        socket.on('statusUpdate', (data) => {
+          fetchRideStatus();
+        });
+
+        socket.on('error', (error) => {
+          console.error('[Socket] Error:', error);
+          toast.error(error.message);
+        });
+      };
+
+      connectSocket();
+
+      if (rideId) {
+        fetchRideStatus();
+        statusPollInterval = setInterval(fetchRideStatus, 8000);
       }
-
-      socket.on('statusUpdate', (data) => {
-        const statusMap = {
-          'accepted': 'Driver is on the way',
-          'at_pickup': 'Driver is at pickup location',
-          'starting': 'Awaiting driver agreement',
-          'in_progress': 'Trip in progress',
-          'awaiting_completion': 'Awaiting passenger confirmation',
-          'completed': 'Ride completed',
-          'cancelled': 'Ride cancelled'
-        };
-        setRideStatus(statusMap[data.status] || data.status);
-        if (data.status === 'awaiting_completion' && isPassengerRef.current) {
-          setShowCompletionModal(true);
-        }
-        if (data.status === 'completed') {
-          setTimeout(() => {
-            navigate(`/ride-completion?rideId=${rideId}`);
-          }, 3000);
-        }
-      });
-    }
-
-    if (rideId) {
-      fetchRideStatus();
-      interval = setInterval(fetchRideStatus, 5000);
     }
 
     return () => {
-      if (interval) clearInterval(interval);
+      if (statusPollInterval) clearInterval(statusPollInterval);
       if (locationInterval) clearInterval(locationInterval);
       if (socket) socket.disconnect();
     };
@@ -135,7 +183,7 @@ export const useLiveTracking = (rideId, user, userRoles) => {
   const updateRideStatus = async (newStatus) => {
     try {
       const token = localStorage.getItem('nvcr_tk');
-      await fetch(`/api/ride/${rideId}/status`, {
+      const response = await fetch(`/api/ride/${rideId}/status`, {
         method: 'PATCH',
         headers: { 
           'Content-Type': 'application/json', 
@@ -143,6 +191,10 @@ export const useLiveTracking = (rideId, user, userRoles) => {
         },
         body: JSON.stringify({ status: newStatus })
       });
+      if (!response.ok) {
+        const errData = await response.json();
+        toast.error(errData.message || "Failed to update ride status");
+      }
       fetchRideStatus();
     } catch (error) {
       console.error('Error updating ride status:', error);
@@ -177,7 +229,25 @@ export const useLiveTracking = (rideId, user, userRoles) => {
     isRider,
     showCompletionModal,
     setShowCompletionModal,
+    showStartRideModal,
+    setShowStartRideModal,
     updateRideStatus,
     submitComplaint
   };
 };
+
+// Helper function to calculate distance between two coordinates (Haversine formula)
+function getDistance(loc1, loc2) {
+  const R = 6371000; // Earth's radius in meters
+  const lat1 = (loc1.lat * Math.PI) / 180;
+  const lat2 = (loc2.lat * Math.PI) / 180;
+  const deltaLat = ((loc2.lat - loc1.lat) * Math.PI) / 180;
+  const deltaLng = ((loc2.lng - loc1.lng) * Math.PI) / 180;
+  
+  const a = Math.sin(deltaLat / 2) * Math.sin(deltaLat / 2) +
+    Math.cos(lat1) * Math.cos(lat2) *
+    Math.sin(deltaLng / 2) * Math.sin(deltaLng / 2);
+  
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
+}

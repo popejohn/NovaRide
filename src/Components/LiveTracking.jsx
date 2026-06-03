@@ -5,12 +5,13 @@ import { motion } from 'framer-motion';
 import Navbar from './Navbar';
 import OtherNav from './VerifiedNav';
 import Button from './Button';
-import { FaStar } from 'react-icons/fa';
+import { FaStar, FaCar } from 'react-icons/fa';
 import MapSection from './MapSection';
 import RideControls from './RideControls';
 import TripDetailsCard from './TripDetailsCard';
 import ComplaintForm from './ComplaintForm';
 import RideCompletionModal from './RideCompletionModal';
+import RideStartModal from './RideStartModal';
 import { useLiveTracking } from '../hooks/useLiveTracking';
 
 const LiveTracking = () => {
@@ -34,6 +35,8 @@ const LiveTracking = () => {
     isRider,
     showCompletionModal,
     setShowCompletionModal,
+    showStartRideModal,
+    setShowStartRideModal,
     updateRideStatus,
     submitComplaint
   } = useLiveTracking(rideId, user, userRoles);
@@ -113,7 +116,8 @@ const LiveTracking = () => {
                 <MapSection
                   rideDetails={rideDetails}
                   driverLocation={driverCoords}
-                  passengerLocation={pickupCoords}
+                  pickupLocation={pickupCoords}
+                  destinationLocation={destinationCoords}
                 />
               </motion.div>
             </div>
@@ -143,8 +147,13 @@ const LiveTracking = () => {
                     <h4 className="text-xl font-black tracking-tight leading-none mb-2">
                       {isRider
                         ? `${rideDetails.user?.firstname} ${rideDetails.user?.lastname}`
-                        : rideDetails.assignedDriver?.riderInfo?.firstname || 'Rider Assigned'}
+                        : rideDetails.assignedDriver?.riderInfo
+                          ? `${rideDetails.assignedDriver.riderInfo.firstname} ${rideDetails.assignedDriver.riderInfo.lastname || ''}`
+                          : 'Rider Assigned'}
                     </h4>
+                    <p className="text-xs text-neutral-400 font-bold mb-2">
+                      📞 {isRider ? rideDetails.user?.phone : rideDetails.assignedDriver?.riderInfo?.phone || 'No phone number available'}
+                    </p>
                     <div className="flex items-center gap-2">
                       <div className="flex text-orange-500">
                         <FaStar /><FaStar /><FaStar /><FaStar /><FaStar />
@@ -157,6 +166,7 @@ const LiveTracking = () => {
                 <RideControls
                   rideStatus={rideDetails.rideStatus}
                   isPassenger={isPassenger}
+                  isRider={isRider}
                   updateRideStatus={updateRideStatus}
                 />
               </motion.div>
@@ -176,6 +186,14 @@ const LiveTracking = () => {
           </div>
         </div>
       </div>
+
+      {/* Ride Start Modal */}
+      <RideStartModal
+        showStartRideModal={showStartRideModal}
+        setShowStartRideModal={setShowStartRideModal}
+        isRider={isRider}
+        updateRideStatus={updateRideStatus}
+      />
 
       {/* Ride Completion Modal */}
       <RideCompletionModal

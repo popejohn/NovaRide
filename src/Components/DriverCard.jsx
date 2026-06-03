@@ -1,4 +1,5 @@
 import React from 'react';
+import { motion } from 'framer-motion';
 import { FaStar, FaCar, FaMapMarkerAlt, FaShieldAlt } from 'react-icons/fa';
 import profilePicPlaceholder from '../assets/placeholderProfile.jpg';
 

@@ -1,39 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from './Navbar';
 import OtherNav from './VerifiedNav';
 import Button from './Button';
 import axios from 'axios';
-import { FaWallet, FaCreditCard, FaMoneyBillWave, FaArrowUp, FaArrowDown, FaHistory, FaPlus, FaExchangeAlt, FaReceipt } from 'react-icons/fa';
+import { FaWallet, FaCreditCard, FaMoneyBillWave, FaArrowUp, FaArrowDown, FaHistory, FaPlus, FaExchangeAlt, FaReceipt, FaMinus, FaArrowLeft } from 'react-icons/fa';
 import SidebarButton from './Profile/SidebarButton';
 import { PaystackButton } from 'react-paystack';
 
 const Motion = motion;
 
-// We need a wrapper component or generic function for PaystackButton to dynamically get amount
-const AddMoneyButtonWrapper = ({ setWalletBalance, setTransactions }) => {
-    const amountStr = prompt("Enter amount to fund (₦):", "5000");
-    const amountToFund = parseInt(amountStr, 10);
-    
-    if (!amountStr || isNaN(amountToFund) || amountToFund <= 0) {
-        return (
-            <Button
-                onClick={() => alert("Please click again and enter a valid amount.")}
-                text={<div className="flex items-center gap-2"><FaPlus className="text-[10px]" /> Add Money</div>}
-                classes="bg-orange-500 text-white font-black uppercase tracking-widest text-[10px] py-4 px-8 rounded-2xl shadow-lg shadow-orange-500/20 hover:bg-orange-600 transition-all"
-            />
-        );
-    }
-
+// Wrapper component for PaystackButton with fixed amount
+const AddMoneyButtonWrapper = ({ userEmail, setWalletBalance, setTransactions }) => {
     const token = localStorage.getItem('nvcr_tk');
+    const defaultAmount = 5000; // Default amount in Naira
 
     return (
         <PaystackButton
             className="bg-orange-500 text-white font-black uppercase tracking-widest text-[10px] py-4 px-8 rounded-2xl shadow-lg shadow-orange-500/20 hover:bg-orange-600 transition-all flex items-center justify-center gap-2"
             text="Add Money"
-            email={`user_${Date.now()}@novacrest.local`}
-            amount={amountToFund * 100} // in kobo
+            email={userEmail || `user_${Date.now()}@novacrest.local`}
+            amount={defaultAmount * 100} // in kobo
             publicKey="pk_test_26f1b45d2f2c179ed904deee64e9fe8c60ff8fc4"
             reference={(new Date()).getTime().toString()}
             onSuccess={async (transaction) => {
@@ -63,38 +52,88 @@ const AddMoneyButtonWrapper = ({ setWalletBalance, setTransactions }) => {
     );
 };
 
-const TransactionItem = ({ transaction }) => (
-  <Motion.div
-    initial={{ opacity: 0, x: -10 }}
-    animate={{ opacity: 1, x: 0 }}
-    className="flex items-center justify-between p-5 bg-white/50 backdrop-blur-sm border border-neutral-100 rounded-2xl hover:bg-white hover:border-orange-500/30 transition-all group"
-  >
-    <div className="flex items-center gap-4">
-      <div className={`p-3 rounded-xl ${transaction.type === 'credit' ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'} group-hover:scale-110 transition-transform`}>
-        {transaction.type === 'credit' ? (
-          <FaArrowDown className="text-sm" />
-        ) : (
-          <FaArrowUp className="text-sm" />
-        )}
-      </div>
-      <div>
-        <div className="font-bold text-neutral-800 text-sm tracking-tight">{transaction.description}</div>
-        <div className="flex items-center gap-3 mt-0.5">
-          <div className="text-[10px] font-black uppercase tracking-widest text-neutral-400">
-            {new Date(transaction.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
-          </div>
-          <div className="text-[10px] font-bold text-neutral-300">|</div>
-          <div className="text-[10px] font-black uppercase tracking-widest text-neutral-300 truncate max-w-[120px]">
-            {transaction.reference}
+const WithdrawButtonWrapper = ({ walletBalance, setWalletBalance, setTransactions }) => {
+    const handleWithdraw = async () => {
+        const amountStr = prompt("Enter amount to withdraw (₦):", "1000");
+        const amountToWithdraw = parseInt(amountStr, 10);
+        
+        if (!amountStr || isNaN(amountToWithdraw) || amountToWithdraw <= 0) {
+            alert("Please enter a valid amount.");
+            return;
+        }
+
+        if (amountToWithdraw > walletBalance) {
+            alert("Insufficient balance. You can only withdraw up to ₦" + walletBalance.toLocaleString());
+            return;
+        }
+
+        try {
+            const token = localStorage.getItem('nvcr_tk');
+            const response = await axios.post('/api/paystack/withdraw', {
+                amount: amountToWithdraw
+            }, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+
+            alert("Withdrawal request submitted successfully! You will receive ₦" + amountToWithdraw.toLocaleString() + " within 1-3 business days.");
+            
+            // Refresh wallet data
+            const refreshRes = await axios.get('/api/user/wallet-data', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            setWalletBalance(refreshRes.data.walletBalance);
+            setTransactions(refreshRes.data.transactions);
+        } catch (error) {
+            console.error("Withdrawal error:", error);
+            alert(error?.response?.data?.message || "Withdrawal failed. Please try again.");
+        }
+    };
+
+    return (
+        <Button
+            onClick={handleWithdraw}
+            text={<div className="flex items-center gap-2"><FaMinus className="text-[10px]" /> Withdraw</div>}
+            classes="bg-white text-neutral-900 font-black uppercase tracking-widest text-[10px] py-4 px-8 rounded-2xl shadow-lg hover:bg-neutral-100 transition-all border border-neutral-200"
+        />
+    );
+};
+
+const TransactionItem = ({ transaction }) => {
+  const isIncoming = transaction.type === 'credit' || transaction.type === 'funding';
+  
+  return (
+    <Motion.div
+      initial={{ opacity: 0, x: -10 }}
+      animate={{ opacity: 1, x: 0 }}
+      className="flex items-center justify-between p-5 bg-white/50 backdrop-blur-sm border border-neutral-100 rounded-2xl hover:bg-white hover:border-orange-500/30 transition-all group"
+    >
+      <div className="flex items-center gap-4">
+        <div className={`p-3 rounded-xl ${isIncoming ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'} group-hover:scale-110 transition-transform`}>
+          {isIncoming ? (
+            <FaArrowDown className="text-sm" />
+          ) : (
+            <FaArrowUp className="text-sm" />
+          )}
+        </div>
+        <div>
+          <div className="font-bold text-neutral-800 text-sm tracking-tight">{transaction.description}</div>
+          <div className="flex items-center gap-3 mt-0.5">
+            <div className="text-[10px] font-black uppercase tracking-widest text-neutral-400">
+              {new Date(transaction.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
+            </div>
+            <div className="text-[10px] font-bold text-neutral-300">|</div>
+            <div className="text-[10px] font-black uppercase tracking-widest text-neutral-300 truncate max-w-[120px]">
+              {transaction.reference}
+            </div>
           </div>
         </div>
       </div>
-    </div>
-    <div className={`text-sm font-black tracking-tighter ${transaction.type === 'credit' ? 'text-green-600' : 'text-red-600'}`}>
-      {transaction.type === 'credit' ? '+' : '-'} ₦{transaction.amount.toLocaleString()}
-    </div>
-  </Motion.div>
-);
+      <div className={`text-sm font-black tracking-tighter ${isIncoming ? 'text-green-600' : 'text-red-600'}`}>
+        {isIncoming ? '+' : '-'} ₦{transaction.amount.toLocaleString()}
+      </div>
+    </Motion.div>
+  );
+};
 
 const Wallet = () => {
   const { user } = useSelector(state => state.verifiedUser);
@@ -123,11 +162,11 @@ const Wallet = () => {
   }, []);
 
   const totalEarned = transactions
-    .filter(t => t.type === 'credit')
+    .filter(t => t.type === 'credit' || t.type === 'funding')
     .reduce((sum, t) => sum + t.amount, 0);
 
   const totalSpent = transactions
-    .filter(t => t.type === 'debit')
+    .filter(t => t.type === 'debit' || t.type === 'withdrawal')
     .reduce((sum, t) => sum + t.amount, 0);
 
   const getRoleDisplay = () => {
@@ -137,6 +176,8 @@ const Wallet = () => {
       default: return 'Passenger';
     }
   };
+
+  const navigate = useNavigate();
 
   return (
     <div className="min-h-screen bg-neutral-50/50">
@@ -197,14 +238,30 @@ const Wallet = () => {
                 >
                   {activeTab === 'overview' && (
                     <div className="space-y-10">
-                      <div className="flex justify-between items-center">
-                        <div>
-                          <h3 className="text-2xl font-black text-neutral-900 tracking-tight">Wallet Overview</h3>
-                          <p className="text-sm text-neutral-500 mt-1">Monitor your earnings and spending status.</p>
+                      <div className="flex justify-between items-center gap-4 flex-wrap">
+                        <div className="flex items-center gap-4">
+                          <Motion.button
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            onClick={() => navigate('/bookride')}
+                            className="p-3 bg-neutral-100 hover:bg-neutral-200 rounded-xl transition-all text-neutral-700 font-black"
+                            title="Back to Booking"
+                          >
+                            <FaArrowLeft className="text-lg" />
+                          </Motion.button>
+                          <div>
+                            <h3 className="text-2xl font-black text-neutral-900 tracking-tight">Wallet Overview</h3>
+                            <p className="text-sm text-neutral-500 mt-1">Monitor your earnings and spending status.</p>
+                          </div>
                         </div>
-                        <Motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                          <AddMoneyButtonWrapper setWalletBalance={setWalletBalance} setTransactions={setTransactions} />
-                        </Motion.div>
+                        <div className="flex gap-3">
+                          <Motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                            <WithdrawButtonWrapper walletBalance={walletBalance} setWalletBalance={setWalletBalance} setTransactions={setTransactions} />
+                          </Motion.div>
+                          <Motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                            <AddMoneyButtonWrapper userEmail={user?.email} setWalletBalance={setWalletBalance} setTransactions={setTransactions} />
+                          </Motion.div>
+                        </div>
                       </div>
 
                       {/* Stat Cards */}

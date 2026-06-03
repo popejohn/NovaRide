@@ -37,8 +37,8 @@ const RecentTransactions = ({ items = [] }) => (
                         className="flex items-center justify-between p-4 bg-white/50 rounded-2xl border border-neutral-100"
                     >
                         <div className="flex items-center gap-4">
-                            <div className={`p-3 rounded-xl ${t.type === 'credit' ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'}`}>
-                                {t.type === 'credit' ? <FaArrowTrendUp /> : <FaPlus className="rotate-45" />}
+                            <div className={`p-3 rounded-xl ${t.type === 'credit' || t.type === 'funding' ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'}`}>
+                                {t.type === 'credit' || t.type === 'funding' ? <FaArrowTrendUp /> : <FaPlus className="rotate-45" />}
                             </div>
                             <div>
                                 <div className="font-bold text-neutral-900 text-sm">{t.description}</div>
@@ -47,8 +47,8 @@ const RecentTransactions = ({ items = [] }) => (
                                 </div>
                             </div>
                         </div>
-                        <div className={`font-black tracking-tighter text-lg ${t.type === 'credit' ? 'text-green-600' : 'text-red-600'}`}>
-                            {t.type === 'credit' ? '+' : '-'}₦{t.amount.toLocaleString()}
+                        <div className={`font-black tracking-tighter text-lg ${t.type === 'credit' || t.type === 'funding' ? 'text-green-600' : 'text-red-600'}`}>
+                            {t.type === 'credit' || t.type === 'funding' ? '+' : '-'}₦{t.amount.toLocaleString()}
                         </div>
                     </motion.div>
                 ))}

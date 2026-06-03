@@ -3,18 +3,18 @@ import novaLogo from '../assets/nova.png'
 import '../App.css'
 import Nav from './Nav'
 import Button from './Button'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { FaBars, FaTimes, FaUser, FaWallet, FaCarSide, FaQuestionCircle, FaChevronDown } from 'react-icons/fa'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useDispatch } from 'react-redux'
 import { logout } from '../Redux/verifiedUserslice'
-import { useNavigate } from 'react-router-dom'
 import { getPredominantRole } from '../utils/roleUtils'
 
 
 const Navbar = ({ userrole, nav, userverified, profilePic = '', button }) => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const location = useLocation();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
@@ -71,7 +71,7 @@ const Navbar = ({ userrole, nav, userverified, profilePic = '', button }) => {
 
                     {/* Actions Section */}
                     <div className='flex items-center gap-4'>
-                            {!userverified && (
+                            {!userverified && location.pathname === '/' && (
                             <Link to={'/login'}>
                                 <button className='font-bold text-sm uppercase tracking-widest bg-neutral-100 text-neutral-700 hover:bg-neutral-200 hover:text-orange-500 transition-all px-6 py-2.5 rounded-xl'>
                                     Login
@@ -108,10 +108,6 @@ const Navbar = ({ userrole, nav, userverified, profilePic = '', button }) => {
                                                 transition={{ type: 'spring', damping: 20, stiffness: 300 }}
                                                 className='absolute right-0 mt-3 w-64 bg-white border border-neutral-200 rounded-2xl shadow-xl overflow-hidden z-[5001]'
                                             >
-                                                <div className='p-4 border-b border-neutral-100 bg-neutral-50/50'>
-                                                    <p className='text-[10px] font-black uppercase tracking-widest text-neutral-400 mb-1'>Account</p>
-                                                    <p className='font-bold text-neutral-800 text-sm truncate'>Nova User</p>
-                                                </div>
                                                 <div className='p-2'>
                                                     {(predominantRole === 'rider' || predominantRole === 'installment') && (
                                                         <Link
@@ -174,7 +170,6 @@ const Navbar = ({ userrole, nav, userverified, profilePic = '', button }) => {
                         <div className='space-y-8'>
                             {userverified && (
                                 <div>
-                                    <p className='text-[10px] font-black uppercase tracking-[0.2em] text-neutral-400 mb-6'>Your Account</p>
                                     <div className='grid grid-cols-2 gap-3'>
                                         {(predominantRole === 'rider' || predominantRole === 'installment') && (
                                             <Link

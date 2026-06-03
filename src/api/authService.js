@@ -20,7 +20,8 @@ const authService = {
             throw new Error('No authentication token found');
         }
 
-        return axios.post('http://localhost:5000/auth/upload-profile-pic', formData, {
+        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+        return axios.post(`${apiUrl}/auth/upload-profile-pic`, formData, {
             headers: {
                 Authorization: `Bearer ${token}`,
                 'Content-Type': 'multipart/form-data'

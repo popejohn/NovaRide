@@ -33,7 +33,8 @@ export const useProfilePicture = (user) => {
         formData.append('profilePic', file);
 
         try {
-            const response = await axios.post('http://localhost:5000/auth/upload-profile-pic', formData, {
+            const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+            const response = await axios.post(`${apiUrl}/auth/upload-profile-pic`, formData, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                     'Content-Type': 'multipart/form-data'

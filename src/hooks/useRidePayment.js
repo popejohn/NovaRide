@@ -13,52 +13,65 @@ export const useRidePayment = (distance, duration, pickupLocation, destination, 
             const token = localStorage.getItem('nvcr_tk');
             const fare = distance * 150;
 
+            console.log('🎫 Ride Booking: Checking balance for fare ₦' + fare);
+
             // Check balance first
             const walletResponse = await client.get('/user/wallet-data', {
-                headers: { Authorization: `Bearer ${token}` }
+                headers: { 
+                    Authorization: `Bearer ${token}`
+                }
             });
 
-            const balance = walletResponse.data.walletBalance;
-
-            if (balance < fare) {
-                toast.error("Insufficient balance, please fund your wallet");
-                navigate('/wallet');
+            // Handle potential 304 or missing data
+            if (!walletResponse.data || walletResponse.data.walletBalance === undefined) {
+                console.error('❌ Invalid wallet response:', walletResponse.data);
+                toast.error("Unable to fetch wallet balance. Please try again.");
                 setIsProcessing(false);
                 return;
             }
 
-            // If balance is sufficient, Paystack popup for the fare amount
-            const paystackConfig = {
-                reference: (new Date()).getTime().toString(),
-                email: `user_${Date.now()}@novacrest.local`, 
-                amount: fare * 100, // in kobo
-                publicKey: 'pk_test_26f1b45d2f2c179ed904deee64e9fe8c60ff8fc4',
-            };
+            const balance = walletResponse.data.walletBalance;
+            console.log('💰 Wallet Balance:', balance, 'Required Fare:', fare);
 
-            const PaystackPop = (await import('@paystack/inline-js')).default;
-            const paystack = new PaystackPop();
-            
-            paystack.newTransaction({
-                ...paystackConfig,
-                onSuccess: async (transaction) => {
-                    toast.success("Payment successful! Creating ride...");
-                    proceedToCreateRide(fare, token);
-                },
-                onCancel: () => {
-                    toast.error("Payment cancelled.");
-                    setIsProcessing(false);
-                }
-            });
+            // If balance is insufficient, redirect to wallet to add money
+            if (balance < fare) {
+                toast.error("Insufficient balance. Redirecting to wallet...");
+                setIsProcessing(false);
+                navigate('/wallet');
+                return;
+            }
+
+            // If balance is sufficient, create ride and redirect to driver selection
+            console.log('✅ Balance sufficient. Creating ride...');
+            await proceedToCreateRide(fare, token);
 
         } catch (error) {
-            console.error('Error in handlePickRider:', error);
+            console.error('❌ Balance check error:', error);
+            console.error('Error details:', {
+                message: error?.message,
+                status: error?.response?.status,
+                data: error?.response?.data,
+                url: error?.config?.url
+            });
+            
+            // Skip errors from verify-token or non-critical calls
+            if (error.config?.url?.includes('verify-token')) {
+                console.warn('Verify-token error (non-critical), continuing...');
+                return;
+            }
+            
             const errorMessage = error.response?.data?.message || error.message;
 
             if (errorMessage.toLowerCase().includes('expired') || error.response?.status === 401) {
                 localStorage.removeItem('nvcr_tk');
                 navigate('/login');
-            } else {
-                toast.error(`Error: ${errorMessage}`);
+            } else if (!errorMessage.includes('404') && !errorMessage.includes('offline')) {
+                // Show specific error messages based on the request URL
+                if (error.config?.url?.includes('wallet-data')) {
+                    toast.error("Failed to fetch wallet balance. Please check your connection.");
+                } else {
+                    toast.error(`Error: ${errorMessage}`);
+                }
             }
             setIsProcessing(false);
         }
@@ -66,6 +79,8 @@ export const useRidePayment = (distance, duration, pickupLocation, destination, 
 
     const proceedToCreateRide = async (fare, token) => {
         try {
+            console.log('🚗 Creating ride with fare:', fare);
+            
             const rideData = {
                 pickupLocation,
                 destination,
@@ -82,17 +97,17 @@ export const useRidePayment = (distance, duration, pickupLocation, destination, 
                 }
             };
 
-            const response = await client.post('/ride/create-ride', rideData, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            console.log('📤 Ride data:', rideData);
+            const response = await client.post('/ride/create-ride', rideData);
 
+            console.log('✅ Ride created:', response.data);
             if (response.status === 200) {
+                toast.success("Ride created! Select a rider...");
                 navigate(`/driver-selection?rideId=${response.data.ride._id}`);
             }
         } catch (error) {
-            console.error('Error creating ride:', error);
+            console.error('❌ Error creating ride:', error);
             toast.error(`Error creating ride: ${error.response?.data?.message || error.message}`);
-        } finally {
             setIsProcessing(false);
         }
     };

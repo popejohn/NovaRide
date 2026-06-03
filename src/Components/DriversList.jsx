@@ -1,4 +1,5 @@
 import React from 'react';
+import { AnimatePresence } from 'framer-motion';
 import { FaUser } from 'react-icons/fa';
 import { ClipLoader } from 'react-spinners';
 import DriverCard from './DriverCard';

@@ -5,6 +5,7 @@ import { setPickupLocation, setDestination } from '../Redux/riderslice';
 import { setPickupCoordinate, setDestinationCoordinate } from '../Redux/locationSlice';
 import { itemLoaded, itemLoading } from '../Redux/showslice';
 import { setUser, logout } from '../Redux/verifiedUserslice';
+import { toast } from 'react-toastify';
 import client from '../api/client';
 import { getSuggestions } from "../utils/autocomplete";
 import { forwardGeocode, reverseGeocode, calculateDistanceAndETA } from '../utils/reverseGeo';
@@ -28,13 +29,19 @@ export const useRideBooking = () => {
 
     useEffect(() => {
         const token = localStorage.getItem('nvcr_tk');
-        if (token) {
+        if (token && !user) {
             client.get('/auth/verify-token')
                 .then((res) => {
-                    dispatch(setUser({ user: res.data.data, isAuthenticated: true }));
+                    if (res.data && res.data.data) {
+                        dispatch(setUser({ user: res.data.data, isAuthenticated: true }));
+                    }
                 })
+                .catch((error) => {
+                    console.warn('Token verification failed (non-critical):', error.message);
+                    // Don't propagate error - token verification is not critical during ride booking
+                });
         }
-    }, [dispatch]);
+    }, [dispatch, user]);
 
     const handleFare = async () => {
         dispatch(itemLoading());
@@ -89,29 +96,70 @@ export const useRideBooking = () => {
 
     const handleUseMyLocation = () => {
         if (!navigator.geolocation) {
-            console.error("Geolocation is not supported by your browser");
+            toast.error("Geolocation is not supported by your browser");
             return;
         }
 
         dispatch(itemLoading());
+        // Clear any previous suggestions first
+        setPickupSuggestions([]);
+        toast.info("Fetching your current location...", { autoClose: 1500 });
+
+        // Use high accuracy and don't cache
+        const geoOptions = {
+            enableHighAccuracy: true,
+            timeout: 15000,
+            maximumAge: 0 // Always get fresh position, never use cached
+        };
+
         navigator.geolocation.getCurrentPosition(
             async (position) => {
-                const { latitude, longitude } = position.coords;
+                const { latitude, longitude, accuracy } = position.coords;
+                
+                console.log(`[Location] Device coordinates: Lat ${latitude.toFixed(6)}, Lon ${longitude.toFixed(6)} (±${accuracy.toFixed(0)}m)`);
+                
                 try {
-                    const address = await reverseGeocode(latitude, longitude);
-                    dispatch(setPickupLocation(address));
+                    // First, immediately set the fresh coordinates from device
                     dispatch(setPickupCoordinate({ lat: latitude, lng: longitude }));
+                    
+                    // Reverse geocode the fresh coordinates to get current address
+                    const address = await reverseGeocode(latitude, longitude);
+                    
+                    console.log(`[Location] Reverse geocoded to: ${address}`);
+                    
+                    // Update the pickup location with fresh data
+                    dispatch(setPickupLocation(address));
+                    setPickupSuggestions([]); // Clear any suggestions
+                    
+                    toast.success(`📍 Location updated: ${address}`, { autoClose: 2500 });
                 } catch (error) {
-                    console.error("Error fetching current location address:", error);
+                    console.error("Error reverse geocoding:", error);
+                    
+                    // Even if address lookup fails, we have valid coordinates from device
+                    const fallbackLocation = `📍 Current Location (${latitude.toFixed(4)}, ${longitude.toFixed(4)})`;
+                    dispatch(setPickupLocation(fallbackLocation));
+                    toast.warning("Using GPS coordinates (address lookup unavailable)", { autoClose: 2000 });
                 } finally {
                     dispatch(itemLoaded());
                 }
             },
             (error) => {
-                console.error("Error getting geolocation:", error);
+                console.error("[Location Error]", error);
                 dispatch(itemLoaded());
+                
+                let errorMessage = "Unable to access your location";
+                
+                if (error.code === error.PERMISSION_DENIED) {
+                    errorMessage = "❌ Location permission denied. Please enable location in browser settings.";
+                } else if (error.code === error.POSITION_UNAVAILABLE) {
+                    errorMessage = "❌ Location services are unavailable. Please enable location services on your device.";
+                } else if (error.code === error.TIMEOUT) {
+                    errorMessage = "❌ Location request timed out. Check your internet connection and try again.";
+                }
+                
+                toast.error(errorMessage);
             },
-            { enableHighAccuracy: true, timeout: 10000, maximumAge: 300000 }
+            geoOptions
         );
     };
 

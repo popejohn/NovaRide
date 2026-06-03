@@ -52,8 +52,9 @@ function Login() {
           }
         }, 1500);
       } catch (error) {
-        toast.error(error.message);
-        dispatch(loginFailure(error));
+        const errorMessage = error?.message || 'Login failed. Please try again.';
+        toast.error(errorMessage);
+        dispatch(loginFailure(errorMessage));
       }
     }
   });
@@ -127,14 +128,14 @@ function Login() {
             <div className="flex justify-between items-center px-1">
               <div className="h-[1px] flex-1 bg-neutral-800 mr-4" />
               <Link to="/forgot-password" title="Recover Access" className="text-[10px] font-black uppercase tracking-[0.2em] text-neutral-500 hover:text-orange-500 transition-colors">
-                Lost Password?
+                forgot Password?
               </Link>
             </div>
 
             <Button
               type="submit"
               text={isLoading ? <Loader color={"#ffffff"} /> : "Login"}
-              classes={'w-full py-5 bg-orange-500 hover:bg-white hover:text-neutral-950 text-white rounded-2xl font-black text-[11px] uppercase tracking-[0.3em] shadow-2xl shadow-orange-500/20 transition-all duration-500 active:scale-95 disabled:opacity-50 border-2 border-transparent hover:border-white'}
+              classes={'w-full py-5 bg-orange-500 hover:bg-white hover:text-neutral-950 text-white rounded-2xl font-black text-[11px] uppercase tracking-[0.3em] shadow-2xl shadow-orange-500/20 transition-all duration-500 active:scale-95 disabled:opacity-50 disabled:hover:bg-orange-500 disabled:hover:text-white disabled:hover:border-transparent border-2 border-transparent hover:border-white'}
               disabled={isLoading}
             />
           </form>

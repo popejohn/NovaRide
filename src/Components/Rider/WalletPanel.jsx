@@ -28,7 +28,7 @@ const WalletPanel = ({ balance = 0 }) => (
                 </p>
             </div>
 
-            <div className="flex gap-4">
+            {/* <div className="flex gap-4">
                 <motion.button
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
@@ -43,7 +43,7 @@ const WalletPanel = ({ balance = 0 }) => (
                 >
                     Top up
                 </motion.button>
-            </div>
+            </div> */}
         </div>
     </motion.div>
 );

@@ -2,9 +2,9 @@ import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { FaArrowLeft } from 'react-icons/fa';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useDriverSocket } from '../hooks/useDriverSocket';
 import { useDriverSelectionManager } from '../hooks/useDriverSelectionManager';
-import StatusModal from './StatusModal';
 import RideDetailsSummary from './RideDetailsSummary';
 import DriversList from './DriversList';
 import BookingConfirmation from './BookingConfirmation';
@@ -16,14 +16,9 @@ const DriverSelection = () => {
   const rideId = queryParams.get('rideId');
 
   const { user } = useSelector(state => state.verifiedUser);
+  const { bookingStatus, setBookingStatus, acceptedDriver } = useDriverSocket(user?._id, rideId);
 
   const { 
-    bookingStatus, 
-    setBookingStatus, 
-    acceptedDriver
-  } = useDriverSocket(user?._id, rideId);
-
-  const {
     drivers,
     rideDetails,
     loading,
@@ -72,20 +67,11 @@ const DriverSelection = () => {
 
         <BookingConfirmation
           selectedDriver={selectedDriver}
+          rideId={rideId}
+          rideDetails={rideDetails}
           bookingStatus={bookingStatus}
           handleConfirmBooking={handleConfirmBooking}
         />
-
-        <AnimatePresence>
-          {(bookingStatus === 'accepted' || bookingStatus === 'rejected') && (
-            <StatusModal
-              status={bookingStatus}
-              driver={acceptedDriver}
-              onAction={() => setBookingStatus('idle')}
-              onProceed={() => navigate(`/live-tracking?rideId=${rideId}`)}
-            />
-          )}
-        </AnimatePresence>
       </div>
     </div>
   );

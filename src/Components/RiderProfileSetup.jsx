@@ -24,8 +24,8 @@ const RiderProfileSetup = () => {
     if (!token) {
       navigate('/login');
     } else {
-      axios
-        .get('http://localhost:5000/rider/get-details', {
+        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+        axios.get(`${apiUrl}/rider/get-details`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },

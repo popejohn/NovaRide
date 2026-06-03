@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaLocationDot, FaLocationArrow } from "react-icons/fa6";
 import { IoClose } from "react-icons/io5";
+import { useState } from 'react';
 
 const LocationSearch = ({
     type,
@@ -15,6 +16,16 @@ const LocationSearch = ({
 }) => {
     const Motion = motion;
     const Icon = type === 'pickup' ? FaLocationDot : FaLocationArrow;
+    const [isLoadingLocation, setIsLoadingLocation] = useState(false);
+
+    const handleUseMyLocation = async () => {
+        setIsLoadingLocation(true);
+        try {
+            await onUseMyLocation();
+        } finally {
+            setIsLoadingLocation(false);
+        }
+    };
 
     return (
         <div className="relative w-full">
@@ -28,17 +39,23 @@ const LocationSearch = ({
                     ref={inputRef}
                     className="p-3 w-full border-0 outline-0 bg-transparent text-white placeholder:text-neutral-400"
                 />
-                <div className="flex items-center">
+                <div className="flex items-center gap-2">
                     {type === 'pickup' && onUseMyLocation && (
-                        <FaLocationArrow
-                            className="text-neutral-400 cursor-pointer hover:text-orange-400 transition-colors mr-2 text-sm"
-                            title="Use my location"
-                            onClick={onUseMyLocation}
-                        />
+                        <motion.button
+                            onClick={handleUseMyLocation}
+                            disabled={isLoadingLocation}
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.95 }}
+                            title="Use my current location"
+                            className="text-neutral-400 hover:text-orange-400 disabled:text-orange-300 transition-colors flex items-center gap-1 px-2 py-1 rounded hover:bg-white/5"
+                        >
+                            <FaLocationArrow className={`text-sm ${isLoadingLocation ? 'animate-pulse' : ''}`} />
+                            {isLoadingLocation && <span className="text-[10px] font-bold">...</span>}
+                        </motion.button>
                     )}
                     {value && (
                         <IoClose
-                            className='text-neutral-400 cursor-pointer mx-3 hover:text-white transition-colors'
+                            className='text-neutral-400 cursor-pointer mx-2 hover:text-white transition-colors'
                             onClick={onClear}
                         />
                     )}

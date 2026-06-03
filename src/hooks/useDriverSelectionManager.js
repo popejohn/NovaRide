@@ -79,6 +79,9 @@ export const useDriverSelectionManager = (rideId, bookingStatus, setBookingStatu
     setSelectedDriver(driver);
     setSelectedDriverForUI(driver); // optional sync to parent if it needs it directly, otherwise the parent can just read it from hook return
     dispatch(setSelectedRider(driver));
+    if (bookingStatus === 'rejected' && setBookingStatus) {
+      setBookingStatus('idle');
+    }
   };
 
   const handleConfirmBooking = async () => {

@@ -24,8 +24,8 @@ const StarRating = ({ rating, onRatingChange }) => {
 };
 
 const RideCompletion = () => {
-  const { role } = useSelector(state => state.verifiedUser);
-  const isRider = role === 'rider';
+  const { user, role } = useSelector(state => state.verifiedUser);
+  const isRider = role?.includes('rider') || role === 'rider';
   const navigate = useNavigate();
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
@@ -102,7 +102,7 @@ const RideCompletion = () => {
 
   return (
     <div className="min-h-screen">
-      <Navbar userrole="" userverified={true} profilePic={rideDetails.user?.profilePic || "/placeholderProfile.jpg"} nav={<OtherNav />} />
+      <Navbar userrole={role} userverified={true} profilePic={user?.profilePic || "/placeholderProfile.jpg"} nav={<OtherNav userrole={role} />} />
 
       <div className="mt-24 px-8 pb-12">
         <div className="max-w-2xl mx-auto">
@@ -159,11 +159,11 @@ const RideCompletion = () => {
                   <div className="flex-1 flex justify-between items-center">
                     <div className="flex items-center space-x-2 text-green-700">
                       <FaCheckCircle className="text-xl" />
-                      <span className="font-bold text-lg text-neutral-900">Ride Amount Collected</span>
+                      <span className="font-bold text-lg text-neutral-900">Earnings Collected</span>
                     </div>
                     <div className="text-right">
-                      <div className="text-2xl font-black text-orange-500">₦{rideDetails.fare.toLocaleString()}</div>
-                      <div className="text-[10px] font-black uppercase tracking-widest text-neutral-400">Paid into your Wallet</div>
+                      <div className="text-2xl font-black text-orange-500">₦{(rideDetails.fare * 0.85).toLocaleString()}</div>
+                      <div className="text-[10px] font-black uppercase tracking-widest text-neutral-400">Paid (85%) into your Wallet</div>
                     </div>
                   </div>
                 ) : (
@@ -190,49 +190,51 @@ const RideCompletion = () => {
             </div>
           </div>
 
-          {/* Rating Section (Only for Passengers) */}
-          {!isRider && (
-            !submitted ? (
-              <div className="bg-neutral-900 text-white rounded-[2rem] shadow-2xl p-8 mb-8 relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-orange-500/10 blur-3xl -mr-16 -mt-16"></div>
-                <h2 className="text-2xl font-black mb-6 relative z-10">Rate Your Experience</h2>
+          {/* Rating Section (For Passengers and Riders) */}
+          {!submitted ? (
+            <div className="bg-neutral-900 text-white rounded-[2rem] shadow-2xl p-8 mb-8 relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-orange-500/10 blur-3xl -mr-16 -mt-16"></div>
+              <h2 className="text-2xl font-black mb-6 relative z-10">
+                {isRider ? "Rate Your Trip" : "Rate Your Experience"}
+              </h2>
 
-                <div className="space-y-6 relative z-10">
-                  <div>
-                    <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-neutral-400 mb-3">How was your ride?</label>
-                    <StarRating rating={rating} onRatingChange={setRating} />
-                  </div>
+              <div className="space-y-6 relative z-10">
+                <div>
+                  <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-neutral-400 mb-3">
+                    {isRider ? "How was your trip with this passenger?" : "How was your ride?"}
+                  </label>
+                  <StarRating rating={rating} onRatingChange={setRating} />
+                </div>
 
-                  <div>
-                    <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-neutral-400 mb-3">Additional Feedback (Optional)</label>
-                    <textarea
-                      value={feedback}
-                      onChange={(e) => setFeedback(e.target.value)}
-                      placeholder="Tell us about your experience..."
-                      className="w-full p-4 rounded-2xl border border-white/10 bg-white/5 text-white placeholder-gray-500 focus:border-orange-500 focus:outline-none transition-all"
-                      rows={3}
-                    />
-                  </div>
-
-                  <Button
-                    text="Submit Rating"
-                    classes="w-full bg-orange-500 text-white py-4 px-6 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-orange-600 disabled:opacity-50 transition-all shadow-lg shadow-orange-500/20"
-                    onClick={handleSubmitRating}
-                    disabled={rating === 0}
+                <div>
+                  <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-neutral-400 mb-3">Additional Feedback (Optional)</label>
+                  <textarea
+                    value={feedback}
+                    onChange={(e) => setFeedback(e.target.value)}
+                    placeholder={isRider ? "Tell us about the passenger..." : "Tell us about your experience..."}
+                    className="w-full p-4 rounded-2xl border border-white/10 bg-white/5 text-white placeholder-gray-500 focus:border-orange-500 focus:outline-none transition-all"
+                    rows={3}
                   />
                 </div>
+
+                <Button
+                  text="Submit Rating"
+                  classes="w-full bg-orange-500 text-white py-4 px-6 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-orange-600 disabled:opacity-50 transition-all shadow-lg shadow-orange-500/20"
+                  onClick={handleSubmitRating}
+                  disabled={rating === 0}
+                />
               </div>
-            ) : (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="bg-green-50 border border-green-200 rounded-3xl p-8 mb-8 text-center"
-              >
-                <FaCheckCircle className="text-green-500 text-4xl mx-auto mb-4" />
-                <h3 className="text-xl font-bold text-green-900">Thank you for your feedback!</h3>
-                <p className="text-green-700 mt-2">Your contribution helps us keep Nova premium.</p>
-              </motion.div>
-            )
+            </div>
+          ) : (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="bg-green-50 border border-green-200 rounded-3xl p-8 mb-8 text-center"
+            >
+              <FaCheckCircle className="text-green-500 text-4xl mx-auto mb-4" />
+              <h3 className="text-xl font-bold text-green-900">Thank you for your feedback!</h3>
+              <p className="text-green-700 mt-2">Your contribution helps us keep Nova premium.</p>
+            </motion.div>
           )}
 
           {/* Action Buttons */}

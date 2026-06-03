@@ -1,44 +1,76 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { FaPlay, FaPause, FaCheck, FaCar } from 'react-icons/fa';
+import { FaPlay, FaCheck, FaCar, FaTimes } from 'react-icons/fa';
 import Button from './Button';
 
-const RideControls = ({ rideStatus, isPassenger, updateRideStatus }) => {
-  const getStatusButton = () => {
-    switch (rideStatus) {
-      case 'accepted':
-        return (
+const RideControls = ({ rideStatus, isPassenger, isRider, updateRideStatus }) => {
+  const renderPassengerControls = () => {
+    if (rideStatus === 'accepted' || rideStatus === 'at_pickup') {
+      return (
+        <div className="space-y-4">
           <Button
             text="START RIDE"
-            icon={<FaPlay className="text-sm" />}
+            icon={<FaPlay className="text-xs" />}
             classes="w-full bg-green-600 text-white py-4 rounded-[1.5rem] font-black text-sm uppercase tracking-[0.2em] shadow-2xl shadow-green-600/20 hover:bg-green-700 transition-all"
-            onClick={() => updateRideStatus('started')}
+            onClick={() => updateRideStatus('starting')}
           />
-        );
-      case 'started':
-        return (
           <Button
-            text="ARRIVED AT DESTINATION"
-            icon={<FaPause className="text-sm" />}
-            classes="w-full bg-blue-600 text-white py-4 rounded-[1.5rem] font-black text-sm uppercase tracking-[0.2em] shadow-2xl shadow-blue-600/20 hover:bg-blue-700 transition-all"
-            onClick={() => updateRideStatus('arrived')}
+            text="CANCEL RIDE"
+            icon={<FaTimes className="text-xs" />}
+            classes="w-full bg-red-600 text-white py-4 rounded-[1.5rem] font-black text-sm uppercase tracking-[0.2em] shadow-2xl shadow-red-600/20 hover:bg-red-700 transition-all"
+            onClick={() => updateRideStatus('pending')}
           />
-        );
-      case 'arrived':
-        return (
-          <Button
-            text="COMPLETE RIDE"
-            icon={<FaCheck className="text-sm" />}
-            classes="w-full bg-orange-600 text-white py-4 rounded-[1.5rem] font-black text-sm uppercase tracking-[0.2em] shadow-2xl shadow-orange-600/20 hover:bg-orange-700 transition-all"
-            onClick={() => updateRideStatus('completed')}
-          />
-        );
-      default:
-        return null;
+        </div>
+      );
     }
+    if (rideStatus === 'starting') {
+      return (
+        <div className="text-center py-4 bg-orange-500/10 border border-orange-500/20 rounded-2xl">
+          <p className="text-orange-500 font-bold uppercase tracking-widest text-xs animate-pulse">
+            Awaiting Driver Agreement...
+          </p>
+        </div>
+      );
+    }
+    return null;
   };
 
-  if (!isPassenger) return null;
+  const renderRiderControls = () => {
+    if (rideStatus === 'accepted') {
+      return (
+        <Button
+          text="I'M ON MY WAY"
+          icon={<FaPlay className="text-xs" />}
+          classes="w-full bg-blue-600 text-white py-4 rounded-[1.5rem] font-black text-sm uppercase tracking-[0.2em] shadow-2xl shadow-blue-600/20 hover:bg-blue-700 transition-all"
+          onClick={() => updateRideStatus('at_pickup')}
+        />
+      );
+    }
+    if (rideStatus === 'in_progress') {
+      return (
+        <Button
+          text="COMPLETE RIDE"
+          icon={<FaCheck className="text-xs" />}
+          classes="w-full bg-orange-600 text-white py-4 rounded-[1.5rem] font-black text-sm uppercase tracking-[0.2em] shadow-2xl shadow-orange-600/20 hover:bg-orange-700 transition-all"
+          onClick={() => updateRideStatus('awaiting_completion')}
+        />
+      );
+    }
+    if (rideStatus === 'awaiting_completion') {
+      return (
+        <div className="text-center py-4 bg-orange-500/10 border border-orange-500/20 rounded-2xl">
+          <p className="text-orange-500 font-bold uppercase tracking-widest text-xs animate-pulse">
+            Awaiting Passenger Confirmation...
+          </p>
+        </div>
+      );
+    }
+    return null;
+  };
+
+  const content = isPassenger ? renderPassengerControls() : (isRider ? renderRiderControls() : null);
+
+  if (!content) return null;
 
   return (
     <motion.div
@@ -55,7 +87,7 @@ const RideControls = ({ rideStatus, isPassenger, updateRideStatus }) => {
       </div>
 
       <div className="space-y-4">
-        {getStatusButton()}
+        {content}
       </div>
     </motion.div>
   );

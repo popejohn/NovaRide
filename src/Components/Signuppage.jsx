@@ -25,6 +25,7 @@ function SignUp() {
     initialValues: {
       firstname: "",
       lastname: "",
+      email: "",
       phone: "",
       password: "",
       confirmpassword: "",
@@ -33,6 +34,7 @@ function SignUp() {
     validationSchema: Yup.object({
       firstname: Yup.string().required("First name is required"),
       lastname: Yup.string().required("Last name is required"),
+      email: Yup.string().email("Please enter a valid email").required("Email is required"),
       phone: Yup.string().matches(/^0\d{10}$/, "Please enter a valid phone number").required("Phone number is required"),
       password: Yup.string().required('Password is required').matches(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/, "Must be 8+ chars with letters & numbers"),
       confirmpassword: Yup.string().oneOf([Yup.ref("password"), null], "Passwords do not match").required('Please confirm password'),
@@ -40,7 +42,8 @@ function SignUp() {
     }),
     onSubmit: (values) => {
       dispatch(signupStart());
-      axios.post("http://localhost:5000/auth/signup", values)
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+      axios.post(`${apiUrl}/auth/signup`, values)
         .then(res => {
           toast.success('Welcome to the Nova family!');
           setTimeout(() => {
@@ -122,6 +125,17 @@ function SignUp() {
               onBlur={formik.handleBlur}
               value={formik.values.phone}
               error={formik.touched.phone && formik.errors.phone}
+            />
+
+            <Input
+              label="Email"
+              name="email"
+              type="email"
+              placeholder="you@example.com"
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              value={formik.values.email}
+              error={formik.touched.email && formik.errors.email}
             />
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

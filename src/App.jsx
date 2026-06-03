@@ -7,6 +7,7 @@ import Login from './Components/Loginpage'
 import Bookride from './Components/Bookride'
 import Riderdash from './Components/Riderdash'
 import ForgotPassword from './Components/ForgotPassword'
+import NewPassword from './Components/NewPassword'
 import DriverSelection from './Components/DriverSelection'
 import LiveTracking from './Components/LiveTracking'
 import RideCompletion from './Components/RideCompletion'
@@ -39,6 +40,7 @@ function App() {
         <Route path='signup' element={<SignUp />} />
         <Route path='login' element={<Login />} />
         <Route path='forgot-password' element={<ForgotPassword />} />
+        <Route path='new-password' element={<NewPassword />} />
         <Route path='bookride' element={<Bookride />} />
         <Route path='driver-selection' element={<DriverSelection />} />
         <Route path='live-tracking' element={<LiveTracking />} />

@@ -26,7 +26,7 @@ function ForgotPassword() {
   const resendOtp = async () => {
     if (!phoneNumber) return;
     setIsLoading(true);
-    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+    const apiUrl = import.meta.env.VITE_API_URL || 'https://novaride-backend-staging.onrender.com';
     try {
       const resp = await axios.post(`${apiUrl}/auth/resend-otp`, { phone: phoneNumber });
       const data = resp?.data?.data || resp?.data || {};
@@ -56,7 +56,7 @@ function ForgotPassword() {
     }),
     onSubmit: async (values) => {
       setIsLoading(true);
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+      const apiUrl = import.meta.env.VITE_API_URL || 'https://novaride-backend-staging.onrender.com';
       try {
         const resp = await axios.post(`${apiUrl}/auth/forgot-password`, {
           phone: values.phone

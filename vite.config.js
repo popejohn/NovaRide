@@ -26,7 +26,7 @@ export default defineConfig({
         }
       },
       '/api': {
-        target: 'http://localhost:5000',
+        target: 'https://novaride-backend-staging.onrender.com',
         changeOrigin: true,
         secure: false,
         rewrite: (path) => path.replace(/^\/api/, '')

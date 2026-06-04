@@ -20,7 +20,7 @@ const authService = {
             throw new Error('No authentication token found');
         }
 
-        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+        const apiUrl = import.meta.env.VITE_API_URL || 'https://novaride-backend-staging.onrender.com';
         return axios.post(`${apiUrl}/auth/upload-profile-pic`, formData, {
             headers: {
                 Authorization: `Bearer ${token}`,

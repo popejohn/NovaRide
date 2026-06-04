@@ -96,7 +96,7 @@ export const useLiveTracking = (rideId, user, userRoles) => {
     const token = localStorage.getItem('nvcr_tk');
 
     if (user && user._id && token && rideId) {
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+      const apiUrl = import.meta.env.VITE_API_URL || 'https://novaride-backend-staging.onrender.com';
       
       const connectSocket = () => {
         socket = io(apiUrl, { 

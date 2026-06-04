@@ -6,7 +6,7 @@ import ErrorHandler from '../utils/errorHandler.js';
 // developed independently of the backend. Switch USE_MOCK to false
 // to call real endpoints.
 const USE_MOCK = false;
-const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const BASE_URL = import.meta.env.VITE_API_URL || 'https://novaride-backend-staging.onrender.com';
 
 // Add response interceptor to handle auth errors globally
 axios.interceptors.response.use(

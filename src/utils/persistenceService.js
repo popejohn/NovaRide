@@ -7,10 +7,11 @@ class PersistenceService {
     try {
       const userData = StorageService.getUser();
       if (userData) {
+        const token = StorageService.getToken();
         return {
           user: userData.user || null,
           role: userData.role || null,
-          isAuthenticated: false, // Force verification on load
+          isAuthenticated: !!(userData.user && token),
           profileCompleted: userData.profileCompleted || false,
           isOnline: userData.isOnline || false,
         };

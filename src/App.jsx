@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import './App.css'
 import { Route, Routes } from 'react-router-dom'
 import LandingPage from './Components/Landingpage'
@@ -23,12 +23,35 @@ import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
 
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
+import { setUser, logout } from './Redux/verifiedUserslice'
+import client from './api/client'
 
 
 function App() {
+  const dispatch = useDispatch();
   const { isAuthenticated } = useSelector(state => state.verifiedUser);
   useSessionTimeout(isAuthenticated); // Enable conditional session timeout
+
+  useEffect(() => {
+    const verifyUser = async () => {
+      const token = localStorage.getItem('nvcr_tk');
+      if (token) {
+        try {
+          const response = await client.get('/auth/verify-token');
+          if (response.data.success) {
+            dispatch(setUser({ user: response.data.data, isAuthenticated: true }));
+          } else {
+            dispatch(logout());
+          }
+        } catch (error) {
+          console.error('Verification failed:', error);
+          dispatch(logout());
+        }
+      }
+    };
+    verifyUser();
+  }, [dispatch]);
 
   const [pickupCoordinate, setPickupCoordinate] = useState({})
   const [destinationCoordinate, setDestinationCoordinate] = useState({})

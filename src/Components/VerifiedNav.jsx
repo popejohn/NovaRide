@@ -15,7 +15,7 @@ const NavItem = ({ to, children, icon: Icon, isHash = false, userverified = true
     isActive = bookingRoutes.includes(path) && (path !== '/' || userverified);
   }
 
-  if (to === '/rider') {
+  if (to === '/rider-profile-setup') {
     const riderRoutes = ['/rider', '/riderdashboard', '/rider-profile-setup', '/ride-request', '/rider-live-tracking', '/register'];
     isActive = riderRoutes.includes(path);
   }
@@ -53,7 +53,7 @@ const OtherNav = ({ userrole, name = "My Account", userverified = true }) => {
         </li>
         {userverified && !roles.includes('rider') && (
           <li>
-            <NavItem to='/rider'>Earn as a Rider</NavItem>
+            <NavItem to='/rider-profile-setup'>Earn as a Rider</NavItem>
           </li>
         )}
         {userverified && !roles.includes('installment') && (

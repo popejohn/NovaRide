@@ -1,6 +1,4 @@
-import axios from 'axios';
-
-const LOCATIONIQ_API_KEY = import.meta.env.VITE_LOCATIONIQ;
+import client from '../api/client';
 
 const locationCache = {
   forward: {},
@@ -14,8 +12,8 @@ export const reverseGeocode = async (lat, lon) => {
   }
 
   try {
-    const response = await axios.get(
-      `/api/locationiq/reverse.php?key=${LOCATIONIQ_API_KEY}&lat=${lat}&lon=${lon}&format=json`
+    const response = await client.get(
+      `/location/reverse?lat=${lat}&lon=${lon}`
     );
     const address = response.data.display_name;
     locationCache.reverse[cacheKey] = address;
@@ -33,8 +31,8 @@ export const forwardGeocode = async (address) => {
   }
 
   try {
-    const response = await axios.get(
-      `/api/locationiq/search.php?key=${LOCATIONIQ_API_KEY}&q=${encodeURIComponent(address)}&format=json`
+    const response = await client.get(
+      `/location/search?q=${encodeURIComponent(address)}`
     );
     const result = response.data[0];
     if (!result) return null;
@@ -54,17 +52,9 @@ export const forwardGeocode = async (address) => {
 
 export const calculateDistanceAndETA = async (pickup, destination) => {
   try {
-    // Use LocationIQ's directions API with proper coordinate format
-    const response = await axios.get(
-      `/api/locationiq/directions/driving/${pickup.lng},${pickup.lat};${destination.lng},${destination.lat}`,
-      {
-        params: {
-          key: LOCATIONIQ_API_KEY,
-          geometries: 'geojson',
-          overview: 'simplified',
-          alternatives: false
-        }
-      }
+    // Use LocationIQ's directions API with proper coordinate format via backend proxy
+    const response = await client.get(
+      `/location/directions/driving/${pickup.lng},${pickup.lat};${destination.lng},${destination.lat}`
     );
 
     // Check if response has the expected structure

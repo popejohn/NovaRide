@@ -80,9 +80,6 @@ const Navbar = ({ userrole, nav, userverified, profilePic = '', button }) => {
                         )}
 
                         <div className='flex items-center gap-3'>
-                            <div className='hidden lg:block'>
-                                {userverified && !hasInstallmentRole && button}
-                            </div>
 
                             {userverified && (
                                 <div
@@ -192,16 +189,7 @@ const Navbar = ({ userrole, nav, userverified, profilePic = '', button }) => {
                                                 <span className='text-[10px] font-black uppercase tracking-wider text-neutral-600'>{item.label}</span>
                                             </Link>
                                         ))}
-                                        {userverified && !hasInstallmentRole && (
-                                            <Link
-                                                to='/installment-profile-setup'
-                                                className='flex flex-col items-center justify-center p-4 bg-neutral-50 rounded-3xl gap-2 hover:bg-orange-50 transition-colors col-span-2 mt-2'
-                                                onClick={() => setIsMenuOpen(false)}
-                                            >
-                                                <span className='text-orange-500 text-xl'><FaCarSide /></span>
-                                                <span className='text-[10px] font-black uppercase tracking-wider text-neutral-600'>Own a maruwa</span>
-                                            </Link>
-                                        )}
+
                                     </div>
                                 </div>
                             )}

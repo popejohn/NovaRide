@@ -4,9 +4,7 @@ import image1 from "../assets/night-5137487_1920.jpg"
 import image2 from "../assets/maruwa_passenger.png"
 import profilePic from '../assets/placeholderProfile.jpg'
 import image3 from "../assets/maruwa_only.png"
-import { setUser, logout } from "../Redux/verifiedUserslice";
-import client from "../api/client";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import Button from "./Button";
 import { Link } from "react-router-dom";
 import HeroSection from "./HeroSection";
@@ -18,7 +16,6 @@ import FooterSection from "./FooterSection";
 import Nav from "./Nav";
 
 export default function LandingPage() {
-  const dispatch = useDispatch();
   const { user, role, isAuthenticated } = useSelector(state => state.verifiedUser);
 
   const [bookLater, setBookLater] = useState(false);
@@ -40,24 +37,6 @@ export default function LandingPage() {
   ];
 
   const [index, setIndex] = useState(0);
-
-  useEffect(() => {
-    const verifyUser = async () => {
-      const token = localStorage.getItem('nvcr_tk');
-      if (token) {
-        try {
-          const response = await client.get('/auth/verify-token');
-          if (response.data.success) {
-            dispatch(setUser({ user: response.data.data, isAuthenticated: true }));
-          }
-        } catch (error) {
-          console.error('Verification failed:', error);
-          dispatch(logout());
-        }
-      }
-    };
-    verifyUser();
-  }, [dispatch]);
 
   useEffect(() => {
     const interval = setInterval(() => {

@@ -27,10 +27,10 @@ const Mapcontainer = () => {
         const address = await reverseGeocode(lat, lng);
         if (!pickupLocation) {
             dispatch(setPickupLocation(address));
-            dispatch(setPickupCoordinate({ lat, lng }))
+            dispatch(setPickupCoordinate({ lat, lng, address }))
         } else {
             dispatch(setDestination(address));
-            dispatch(setDestinationCoordinate({ lat, lng }))
+            dispatch(setDestinationCoordinate({ lat, lng, address }))
         }
     };
 
@@ -65,7 +65,7 @@ const Mapcontainer = () => {
                                     const { lat, lng } = e.target.getLatLng();
                                     const address = await reverseGeocode(lat, lng);
                                     dispatch(setPickupLocation(address));
-                                    dispatch(setPickupCoordinate({ lat, lng }));
+                                    dispatch(setPickupCoordinate({ lat, lng, address }));
                                 }
                             }}
                         />
@@ -79,7 +79,7 @@ const Mapcontainer = () => {
                                     const { lat, lng } = e.target.getLatLng();
                                     const address = await reverseGeocode(lat, lng);
                                     dispatch(setDestination(address));
-                                    dispatch(setDestinationCoordinate({ lat, lng }));
+                                    dispatch(setDestinationCoordinate({ lat, lng, address }));
                                 }
                             }}
                         />

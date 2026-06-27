@@ -1,10 +1,9 @@
 import { useState, useRef, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
 import { setPickupLocation, setDestination } from '../Redux/riderslice';
 import { setPickupCoordinate, setDestinationCoordinate } from '../Redux/locationSlice';
 import { itemLoaded, itemLoading } from '../Redux/showslice';
-import { setUser, logout } from '../Redux/verifiedUserslice';
+import { setUser } from '../Redux/verifiedUserslice';
 import { toast } from 'react-toastify';
 import client from '../api/client';
 import { getSuggestions } from "../utils/autocomplete";
@@ -12,11 +11,11 @@ import { forwardGeocode, reverseGeocode, calculateDistanceAndETA } from '../util
 
 export const useRideBooking = () => {
     const dispatch = useDispatch();
-    const navigate = useNavigate();
 
     const { pickupLocation, destination } = useSelector((state) => state.getRide);
     const { user, isAuthenticated } = useSelector((state) => state.verifiedUser);
     const { loading } = useSelector(state => state.loader);
+    const { pickupCoordinate, destinationCoordinate } = useSelector((state) => state.location);
 
     const [showCostDist, setShowCostDist] = useState(false);
     const [distance, setDistance] = useState('');
@@ -47,14 +46,26 @@ export const useRideBooking = () => {
         dispatch(itemLoading());
         setShowCostDist(false);
         try {
-            const destCoord = await forwardGeocode(destination);
-            const pickCoord = await forwardGeocode(pickupLocation);
-
-            if (pickCoord?.lat !== undefined && pickCoord?.lng !== undefined) {
-                dispatch(setPickupCoordinate({ lat: pickCoord.lat, lng: pickCoord.lng }));
+            let pickCoord = pickupCoordinate;
+            if (!pickupCoordinate || !pickupCoordinate.lat || pickupCoordinate.address !== pickupLocation) {
+                const forwardRes = await forwardGeocode(pickupLocation);
+                if (forwardRes) {
+                    pickCoord = { lat: forwardRes.lat, lng: forwardRes.lng, address: pickupLocation };
+                    dispatch(setPickupCoordinate(pickCoord));
+                } else {
+                    pickCoord = null;
+                }
             }
-            if (destCoord?.lat !== undefined && destCoord?.lng !== undefined) {
-                dispatch(setDestinationCoordinate({ lat: destCoord.lat, lng: destCoord.lng }));
+
+            let destCoord = destinationCoordinate;
+            if (!destinationCoordinate || !destinationCoordinate.lat || destinationCoordinate.address !== destination) {
+                const forwardRes = await forwardGeocode(destination);
+                if (forwardRes) {
+                    destCoord = { lat: forwardRes.lat, lng: forwardRes.lng, address: destination };
+                    dispatch(setDestinationCoordinate(destCoord));
+                } else {
+                    destCoord = null;
+                }
             }
 
             if (destCoord && pickCoord && destCoord.lat && pickCoord.lat) {
@@ -77,11 +88,11 @@ export const useRideBooking = () => {
     const handleSuggestionClick = (item, type) => {
         if (type === "pickup") {
             dispatch(setPickupLocation(item.display));
-            dispatch(setPickupCoordinate({ lat: item.lat, lng: item.lng }));
+            dispatch(setPickupCoordinate({ lat: item.lat, lng: item.lng, address: item.display }));
             setPickupSuggestions([]);
         } else {
             dispatch(setDestination(item.display));
-            dispatch(setDestinationCoordinate({ lat: item.lat, lng: item.lng }));
+            dispatch(setDestinationCoordinate({ lat: item.lat, lng: item.lng, address: item.display }));
             setDestinationSuggestions([]);
         }
     };
@@ -124,20 +135,36 @@ export const useRideBooking = () => {
                     
                     // Reverse geocode the fresh coordinates to get current address
                     const address = await reverseGeocode(latitude, longitude);
-                    
-                    console.log(`[Location] Reverse geocoded to: ${address}`);
-                    
-                    // Update the pickup location with fresh data
-                    dispatch(setPickupLocation(address));
-                    setPickupSuggestions([]); // Clear any suggestions
-                    
-                    toast.success(`📍 Location updated: ${address}`, { autoClose: 2500 });
+                    const normalizedAddress = (address || '').toLowerCase().trim();
+                    const isAddressLookupFailure =
+                        !address ||
+                        normalizedAddress.includes('unable to retrieve location') ||
+                        normalizedAddress.includes('unable to retrieve address');
+
+                    if (isAddressLookupFailure) {
+                        // Keep coordinates, but avoid showing an error text in the pickup input
+                        const fallbackLocation = 'Current Location';
+                        dispatch(setPickupLocation(fallbackLocation));
+                        dispatch(setPickupCoordinate({ lat: latitude, lng: longitude, address: fallbackLocation }));
+                        setPickupSuggestions([]);
+                        toast.warning("Using GPS coordinates (address lookup unavailable)", { autoClose: 2000 });
+                    } else {
+                        console.log(`[Location] Reverse geocoded to: ${address}`);
+
+                        // Update the pickup location with fresh data
+                        dispatch(setPickupLocation(address));
+                        dispatch(setPickupCoordinate({ lat: latitude, lng: longitude, address: address }));
+                        setPickupSuggestions([]); // Clear any suggestions
+
+                        toast.success(`📍 Location updated: ${address}`, { autoClose: 2500 });
+                    }
                 } catch (error) {
                     console.error("Error reverse geocoding:", error);
                     
                     // Even if address lookup fails, we have valid coordinates from device
-                    const fallbackLocation = `📍 Current Location (${latitude.toFixed(4)}, ${longitude.toFixed(4)})`;
+                    const fallbackLocation = 'Current Location';
                     dispatch(setPickupLocation(fallbackLocation));
+                    dispatch(setPickupCoordinate({ lat: latitude, lng: longitude, address: fallbackLocation }));
                     toast.warning("Using GPS coordinates (address lookup unavailable)", { autoClose: 2000 });
                 } finally {
                     dispatch(itemLoaded());

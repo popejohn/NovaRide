@@ -1,16 +1,34 @@
 import React from "react";
-import { FaLocationArrow } from "react-icons/fa";
-import { TbLocationDown } from "react-icons/tb";
-import { setPickupLocation, setDestination } from '../Redux/riderslice';
-import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import LocationSearch from "./Booking/LocationSearch";
 import Button from "./Button";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import map from "../assets/map.png";
+import { useRideBooking } from "../hooks/useRideBooking";
 
 const OrderRideSection = ({ bookLater, setBookLater, startDate, setStartDate }) => {
-  const dispatch = useDispatch();
-  const { pickupLocation, destination } = useSelector((state) => state.getRide);
+  const navigate = useNavigate();
+  const {
+    pickupLocation,
+    destination,
+    pickupSuggestions,
+    destinationSuggestions,
+    activeInput,
+    handleLocationChange,
+    handleSuggestionClick,
+    handleUseMyLocation,
+    clearInput,
+    isAuthenticated
+  } = useRideBooking();
+
+  const handleOrderRide = () => {
+    if (isAuthenticated) {
+      navigate('/bookride');
+    } else {
+      navigate('/login');
+    }
+  };
 
   return (
     <section className="px-4 sm:px-8 md:px-16 lg:px-36 bg-white flex flex-col md:flex-row justify-center items-center w-full gap-4 md:gap-8 lg:gap-26 mt-8 md:mt-16 lg:mt-40">
@@ -20,27 +38,30 @@ const OrderRideSection = ({ bookLater, setBookLater, startDate, setStartDate }) 
           <p className="-mt-10 text-sm md:text-md text-stone-500 font-semibold">Order a maruwa to any destination of your choice</p>
         </div>
 
-        <div className="mt-8 w-full md:w-3/4">
-          <div className="rounded-sm bg-stone-200 h-12 px-2 w-full flex items-center">
-            <input
-              type="text"
-              value={pickupLocation}
-              placeholder="Current location"
-              className="h-full placeholder:font-semibold w-full border-0 outline-0"
-              onChange={(e) => dispatch(setPickupLocation(e.target.value))}
-            />
-            <FaLocationArrow />
-          </div>
-          <div className="rounded-sm bg-stone-200 h-12 px-2 w-full mt-5 flex items-center">
-            <input
-              type="text"
-              value={destination}
-              placeholder="Destination"
-              className="h-full placeholder:font-semibold w-full border-0 outline-0"
-              onChange={(e) => dispatch(setDestination(e.target.value))}
-            />
-            <TbLocationDown />
-          </div>
+        <div className="mt-8 w-full md:w-3/4 space-y-4">
+          <LocationSearch
+            type="pickup"
+            theme="light"
+            value={pickupLocation}
+            placeholder="Pick-up location"
+            suggestions={activeInput === "pickup" ? pickupSuggestions : []}
+            onValueChange={(val) => handleLocationChange(val, "pickup")}
+            onSuggestionClick={(item) => handleSuggestionClick(item, "pickup")}
+            onClear={() => clearInput("pickup")}
+            onUseMyLocation={handleUseMyLocation}
+          />
+
+          <LocationSearch
+            type="destination"
+            theme="light"
+            value={destination}
+            placeholder="Destination"
+            suggestions={activeInput === "destination" ? destinationSuggestions : []}
+            onValueChange={(val) => handleLocationChange(val, "destination")}
+            onSuggestionClick={(item) => handleSuggestionClick(item, "destination")}
+            onClear={() => clearInput("destination")}
+          />
+
           {bookLater && (
             <>
               <hr className="mt-5 border-2 border-gray-100" />
@@ -54,8 +75,12 @@ const OrderRideSection = ({ bookLater, setBookLater, startDate, setStartDate }) 
             </>
           )}
           <div className="flex justify-start items-end gap-3 mt-5 group">
-            <Button text={'Order Ride'} classes={'bg-black font-bold py-2 px-4 md:py-3 md:px-5 rounded-md text-white hover:scale-105'} />
-            <div className="flex flex-col" onClick={() => setBookLater(!bookLater)}>
+            <Button 
+              text={'Order Ride'} 
+              classes={'bg-black font-bold py-2 px-4 md:py-3 md:px-5 rounded-md text-white hover:scale-105 active:scale-95 transition-all'} 
+              onClick={handleOrderRide}
+            />
+            <div className="flex flex-col cursor-pointer" onClick={() => setBookLater(!bookLater)}>
               Book for a later date
               <div className="bg-stone-300 h-1 rounded-e-full rounded-s-full">
                 <div className="w-1 h-1 rounded-e-full rounded-s-full transition-all duration-300 group-hover:w-full group-hover:bg-black"></div>

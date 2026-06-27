@@ -86,6 +86,7 @@ const GuarantorsStep = ({ formik }) => {
                onChange={formik.handleChange}
                onBlur={formik.handleBlur}
                name="g1Income"
+               min="0"
                error={formik.touched.g1Income && formik.errors.g1Income}
              />
            </div>
@@ -174,6 +175,7 @@ const GuarantorsStep = ({ formik }) => {
                onChange={formik.handleChange}
                onBlur={formik.handleBlur}
                name="g2Income"
+               min="0"
                error={formik.touched.g2Income && formik.errors.g2Income}
              />
            </div>

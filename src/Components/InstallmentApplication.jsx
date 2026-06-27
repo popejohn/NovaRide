@@ -74,7 +74,7 @@ const InstallmentApplication = () => {
       termsAccepted: false
     },
     validationSchema: Yup.object({
-      downPayment: Yup.number().min(500000, 'Minimum down payment is ₦500,000').required('Down payment is required'),
+      downPayment: Yup.number().min(0, 'Down payment cannot be negative').min(500000, 'Minimum down payment is ₦500,000').required('Down payment is required'),
       preferredTenure: Yup.number().oneOf([12, 24, 36, 48]).required('Please select a payment tenure'),
       termsAccepted: Yup.boolean().oneOf([true], 'You must accept the terms and conditions')
     }),
@@ -229,6 +229,7 @@ const InstallmentApplication = () => {
                     onBlur={formik.handleBlur}
                     name="downPayment"
                     placeholder="500000"
+                    min="0"
                   />
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Preferred Tenure</label>

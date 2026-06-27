@@ -6,7 +6,7 @@ import passanger from "../assets/alight.png";
 
 const InstallmentSection = () => {
   const token = useSelector((state) => state.auth.token);
-  const destination = token ? "/installment-profile-setup" : "/login";
+  const destination = "/login";
 
   return (
     <section className="py-8 md:py-16 px-4 sm:px-8 md:px-16 lg:px-36 bg-white flex flex-col md:flex-row items-center w-full gap-4 md:gap-8 lg:gap-26 my-20 md:my-40">

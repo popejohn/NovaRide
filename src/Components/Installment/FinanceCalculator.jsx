@@ -38,7 +38,8 @@ export const FinanceCalculator = ({ installment }) => {
             <input
               type="number"
               value={extraPayment}
-              onChange={(e) => setExtraPayment(Number(e.target.value))}
+              onChange={(e) => setExtraPayment(Math.max(0, Number(e.target.value) || 0))}
+              min="0"
               className="w-full px-8 py-5 rounded-[1.5rem] bg-neutral-50 border-2 border-neutral-100 focus:border-orange-500/30 font-black text-neutral-900 outline-none transition-all"
               placeholder="Enter amount"
             />
@@ -49,8 +50,8 @@ export const FinanceCalculator = ({ installment }) => {
             <input
               type="number"
               value={newTenure}
-              onChange={(e) => setNewTenure(Number(e.target.value))}
-              min="1"
+              onChange={(e) => setNewTenure(Math.max(0, Number(e.target.value) || 0))}
+              min="0"
               max={installment.remainingMonths}
               className="w-full px-8 py-5 rounded-[1.5rem] bg-neutral-50 border-2 border-neutral-100 focus:border-orange-500/30 font-black text-neutral-900 outline-none transition-all"
             />

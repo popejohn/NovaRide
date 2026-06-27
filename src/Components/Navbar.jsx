@@ -3,7 +3,7 @@ import novaLogo from '../assets/nova.png'
 import '../App.css'
 import Nav from './Nav'
 import Button from './Button'
-import { Link, useNavigate, useLocation } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { FaBars, FaTimes, FaUser, FaWallet, FaCarSide, FaQuestionCircle, FaChevronDown } from 'react-icons/fa'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useDispatch } from 'react-redux'
@@ -14,7 +14,6 @@ import { getPredominantRole } from '../utils/roleUtils'
 const Navbar = ({ userrole, nav, userverified, profilePic = '', button }) => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const location = useLocation();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
@@ -23,6 +22,7 @@ const Navbar = ({ userrole, nav, userverified, profilePic = '', button }) => {
         navigate('/login');
         setIsMenuOpen(false);
         setIsDropdownOpen(false);
+        localStorage.removeItem('nvcr_tk');
     };
 
     const predominantRole = getPredominantRole(userrole);
@@ -71,7 +71,7 @@ const Navbar = ({ userrole, nav, userverified, profilePic = '', button }) => {
 
                     {/* Actions Section */}
                     <div className='flex items-center gap-4'>
-                            {!userverified && location.pathname === '/' && (
+                            {!userverified && (
                             <Link to={'/login'}>
                                 <button className='font-bold text-sm uppercase tracking-widest bg-neutral-100 text-neutral-700 hover:bg-neutral-200 hover:text-orange-500 transition-all px-6 py-2.5 rounded-xl'>
                                     Login

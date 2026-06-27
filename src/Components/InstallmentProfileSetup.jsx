@@ -49,12 +49,12 @@ const InstallmentProfileSetup = () => {
       state: ''
     },
     validationSchema: Yup.object({
-      firstname: Yup.string().required('First name is required'),
-      lastname: Yup.string().required('Last name is required'),
+      firstname: Yup.string().required('First name is required').min(2, 'Enter a valid first name'),
+      lastname: Yup.string().required('Last name is required').min(2, 'Enter a valid last name'),
       phone: Yup.string().matches(/^0\d{10}$/, 'Please enter a valid phone number').required('Phone number is required'),
       email: Yup.string().email('Invalid email address').required('Email is required'),
       dateOfBirth: Yup.date().required('Date of birth is required'),
-      gender: Yup.string().oneOf(['male', 'female', 'other']).required('Gender is required'),
+      gender: Yup.string().oneOf(['male', 'female']).required('Gender is required'),
       maritalStatus: Yup.string().oneOf(['single', 'married', 'divorced', 'widowed']).required('Marital status is required'),
       address: Yup.string().required('Address is required'),
       city: Yup.string().required('City is required'),
@@ -87,7 +87,7 @@ const InstallmentProfileSetup = () => {
       g1Address: Yup.string().required('Address is required'),
       g1Employer: Yup.string().required('Employer name is required'),
       g1Job: Yup.string().required('Job title is required'),
-      g1Income: Yup.number().min(300000, 'Minimum income is ₦300,000').required('Income is required'),
+      g1Income: Yup.number().min(0, 'Income cannot be negative').min(300000, 'Minimum income is ₦300,000').required('Income is required'),
       g2Name: Yup.string().required('Guarantor 2 name is required'),
       g2Phone: Yup.string().matches(/^0\d{10}$/, 'Invalid phone number').required('Guarantor 2 phone is required'),
       g2Relationship: Yup.string().required('Relationship is required'),
@@ -95,6 +95,7 @@ const InstallmentProfileSetup = () => {
       g2Employer: Yup.string().required('Employer name is required'),
       g2Job: Yup.string().required('Job title is required'),
       g2Income: Yup.number()
+        .min(0, 'Income cannot be negative')
         .min(300000, 'Minimum income is ₦300,000')
         .required('Income is required')
         .test('at-least-one-500k', 'At least one guarantor must earn ₦500,000 or more', function(value) {
@@ -115,9 +116,9 @@ const InstallmentProfileSetup = () => {
     },
     validationSchema: Yup.object({
       idType: Yup.string().oneOf(['national-id', 'drivers-license', 'international-passport']).required('ID type is required'),
-      idNumber: Yup.string().required('ID number is required'),
+      idNumber: Yup.number("Enter a valid ID number").required('ID number is required'),
       idExpiry: Yup.date().min(new Date(), 'ID must not be expired').required('ID expiry date is required').nullable(),
-      bvn: Yup.string().matches(/^\d{11}$/, 'BVN must be 11 digits').required('BVN is required'),
+      bvn: Yup.number().matches(/^\d{11}$/, 'BVN must be 11 digits').required('BVN is required'),
       nin: Yup.string().matches(/^\d{11}$/, 'NIN must be 11 digits').required('NIN is required')
     }),
     onSubmit: () => setCurrentStep(4)

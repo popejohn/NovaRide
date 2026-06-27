@@ -135,20 +135,34 @@ export const useRideBooking = () => {
                     
                     // Reverse geocode the fresh coordinates to get current address
                     const address = await reverseGeocode(latitude, longitude);
-                    
-                    console.log(`[Location] Reverse geocoded to: ${address}`);
-                    
-                    // Update the pickup location with fresh data
-                    dispatch(setPickupLocation(address));
-                    dispatch(setPickupCoordinate({ lat: latitude, lng: longitude, address: address }));
-                    setPickupSuggestions([]); // Clear any suggestions
-                    
-                    toast.success(`📍 Location updated: ${address}`, { autoClose: 2500 });
+                    const normalizedAddress = (address || '').toLowerCase().trim();
+                    const isAddressLookupFailure =
+                        !address ||
+                        normalizedAddress.includes('unable to retrieve location') ||
+                        normalizedAddress.includes('unable to retrieve address');
+
+                    if (isAddressLookupFailure) {
+                        // Keep coordinates, but avoid showing an error text in the pickup input
+                        const fallbackLocation = 'Current Location';
+                        dispatch(setPickupLocation(fallbackLocation));
+                        dispatch(setPickupCoordinate({ lat: latitude, lng: longitude, address: fallbackLocation }));
+                        setPickupSuggestions([]);
+                        toast.warning("Using GPS coordinates (address lookup unavailable)", { autoClose: 2000 });
+                    } else {
+                        console.log(`[Location] Reverse geocoded to: ${address}`);
+
+                        // Update the pickup location with fresh data
+                        dispatch(setPickupLocation(address));
+                        dispatch(setPickupCoordinate({ lat: latitude, lng: longitude, address: address }));
+                        setPickupSuggestions([]); // Clear any suggestions
+
+                        toast.success(`📍 Location updated: ${address}`, { autoClose: 2500 });
+                    }
                 } catch (error) {
                     console.error("Error reverse geocoding:", error);
                     
                     // Even if address lookup fails, we have valid coordinates from device
-                    const fallbackLocation = `📍 Current Location (${latitude.toFixed(4)}, ${longitude.toFixed(4)})`;
+                    const fallbackLocation = 'Current Location';
                     dispatch(setPickupLocation(fallbackLocation));
                     dispatch(setPickupCoordinate({ lat: latitude, lng: longitude, address: fallbackLocation }));
                     toast.warning("Using GPS coordinates (address lookup unavailable)", { autoClose: 2000 });

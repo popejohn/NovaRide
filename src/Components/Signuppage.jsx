@@ -32,8 +32,8 @@ function SignUp() {
       role: ""
     },
     validationSchema: Yup.object({
-      firstname: Yup.string().required("First name is required"),
-      lastname: Yup.string().required("Last name is required"),
+      firstname: Yup.string().required("First name is required").min(2, "Please enter a valid first name"),
+      lastname: Yup.string().required("Last name is required").min(2, "Please enter a valid last name"),
       email: Yup.string().email("Please enter a valid email").required("Email is required"),
       phone: Yup.string().matches(/^0\d{10}$/, "Please enter a valid phone number").required("Phone number is required"),
       password: Yup.string().required('Password is required').matches(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/, "Must be 8+ chars with letters & numbers"),

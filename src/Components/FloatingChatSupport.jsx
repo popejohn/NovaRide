@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import axios from 'axios';
 import { io } from 'socket.io-client';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaComments, FaTimes, FaPaperPlane, FaUserShield } from 'react-icons/fa';
@@ -28,16 +29,14 @@ const FloatingChatSupport = () => {
     if (!token) return;
     const checkActiveChat = async () => {
       try {
-        const response = await fetch('/api/support/my-chat', {
+        const response = await axios.get(`${apiUrl}/support/my-chat`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
-        if (response.ok) {
-          const data = await response.json();
-          if (data.chat) {
-            setChat(data.chat);
-            setMessages(data.chat.messages || []);
-            initSocket(data.chat._id);
-          }
+        const data = response.data;
+        if (data.chat) {
+          setChat(data.chat);
+          setMessages(data.chat.messages || []);
+          initSocket(data.chat._id);
         }
       } catch (error) {
         console.error('Error checking active support chat:', error);
@@ -100,19 +99,20 @@ const FloatingChatSupport = () => {
   const startChat = async () => {
     try {
       setConnecting(true);
-      const response = await fetch('/api/support/start', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+      const response = await axios.post(
+        `${apiUrl}/support/start`,
+        {},
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
         }
-      });
-      if (response.ok) {
-        const data = await response.json();
-        setChat(data.chat);
-        setMessages([]);
-        initSocket(data.chat._id);
-      }
+      );
+      const data = response.data;
+      setChat(data.chat);
+      setMessages([]);
+      initSocket(data.chat._id);
     } catch (error) {
       console.error('Error starting support chat:', error);
     } finally {
@@ -125,17 +125,16 @@ const FloatingChatSupport = () => {
     const messageText = inputText.trim();
     setInputText('');
     try {
-      const response = await fetch('/api/support/message', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({ text: messageText })
-      });
-      if (!response.ok) {
-        console.error('Failed to send message via API');
-      }
+      await axios.post(
+        `${apiUrl}/support/message`,
+        { text: messageText },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
+        }
+      );
     } catch (error) {
       console.error('Error sending support message:', error);
     }

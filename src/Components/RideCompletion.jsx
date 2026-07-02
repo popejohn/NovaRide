@@ -6,7 +6,7 @@ import Navbar from './Navbar';
 import OtherNav from './VerifiedNav';
 import Button from './Button';
 import { FaStar, FaMapMarkerAlt, FaClock, FaCar, FaCheckCircle } from 'react-icons/fa';
-import axios from 'axios';
+import api from '../services/axios';
 
 const StarRating = ({ rating, onRatingChange }) => {
   return (
@@ -45,7 +45,7 @@ const RideCompletion = () => {
       }
       try {
         const token = localStorage.getItem('nvcr_tk');
-        const response = await axios.get(`/api/ride/${rideId}`, {
+        const response = await api.get(`/ride/${rideId}`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         setRideDetails(response.data.ride);
@@ -62,7 +62,7 @@ const RideCompletion = () => {
   const handleSubmitRating = async () => {
     try {
       const token = localStorage.getItem('nvcr_tk');
-      await axios.post(`/api/ride/${rideId}/rate`, {
+      await api.post(`/ride/${rideId}/rate`, {
         rating,
         feedback
       }, {
@@ -259,3 +259,6 @@ const RideCompletion = () => {
 };
 
 export default RideCompletion;
+
+
+

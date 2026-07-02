@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { io } from 'socket.io-client';
-import axios from 'axios';
+import api from '../services/axios';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
@@ -96,8 +96,6 @@ export const useLiveTracking = (rideId, user, userRoles) => {
     const token = localStorage.getItem('nvcr_tk');
 
     if (user && user._id && token && rideId) {
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-      
       const connectSocket = () => {
         socket = io(apiUrl, { 
           auth: { token },
@@ -205,7 +203,7 @@ export const useLiveTracking = (rideId, user, userRoles) => {
     if (!complaintText.trim()) return false;
     try {
       const token = localStorage.getItem('nvcr_tk');
-      await axios.post(`/api/ride/${rideId}/complaint`, {
+      await api.post(`/api/ride/${rideId}/complaint`, {
         text: complaintText,
         role: isRider ? 'rider' : 'passenger'
       }, {
@@ -251,3 +249,8 @@ function getDistance(loc1, loc2) {
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   return R * c;
 }
+
+
+
+
+

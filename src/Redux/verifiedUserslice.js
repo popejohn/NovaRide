@@ -59,3 +59,6 @@ export const verifiedUserSlice = createSlice({
 
 export const { setUser, setProfileCompleted, logout, setOnlineStatus } = verifiedUserSlice.actions;
 export default verifiedUserSlice.reducer;
+
+
+

@@ -49,3 +49,7 @@ const WalletPanel = ({ balance = 0 }) => (
 );
 
 export default WalletPanel;
+
+
+
+

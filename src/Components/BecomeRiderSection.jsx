@@ -27,3 +27,6 @@ const BecomeRiderSection = () => {
 };
 
 export default BecomeRiderSection;
+
+
+

@@ -30,3 +30,6 @@ const InstallmentSection = () => {
 };
 
 export default InstallmentSection;
+
+
+

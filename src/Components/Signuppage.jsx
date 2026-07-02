@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Button from "./Button";
 import Input from "./Input";
 import { useNavigate, Link } from "react-router-dom";
-import axios from "axios";
+import api from '../services/axios';
 import { useSelector, useDispatch } from "react-redux";
 import { signupStart, signupFailure, signupSuccess } from "../Redux/authslice";
 import { useFormik } from "formik";
@@ -42,8 +42,7 @@ function SignUp() {
     }),
     onSubmit: (values) => {
       dispatch(signupStart());
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-      axios.post(`${apiUrl}/auth/signup`, values)
+      api.post('/auth/signup', values)
         .then(res => {
           toast.success('Welcome to the Nova family!');
           setTimeout(() => {
@@ -218,3 +217,9 @@ function SignUp() {
 }
 
 export default SignUp;
+
+
+
+
+
+

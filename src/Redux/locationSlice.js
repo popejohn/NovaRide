@@ -22,3 +22,7 @@ export const locationSlice = createSlice({
 export const { setPickupCoordinate, setDestinationCoordinate } = locationSlice.actions;
 
 export default locationSlice.reducer;
+
+
+
+

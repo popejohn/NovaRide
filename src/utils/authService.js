@@ -1,13 +1,13 @@
 // Auth service to handle authentication operations
 // Abstracts HTTP calls and state management
-import client from '../api/client.js';
+import api from '../services/axios';
 import StorageService from './storageService.js';
 import RoleService from './roleService.js';
 
 class AuthService {
   static async login(credentials) {
     try {
-      const response = await client.post('/auth/login', credentials);
+      const response = await api.post('/auth/login', credentials);
       const { token, user } = response.data.data;
 
       // Store token
@@ -26,7 +26,7 @@ class AuthService {
 
   static async signup(userData) {
     try {
-      const response = await client.post('/auth/signup', userData);
+      const response = await api.post('/auth/signup', userData);
       return {
         success: true,
         data: response.data
@@ -38,7 +38,7 @@ class AuthService {
 
   static async verifyToken() {
     try {
-      const response = await client.get('/auth/verify-token');
+      const response = await api.get('/auth/verify-token');
       return {
         success: true,
         user: response.data.data
@@ -54,3 +54,6 @@ class AuthService {
 }
 
 export default AuthService;
+
+
+

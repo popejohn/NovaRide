@@ -41,3 +41,6 @@ const HeroSection = ({ messages, index }) => {
 };
 
 export default HeroSection;
+
+
+

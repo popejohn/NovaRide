@@ -5,7 +5,7 @@ import { setPickupCoordinate, setDestinationCoordinate } from '../Redux/location
 import { itemLoaded, itemLoading } from '../Redux/showslice';
 import { setUser } from '../Redux/verifiedUserslice';
 import { toast } from 'react-toastify';
-import client from '../api/client';
+import api from '../services/axios';
 import { getSuggestions } from "../utils/autocomplete";
 import { forwardGeocode, reverseGeocode, calculateDistanceAndETA } from '../utils/reverseGeo';
 
@@ -29,7 +29,7 @@ export const useRideBooking = () => {
     useEffect(() => {
         const token = localStorage.getItem('nvcr_tk');
         if (token && !user) {
-            client.get('/auth/verify-token')
+            api.get('/auth/verify-token')
                 .then((res) => {
                     if (res.data && res.data.data) {
                         dispatch(setUser({ user: res.data.data, isAuthenticated: true }));
@@ -244,3 +244,7 @@ export const useRideBooking = () => {
         clearInput
     };
 };
+
+
+
+

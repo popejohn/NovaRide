@@ -8,7 +8,7 @@ import * as Yup from 'yup';
 import { FaUser, FaIdCard, FaBriefcase, FaHome, FaMoneyBillWave, FaCalculator, FaUsers } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import { setProfileCompleted } from '../Redux/verifiedUserslice';
-import axios from 'axios';
+import api from '../services/axios';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import PersonalInfoStep from './Installment/PersonalInfoStep';
@@ -207,7 +207,7 @@ const InstallmentProfileSetup = () => {
           paymentDetails: values,
         };
 
-        await axios.post('/api/user/installment-profile', profileData, {
+        await api.post('/user/installment-profile', profileData, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
 
@@ -364,3 +364,6 @@ const InstallmentProfileSetup = () => {
 };
 
 export default InstallmentProfileSetup;
+
+
+

@@ -27,7 +27,7 @@ import 'react-toastify/dist/ReactToastify.css'
 
 import { useSelector, useDispatch } from 'react-redux'
 import { setUser, logout } from './Redux/verifiedUserslice'
-import client from './api/client'
+import api from './services/axios'
 
 
 function App() {
@@ -40,7 +40,7 @@ function App() {
       const token = localStorage.getItem('nvcr_tk');
       if (token) {
         try {
-          const response = await client.get('/auth/verify-token');
+          const response = await api.get('/auth/verify-token');
           if (response.data.success) {
             dispatch(setUser({ user: response.data.data, isAuthenticated: true }));
           } else {
@@ -87,3 +87,7 @@ function App() {
 }
 
 export default App
+
+
+
+

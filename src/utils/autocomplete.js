@@ -1,10 +1,10 @@
-import client from "../api/client";
+import api from '../services/axios';
 
 export const getSuggestions = async (query) => {
   if (!query || query.trim() === "") return [];
 
   try {
-    const response = await client.get(
+    const response = await api.get(
       `/location/autocomplete?q=${encodeURIComponent(query)}`
     );
 
@@ -18,3 +18,7 @@ export const getSuggestions = async (query) => {
     return [];
   }
 };
+
+
+
+

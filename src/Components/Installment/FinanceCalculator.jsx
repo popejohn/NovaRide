@@ -76,3 +76,7 @@ export const FinanceCalculator = ({ installment }) => {
     </div>
   );
 };
+
+
+
+

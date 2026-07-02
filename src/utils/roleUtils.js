@@ -20,3 +20,7 @@ export const getPredominantRole = (roles) => {
 
     return 'passenger';
 };
+
+
+
+

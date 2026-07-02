@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Button from "./Button";
 import Input from "./Input";
 import { useNavigate, Link, useSearchParams } from "react-router-dom";
-import axios from "axios";
+import api from '../services/axios';
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { toast } from 'react-toastify';
@@ -35,9 +35,8 @@ function NewPassword() {
         return;
       }
       setIsLoading(true);
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
       try {
-        const resp = await axios.post(`${apiUrl}/auth/verify-reset-otp`, {
+        const resp = await api.post('/auth/verify-reset-otp', {
           phone,
           otp,
           newPassword: values.newPassword,
@@ -119,3 +118,9 @@ function NewPassword() {
 }
 
 export default NewPassword;
+
+
+
+
+
+

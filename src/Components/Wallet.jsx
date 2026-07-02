@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from './Navbar';
 import OtherNav from './VerifiedNav';
 import Button from './Button';
-import axios from 'axios';
+import api from '../services/axios';
 import { FaWallet, FaCreditCard, FaMoneyBillWave, FaArrowUp, FaArrowDown, FaHistory, FaPlus, FaExchangeAlt, FaReceipt, FaMinus, FaArrowLeft } from 'react-icons/fa';
 import SidebarButton from './Profile/SidebarButton';
 import { PaystackButton } from 'react-paystack';
@@ -27,7 +27,7 @@ const AddMoneyButtonWrapper = ({ userEmail, setWalletBalance, setTransactions })
             reference={(new Date()).getTime().toString()}
             onSuccess={async (transaction) => {
                 try {
-                    await axios.post('/api/paystack/verify-wallet-funding', {
+                    await api.post('/paystack/verify-wallet-funding', {
                         reference: transaction.reference
                     }, {
                         headers: { Authorization: `Bearer ${token}` }
@@ -35,7 +35,7 @@ const AddMoneyButtonWrapper = ({ userEmail, setWalletBalance, setTransactions })
                     
                     alert("Wallet funded successfully!");
                     // refresh data
-                    const refreshRes = await axios.get('/api/user/wallet-data', {
+                    const refreshRes = await api.get('/user/wallet-data', {
                         headers: { 'Authorization': `Bearer ${token}` }
                     });
                     setWalletBalance(refreshRes.data.walletBalance);
@@ -69,7 +69,7 @@ const WithdrawButtonWrapper = ({ walletBalance, setWalletBalance, setTransaction
 
         try {
             const token = localStorage.getItem('nvcr_tk');
-            const response = await axios.post('/api/paystack/withdraw', {
+            const response = await api.post('/paystack/withdraw', {
                 amount: amountToWithdraw
             }, {
                 headers: { Authorization: `Bearer ${token}` }
@@ -78,7 +78,7 @@ const WithdrawButtonWrapper = ({ walletBalance, setWalletBalance, setTransaction
             alert("Withdrawal request submitted successfully! You will receive ₦" + amountToWithdraw.toLocaleString() + " within 1-3 business days.");
             
             // Refresh wallet data
-            const refreshRes = await axios.get('/api/user/wallet-data', {
+            const refreshRes = await api.get('/user/wallet-data', {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             setWalletBalance(refreshRes.data.walletBalance);
@@ -146,7 +146,7 @@ const Wallet = () => {
     const fetchWalletData = async () => {
       try {
         const token = localStorage.getItem('nvcr_tk');
-        const response = await axios.get('/api/user/wallet-data', {
+        const response = await api.get('/user/wallet-data', {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         setWalletBalance(response.data.walletBalance);
@@ -394,3 +394,7 @@ const Wallet = () => {
 };
 
 export default Wallet;
+
+
+
+

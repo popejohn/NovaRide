@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../services/axios';
 import { useDispatch } from 'react-redux';
 import { setSelectedRider } from '../Redux/riderslice';
 
@@ -20,7 +20,7 @@ export const useDriverSelectionManager = (rideId, bookingStatus, setBookingStatu
 
         if (rideId) {
           try {
-            const rideResponse = await axios.get(`/api/ride/${rideId}`, {
+            const rideResponse = await api.get(`/api/ride/${rideId}`, {
               headers: { Authorization: `Bearer ${token}` }
             });
             currentRideDetails = rideResponse.data.ride;
@@ -37,7 +37,7 @@ export const useDriverSelectionManager = (rideId, bookingStatus, setBookingStatu
           const lng = currentRideDetails?.pickupCoordinates?.coordinates[0] || rideDetails?.pickupCoordinates?.coordinates[0];
 
           if (lat && lng) {
-            const driverResponse = await axios.get('/api/rider/nearby-drivers', {
+            const driverResponse = await api.get('/api/rider/nearby-drivers', {
               params: { lat, lng, maxDistance: 5000 }
             });
 
@@ -89,7 +89,7 @@ export const useDriverSelectionManager = (rideId, bookingStatus, setBookingStatu
       try {
         setBookingStatus('waiting');
         const token = localStorage.getItem('nvcr_tk');
-        const response = await axios.post(`/api/ride/${rideId}/assign-driver`, {
+        const response = await api.post(`/api/ride/${rideId}/assign-driver`, {
           driverId: selectedDriver.id
         }, {
           headers: { Authorization: `Bearer ${token}` }
@@ -118,3 +118,7 @@ export const useDriverSelectionManager = (rideId, bookingStatus, setBookingStatu
     setSelectedDriver
   };
 };
+
+
+
+

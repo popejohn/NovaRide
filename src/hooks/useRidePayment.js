@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import client from '../api/client';
+import api from '../services/axios';
 import { toast } from 'react-toastify';
 
 export const useRidePayment = (distance, duration, pickupLocation, destination, pickupCoordinate, destinationCoordinate) => {
@@ -16,7 +16,7 @@ export const useRidePayment = (distance, duration, pickupLocation, destination, 
             console.log('🎫 Ride Booking: Checking balance for fare ₦' + fare);
 
             // Check balance first
-            const walletResponse = await client.get('/user/wallet-data', {
+            const walletResponse = await api.get('/user/wallet-data', {
                 headers: { 
                     Authorization: `Bearer ${token}`
                 }
@@ -98,7 +98,7 @@ export const useRidePayment = (distance, duration, pickupLocation, destination, 
             };
 
             console.log('📤 Ride data:', rideData);
-            const response = await client.post('/ride/create-ride', rideData);
+            const response = await api.post('/ride/create-ride', rideData);
 
             console.log('✅ Ride created:', response.data);
             if (response.status === 200) {
@@ -117,3 +117,7 @@ export const useRidePayment = (distance, duration, pickupLocation, destination, 
         isProcessing
     };
 };
+
+
+
+

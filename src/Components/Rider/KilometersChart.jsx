@@ -38,3 +38,7 @@ const KilometersChart = ({ monthly = [120, 180, 210, 150, 200, 260] }) => {
 };
 
 export default KilometersChart;
+
+
+
+

@@ -72,3 +72,7 @@ const ClickToReveal = ({ distance, duration, cancelRide }) => {
 };
 
 export default ClickToReveal;
+
+
+
+

@@ -187,3 +187,7 @@ const PersonalInfoStep = ({ formik, profilePicture, onProfilePictureChange }) =>
 };
 
 export default PersonalInfoStep;
+
+
+
+

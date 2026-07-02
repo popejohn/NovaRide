@@ -131,3 +131,6 @@ const MapSection = ({ rideDetails, driverLocation, pickupLocation, destinationLo
 };
 
 export default MapSection;
+
+
+

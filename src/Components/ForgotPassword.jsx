@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Button from "./Button";
 import Input from "./Input";
 import { useNavigate, Link } from "react-router-dom";
-import axios from "axios";
+import api from '../services/axios';
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { toast } from 'react-toastify';
@@ -26,9 +26,8 @@ function ForgotPassword() {
   const resendOtp = async () => {
     if (!phoneNumber) return;
     setIsLoading(true);
-    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
     try {
-      const resp = await axios.post(`${apiUrl}/auth/resend-otp`, { phone: phoneNumber });
+      const resp = await api.post('/auth/resend-otp', { phone: phoneNumber });
       const data = resp?.data?.data || resp?.data || {};
       if (data?.expiresAt) {
         setOtpExpiresAt(new Date(data.expiresAt));
@@ -56,9 +55,8 @@ function ForgotPassword() {
     }),
     onSubmit: async (values) => {
       setIsLoading(true);
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
       try {
-        const resp = await axios.post(`${apiUrl}/auth/forgot-password`, {
+        const resp = await api.post('/auth/forgot-password', {
           phone: values.phone
         });
         toast.success('OTP sent to your phone number');
@@ -105,9 +103,8 @@ function ForgotPassword() {
     onSubmit: async (values) => {
       if (otpVerifying) return;
       setOtpVerifying(true);
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
       try {
-        const resp = await axios.post(`${apiUrl}/auth/verify-otp`, {
+        const resp = await api.post('/auth/verify-otp', {
           phone: phoneNumber,
           otp: values.otp,
         });
@@ -328,3 +325,8 @@ function ForgotPassword() {
 }
 
 export default ForgotPassword;
+
+
+
+
+

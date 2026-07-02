@@ -1,8 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
-import axios from 'axios';
+import api from '../services/axios';
 import { io } from 'socket.io-client';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaComments, FaTimes, FaPaperPlane, FaUserShield } from 'react-icons/fa';
+
+const socketUrl = import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace(/\/api$/, '') : 'http://localhost:5000';
+
 const FloatingChatSupport = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [chat, setChat] = useState(null);
@@ -13,7 +16,6 @@ const FloatingChatSupport = () => {
   const socketRef = useRef(null);
   const messagesEndRef = useRef(null);
   const token = localStorage.getItem('nvcr_tk');
-  const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
   // Scroll to bottom helper
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -29,7 +31,7 @@ const FloatingChatSupport = () => {
     if (!token) return;
     const checkActiveChat = async () => {
       try {
-        const response = await axios.get(`${apiUrl}/support/my-chat`, {
+        const response = await api.get('/support/my-chat', {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         const data = response.data;
@@ -55,7 +57,7 @@ const FloatingChatSupport = () => {
       socketRef.current.disconnect();
     }
     setConnecting(true);
-    const socket = io(apiUrl, {
+    const socket = io(socketUrl, {
       auth: { token },
       reconnection: true
     });
@@ -99,8 +101,8 @@ const FloatingChatSupport = () => {
   const startChat = async () => {
     try {
       setConnecting(true);
-      const response = await axios.post(
-        `${apiUrl}/support/start`,
+      const response = await api.post(
+        '/support/start',
         {},
         {
           headers: {
@@ -125,8 +127,8 @@ const FloatingChatSupport = () => {
     const messageText = inputText.trim();
     setInputText('');
     try {
-      await axios.post(
-        `${apiUrl}/support/message`,
+      await api.post(
+        '/support/message',
         { text: messageText },
         {
           headers: {
@@ -297,3 +299,8 @@ const FloatingChatSupport = () => {
   );
 };
 export default FloatingChatSupport;
+
+
+
+
+

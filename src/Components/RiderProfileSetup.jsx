@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import Navbar from './Navbar';
 import OtherNav from './VerifiedNav';
 import Button from './Button';
-import axios from 'axios';
+import api from '../services/axios';
 import { FaCar, FaIdCard, FaCreditCard, FaUser } from 'react-icons/fa';
 import { setUser } from '../Redux/verifiedUserslice';
 import RiderPersonalInfoStep from './Rider/RiderPersonalInfoStep';
@@ -24,8 +24,7 @@ const RiderProfileSetup = () => {
     if (!token) {
       navigate('/login');
     } else {
-        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-        axios.get(`${apiUrl}/rider/get-details`, {
+        api.get('/rider/get-details', {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -180,3 +179,8 @@ const RiderProfileSetup = () => {
 };
 
 export default RiderProfileSetup;
+
+
+
+
+

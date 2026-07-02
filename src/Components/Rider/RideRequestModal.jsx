@@ -134,3 +134,7 @@ const RideRequestModal = ({ ride, onAccept, onDecline, onClose }) => {
 };
 
 export default RideRequestModal;
+
+
+
+

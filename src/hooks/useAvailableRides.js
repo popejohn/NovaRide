@@ -24,7 +24,7 @@ export const useAvailableRides = (isOnline) => {
 
             // Connect to Socket.io for real-time updates
             const token = localStorage.getItem('nvcr_tk');
-            const apiUrl = import.meta.env.VITE_API_URL || 'https://novaride-backend-staging.onrender.com';
+            const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
             
             socket = io(apiUrl, {
                 auth: { token },
@@ -89,3 +89,7 @@ export const useAvailableRides = (isOnline) => {
         refetchRides: fetchRides
     };
 };
+
+
+
+

@@ -70,3 +70,7 @@ const PrevDestinations = ({ query = '', max = 6, onSelect: onSelectProp }) => {
 };
 
 export default PrevDestinations;
+
+
+
+

@@ -23,8 +23,6 @@ export const useRiderSocket = (userId, isOnline, onRideRequest) => {
     useEffect(() => {
         if (isOnline && userId) {
             const token = StorageService.getToken();
-            const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-            
             socketRef.current = io(apiUrl, {
                 auth: { token },
                 reconnection: true,
@@ -85,3 +83,7 @@ export const useRiderSocket = (userId, isOnline, onRideRequest) => {
         isConnected
     };
 };
+
+
+
+

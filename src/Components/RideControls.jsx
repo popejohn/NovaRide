@@ -94,3 +94,6 @@ const RideControls = ({ rideStatus, isPassenger, isRider, updateRideStatus }) =>
 };
 
 export default RideControls;
+
+
+

@@ -92,7 +92,7 @@ const InstallmentApplication = () => {
           application: values
         };
 
-        await axios.post('/api/user/installment-application', applicationData, {
+        await api.post('/user/installment-application', applicationData, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
 
@@ -317,3 +317,6 @@ const InstallmentApplication = () => {
 };
 
 export default InstallmentApplication;
+
+
+

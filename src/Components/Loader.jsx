@@ -18,3 +18,6 @@ const Loader = ({color}) => {
 
 
 export default Loader
+
+
+

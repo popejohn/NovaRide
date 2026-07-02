@@ -59,3 +59,7 @@ const RideStartModal = ({ showStartRideModal, setShowStartRideModal, isRider, up
 };
 
 export default RideStartModal;
+
+
+
+

@@ -83,3 +83,6 @@ const RideDetailsSummary = ({ rideDetails, fetchingRide }) => {
 };
 
 export default RideDetailsSummary;
+
+
+

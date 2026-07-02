@@ -66,3 +66,7 @@ const InstallmentPlanStep = ({ formik, plans }) => {
 };
 
 export default InstallmentPlanStep;
+
+
+
+

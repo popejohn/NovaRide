@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import client from '../api/client';
+import api from '../services/axios';
 import { toast } from 'react-toastify';
 
 export const useRidePaymentAfterDriver = (rideId, rideDetails) => {
@@ -22,7 +22,7 @@ export const useRidePaymentAfterDriver = (rideId, rideDetails) => {
             console.log('💳 Processing payment for ride:', rideId, 'Fare: ₦' + fare);
 
             // Check balance one more time before payment
-            const walletResponse = await client.get('/user/wallet-data', {
+            const walletResponse = await api.get('/user/wallet-data', {
                 headers: { 
                     Authorization: `Bearer ${token}`
                 }
@@ -90,7 +90,7 @@ export const useRidePaymentAfterDriver = (rideId, rideDetails) => {
 
             // Verify payment with backend
             console.log('🔍 Verifying payment with backend...');
-            const verifyResponse = await client.post('/paystack/verify-ride-payment', {
+            const verifyResponse = await api.post('/paystack/verify-ride-payment', {
                 reference: transaction.reference,
                 rideId: rideId
             }, {
@@ -133,3 +133,7 @@ export const useRidePaymentAfterDriver = (rideId, rideDetails) => {
         setIsProcessing
     };
 };
+
+
+
+

@@ -1,7 +1,8 @@
-# TODO: Disable inputs and buttons in Bookride component after clickToReveal
-
-- [x] Add className="inputs-class" to the container div holding inputs and buttons
-- [x] Add disabled={showCostDist} to the pickup input
-- [x] Add disabled={showCostDist} to the destination input
-- [x] Update Book ride button disabled prop to include showCostDist
-- [x] Update Clear button disabled prop to include showCostDist
+- [ ] Create centralized Axios instance at src/services/axios.js
+- [ ] Replace all `client` imports with shared axios instance
+- [ ] Replace backend direct `axios` imports/usages with shared axios instance
+- [ ] Convert API calls to relative paths only (no manual VITE_API_URL concat)
+- [ ] Remove old src/api/client.js
+- [ ] Scan for hard-coded backend URLs and duplicate /api/api patterns
+- [ ] Run frontend build to verify
+- [ ] Prepare modified-files summary and list any non-convertible API calls

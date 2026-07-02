@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import axios from 'axios';
+import api from '../services/axios';
 import { toast } from 'react-toastify';
 import { useDispatch } from 'react-redux';
 import { setProfileCompleted } from '../Redux/verifiedUserslice';
@@ -161,8 +161,7 @@ export const useRiderProfileForm = (user) => {
                     payment: values
                 };
 
-                const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-                const response = await axios.post(`${apiUrl}/rider/create-profile`, profileData, {
+                const response = await api.post('/rider/create-profile', profileData, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                         'Content-Type': 'application/json'
@@ -210,3 +209,9 @@ export const useRiderProfileForm = (user) => {
         getCurrentFormik
     };
 };
+
+
+
+
+
+

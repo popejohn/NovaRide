@@ -47,3 +47,7 @@ const useSessionTimeout = (isAuthenticated, timeoutMs = 30 * 60 * 1000) => {
 };
 
 export default useSessionTimeout;
+
+
+
+

@@ -1,4 +1,4 @@
-// Error handling service to separate concerns from API client
+// Error handling service to separate concerns from API api
 import StorageService from './storageService.js';
 
 class ErrorHandler {
@@ -21,3 +21,6 @@ class ErrorHandler {
 }
 
 export default ErrorHandler;
+
+
+

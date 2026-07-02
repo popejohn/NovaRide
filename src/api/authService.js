@@ -1,17 +1,16 @@
-import client from './client';
-import axios from 'axios';
+import api from '../services/axios';
 
 const authService = {
     updateProfile: async (data) => {
-        return client.put('/auth/update-profile', data);
+        return api.put('/auth/update-profile', data);
     },
 
     changePassword: async (data) => {
-        return client.put('/auth/change-password', data);
+        return api.put('/auth/change-password', data);
     },
 
     updateSecuritySettings: async (data) => {
-        return client.put('/auth/security-settings', data);
+        return api.put('/auth/security-settings', data);
     },
 
     uploadProfilePic: async (formData) => {
@@ -20,8 +19,7 @@ const authService = {
             throw new Error('No authentication token found');
         }
 
-        const apiUrl = import.meta.env.VITE_API_URL || 'https://novaride-backend-staging.onrender.com';
-        return axios.post(`${apiUrl}/auth/upload-profile-pic`, formData, {
+        return api.post(`${apiUrl}/auth/upload-profile-pic`, formData, {
             headers: {
                 Authorization: `Bearer ${token}`,
                 'Content-Type': 'multipart/form-data'
@@ -31,3 +29,9 @@ const authService = {
 };
 
 export default authService;
+
+
+
+
+
+

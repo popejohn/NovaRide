@@ -5,3 +5,7 @@ export function debounce(func, delay = 500) {
     timeout = setTimeout(() => func(...args), delay);
   };
 }
+
+
+
+

@@ -1,4 +1,4 @@
-import client from '../api/client';
+import api from '../services/axios';
 
 const locationCache = {
   forward: {},
@@ -12,7 +12,7 @@ export const reverseGeocode = async (lat, lon) => {
   }
 
   try {
-    const response = await client.get(
+    const response = await api.get(
       `/location/reverse?lat=${lat}&lon=${lon}`
     );
     const address = response.data.display_name;
@@ -31,7 +31,7 @@ export const forwardGeocode = async (address) => {
   }
 
   try {
-    const response = await client.get(
+    const response = await api.get(
       `/location/search?q=${encodeURIComponent(address)}`
     );
     const result = response.data[0];
@@ -53,7 +53,7 @@ export const forwardGeocode = async (address) => {
 export const calculateDistanceAndETA = async (pickup, destination) => {
   try {
     // Use LocationIQ's directions API with proper coordinate format via backend proxy
-    const response = await client.get(
+    const response = await api.get(
       `/location/directions/driving/${pickup.lng},${pickup.lat};${destination.lng},${destination.lat}`
     );
 
@@ -78,4 +78,8 @@ export const calculateDistanceAndETA = async (pickup, destination) => {
 
   }
 };
+
+
+
+
 

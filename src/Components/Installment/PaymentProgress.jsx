@@ -2,7 +2,7 @@ import React from 'react';
 import { FaChartLine } from 'react-icons/fa';
 import { PaystackButton } from 'react-paystack';
 import { motion } from 'framer-motion';
-import axios from 'axios';
+import api from '../../services/axios';
 
 export const PaymentProgress = ({ totalAmount, paidAmount, nextPaymentDate, onPaymentSuccess }) => {
   const progress = (paidAmount / totalAmount) * 100;
@@ -64,7 +64,7 @@ export const PaymentProgress = ({ totalAmount, paidAmount, nextPaymentDate, onPa
           reference={(new Date()).getTime().toString()}
           onSuccess={async (transaction) => {
               try {
-                  await axios.post('/api/paystack/verify-installment-payment', {
+                  await api.post('/paystack/verify-installment-payment', {
                       reference: transaction.reference
                   }, {
                       headers: { Authorization: `Bearer ${token}` }
@@ -85,3 +85,8 @@ export const PaymentProgress = ({ totalAmount, paidAmount, nextPaymentDate, onPa
     </div>
   );
 };
+
+
+
+
+

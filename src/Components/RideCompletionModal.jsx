@@ -59,3 +59,6 @@ const RideCompletionModal = ({ showCompletionModal, setShowCompletionModal, isPa
 };
 
 export default RideCompletionModal;
+
+
+

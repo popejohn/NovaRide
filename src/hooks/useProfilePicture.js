@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import axios from 'axios';
+import api from '../services/axios';
 import { toast } from 'react-toastify';
 import { useDispatch } from 'react-redux';
 import { setUser } from '../Redux/verifiedUserslice';
@@ -33,8 +33,7 @@ export const useProfilePicture = (user) => {
         formData.append('profilePic', file);
 
         try {
-            const apiUrl = import.meta.env.VITE_API_URL || 'https://novaride-backend-staging.onrender.com';
-            const response = await axios.post(`${apiUrl}/auth/upload-profile-pic`, formData, {
+            const response = await api.post('/auth/upload-profile-pic', formData, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                     'Content-Type': 'multipart/form-data'
@@ -129,3 +128,9 @@ export const useProfilePicture = (user) => {
         captureImage
     };
 };
+
+
+
+
+
+

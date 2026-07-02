@@ -20,8 +20,6 @@ export const useDriverSocket = (userId, rideId) => {
     const token = localStorage.getItem('nvcr_tk');
 
     if (userId && token) {
-      const apiUrl = import.meta.env.VITE_API_URL || 'https://novaride-backend-staging.onrender.com';
-      
       socketRef.current = io(apiUrl, {
         auth: { token },
         reconnection: true,
@@ -93,3 +91,8 @@ export const useDriverSocket = (userId, rideId) => {
     socket: socketRef.current
   };
 };
+
+
+
+
+

@@ -52,3 +52,7 @@ const RiderPaymentStep = ({ formik }) => {
 };
 
 export default RiderPaymentStep;
+
+
+
+

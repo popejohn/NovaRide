@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import Navbar from './Navbar';
 import OtherNav from './VerifiedNav';
 import Button from './Button';
-import axios from 'axios';
+import api from '../services/axios';
 import { FaCar, FaCalculator, FaClock, FaMoneyBillWave, FaChartLine, FaMotorcycle, FaMapMarkerAlt } from 'react-icons/fa';
 import { PaystackButton } from 'react-paystack';
 import { motion } from 'framer-motion';
@@ -65,7 +65,7 @@ const InstallmentDashboard = () => {
   const fetchInstallmentData = async () => {
     try {
       const token = localStorage.getItem('nvcr_tk');
-      const response = await axios.get('/api/user/installment-data', {
+      const response = await api.get('/user/installment-data', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       setInstallmentData(response.data.installment);
@@ -263,3 +263,6 @@ const InstallmentDashboard = () => {
 };
 
 export default InstallmentDashboard;
+
+
+

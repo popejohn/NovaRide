@@ -19,7 +19,7 @@ const authService = {
             throw new Error('No authentication token found');
         }
 
-        return api.post(`${apiUrl}/auth/upload-profile-pic`, formData, {
+        return api.post(`/auth/upload-profile-pic`, formData, {
             headers: {
                 Authorization: `Bearer ${token}`,
                 'Content-Type': 'multipart/form-data'

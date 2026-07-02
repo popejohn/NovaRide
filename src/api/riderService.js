@@ -6,21 +6,21 @@ const API_BASE = ''; // Using relative paths as axios might be configured with a
 const riderService = {
     getDetails: async () => {
         const token = localStorage.getItem('nvcr_tk');
-        return api.get('/api/rider/get-details', {
+        return api.get('/rider/get-details', {
             headers: { 'Authorization': `Bearer ${token}` }
         });
     },
 
     getAvailableRides: async () => {
         const token = localStorage.getItem('nvcr_tk');
-        return api.get('/api/ride/available-rides', {
+        return api.get('/ride/available-rides', {
             headers: { 'Authorization': `Bearer ${token}` }
         });
     },
 
     updateLocation: async (latitude, longitude, isAvailable) => {
         const token = localStorage.getItem('nvcr_tk');
-        return api.put('/api/rider/update-location',
+        return api.put('/rider/update-location',
             { latitude, longitude, isAvailable },
             { headers: { 'Authorization': `Bearer ${token}` } }
         );
@@ -28,14 +28,14 @@ const riderService = {
 
     getWalletData: async () => {
         const token = localStorage.getItem('nvcr_tk');
-        return api.get('/api/user/wallet-data', {
+        return api.get('/user/wallet-data', {
             headers: { 'Authorization': `Bearer ${token}` }
         });
     },
 
     getRideHistory: async (role = 'rider') => {
         const token = localStorage.getItem('nvcr_tk');
-        return api.get(`/api/ride/history?role=${role}`, {
+        return api.get(`/ride/history?role=${role}`, {
             headers: { 'Authorization': `Bearer ${token}` }
         });
     }

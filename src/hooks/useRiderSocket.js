@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 import { io } from 'socket.io-client';
 import StorageService from '../utils/storageService.js';
 
+const apiUrl = import.meta.env.VITE_API_URL?.replace(/\/api$/, '') || 'http://localhost:5000';
+
 // Exponential backoff for reconnection
 const getReconnectDelay = (attempt) => {
   const baseDelay = 1000; // 1 second

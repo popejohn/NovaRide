@@ -4,6 +4,8 @@ import api from '../services/axios';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
+const apiUrl = import.meta.env.VITE_API_URL?.replace(/\/api$/, '') || 'http://localhost:5000';
+
 // Exponential backoff for reconnection
 const getReconnectDelay = (attempt) => {
   const baseDelay = 1000; // 1 second
@@ -203,7 +205,7 @@ export const useLiveTracking = (rideId, user, userRoles) => {
     if (!complaintText.trim()) return false;
     try {
       const token = localStorage.getItem('nvcr_tk');
-      await api.post(`/api/ride/${rideId}/complaint`, {
+      await api.post(`/ride/${rideId}/complaint`, {
         text: complaintText,
         role: isRider ? 'rider' : 'passenger'
       }, {

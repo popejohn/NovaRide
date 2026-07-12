@@ -2,24 +2,34 @@
 // This abstracts storage logic from Redux slices
 // User data is NOT persisted to localStorage — only the JWT token is stored.
 // On page refresh, App.jsx re-verifies the token with the backend to restore user state.
+// The rider's online/go-live status IS persisted so it survives page refreshes.
+
+const ONLINE_STATUS_KEY = 'nvcr_rider_online';
 
 class PersistenceService {
   static loadUserState() {
-    // Always return empty defaults — user data is fetched fresh from the API
+    // User data is fetched fresh from the API, but rider online status is persisted.
+    const isOnline = localStorage.getItem(ONLINE_STATUS_KEY) === 'true';
     return {
       user: null,
       role: null,
       isAuthenticated: false,
       profileCompleted: false,
-      isOnline: false,
+      isOnline,
     };
   }
 
-  // No-op: user data must not be written to localStorage
-  static saveUserState(_state) {}
+  // Persist only the rider's online status — user data must not be written to localStorage
+  static saveUserState(state) {
+    if (typeof state.isOnline === 'boolean') {
+      localStorage.setItem(ONLINE_STATUS_KEY, String(state.isOnline));
+    }
+  }
 
-  // No-op: nothing to clear for user data
-  static clearUserState() {}
+  // Clear the online status when the user logs out
+  static clearUserState() {
+    localStorage.removeItem(ONLINE_STATUS_KEY);
+  }
 }
 
 export default PersistenceService;

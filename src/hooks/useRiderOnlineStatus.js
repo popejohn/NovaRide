@@ -46,7 +46,8 @@ export const useRiderOnlineStatus = () => {
                     }
                 }, 60000);
             } catch (error) {
-                dispatch(setOnlineStatus(false));
+                // Don't revert the online status — keep the rider's intent.
+                // The status will be synced on the next location interval.
                 setLocationError(error.message);
                 console.error('Error enabling online status:', error);
             }

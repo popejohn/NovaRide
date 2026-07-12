@@ -2,8 +2,6 @@ import { useState, useEffect, useRef } from 'react';
 import { io } from 'socket.io-client';
 import riderService from '../api/riderService';
 
-const apiUrl = import.meta.env.VITE_API_URL?.replace(/\/api$/, '') || 'http://localhost:5000';
-
 export const useAvailableRides = (isOnline) => {
     const [availableRides, setAvailableRides] = useState([]);
     const socketRef = useRef(null);
@@ -26,7 +24,7 @@ export const useAvailableRides = (isOnline) => {
 
             // Connect to Socket.io for real-time updates
             const token = localStorage.getItem('nvcr_tk');
-            const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+            const apiUrl = import.meta.env.VITE_API_URL || 'https://novaride-backend-staging.onrender.com';
             
             socket = io(apiUrl, {
                 auth: { token },

@@ -45,9 +45,7 @@ const AddMoneyButtonWrapper = ({ userEmail, setWalletBalance, setTransactions })
                     alert("Payment verification failed. Please contact support.");
                 }
             }}
-            onClose={() => {
-                console.log("Payment cancelled.");
-            }}
+            onClose={() => {}}
         />
     );
 };

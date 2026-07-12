@@ -108,7 +108,6 @@ export const useLiveTracking = (rideId, user, userRoles) => {
         });
 
         socket.on('connect', () => {
-          console.log('[Socket] Connected');
           reconnectAttemptRef.current = 0; // Reset on successful connection
           socket.emit('join', user._id);
           socket.emit('joinRide', rideId);
@@ -120,7 +119,7 @@ export const useLiveTracking = (rideId, user, userRoles) => {
         });
 
         socket.on('disconnect', (reason) => {
-          console.log('[Socket] Disconnected:', reason);
+          // disconnected
         });
 
         if (userRoles?.includes('rider') && isRider) {

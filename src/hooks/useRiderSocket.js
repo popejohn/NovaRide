@@ -35,7 +35,6 @@ export const useRiderSocket = (userId, isOnline, onRideRequest) => {
             });
 
             socketRef.current.on('connect', () => {
-                console.log('[Rider Socket] Connected');
                 setIsConnected(true);
                 reconnectAttemptRef.current = 0; // Reset on successful connection
                 socketRef.current.emit('join', userId);
@@ -48,7 +47,6 @@ export const useRiderSocket = (userId, isOnline, onRideRequest) => {
             });
 
             socketRef.current.on('disconnect', (reason) => {
-                console.log('[Rider Socket] Disconnected:', reason);
                 setIsConnected(false);
                 if (reason === 'io server disconnect') {
                     // Manually reconnect if server disconnects
@@ -59,7 +57,6 @@ export const useRiderSocket = (userId, isOnline, onRideRequest) => {
             });
 
             socketRef.current.on('incomingRideRequest', (data) => {
-                console.log('Incoming ride request:', data);
                 // Play notification sound with error handling
                 const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
                 audio.play().catch(e => console.warn('Audio play failed:', e));

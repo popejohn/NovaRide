@@ -62,7 +62,6 @@ const FloatingChatSupport = () => {
       reconnection: true
     });
     socket.on('connect', () => {
-      console.log('[Socket] Connected to support chat');
       setConnecting(false);
       socket.emit('joinSupportChat', chatId);
     });

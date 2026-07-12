@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import api from '../services/axios';
 import { toast } from 'react-toastify';
 
 export const useRidePaymentAfterDriver = (rideId, rideDetails) => {
     const navigate = useNavigate();
     const [isProcessing, setIsProcessing] = useState(false);
+    const user = useSelector(state => state.verifiedUser.user);
 
     const processPaymentForRide = async () => {
         try {
@@ -19,7 +21,6 @@ export const useRidePaymentAfterDriver = (rideId, rideDetails) => {
             }
 
             const fare = rideDetails.fare;
-            console.log('💳 Processing payment for ride:', rideId, 'Fare: ₦' + fare);
 
             // Check balance one more time before payment
             const walletResponse = await api.get('/user/wallet-data', {
@@ -36,22 +37,12 @@ export const useRidePaymentAfterDriver = (rideId, rideDetails) => {
             }
 
             const balance = walletResponse.data.walletBalance;
-            console.log('💰 Wallet Balance:', balance, 'Required Fare:', fare);
             
             // Note: We do not check if balance < fare here because the user is 
             // paying directly with Paystack (card).
 
             // Get user email for Paystack
-            let userEmail = `user_${Date.now()}@novacrest.local`;
-            try {
-                const userStr = localStorage.getItem('verifiedUser');
-                if (userStr) {
-                    const userData = JSON.parse(userStr);
-                    userEmail = userData.email || userEmail;
-                }
-            } catch (e) {
-                console.warn('Could not get user email from storage:', e.message);
-            }
+            const userEmail = user?.email || `user_${Date.now()}@novacrest.local`;
 
             // Return config for PaystackButton component to use
             return {
@@ -79,7 +70,6 @@ export const useRidePaymentAfterDriver = (rideId, rideDetails) => {
 
     const handlePaymentSuccess = async (transaction, rideId, token) => {
         try {
-            console.log('✅ Paystack payment successful:', transaction);
             
             if (!transaction || !transaction.reference) {
                 console.error('❌ Invalid transaction response');
@@ -89,7 +79,6 @@ export const useRidePaymentAfterDriver = (rideId, rideDetails) => {
             }
 
             // Verify payment with backend
-            console.log('🔍 Verifying payment with backend...');
             const verifyResponse = await api.post('/paystack/verify-ride-payment', {
                 reference: transaction.reference,
                 rideId: rideId
@@ -98,7 +87,6 @@ export const useRidePaymentAfterDriver = (rideId, rideDetails) => {
             });
 
             if (verifyResponse.status === 200) {
-                console.log('✅ Payment verified successfully');
                 toast.success("Payment successful! Proceeding to live tracking...");
                 setIsProcessing(false);
                 
@@ -115,7 +103,6 @@ export const useRidePaymentAfterDriver = (rideId, rideDetails) => {
     };
 
     const handlePaymentCancel = () => {
-        console.log('⚠️ Payment cancelled by user');
         toast.warn("Payment cancelled. You can try again.");
         setIsProcessing(false);
     };

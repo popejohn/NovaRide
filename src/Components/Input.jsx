@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 
-export default function Input({ label, error, variant = "dark", icon: Icon, field, form, className: customClassName, ...props }) {
+export default function Input({ label, error, required, variant = "dark", icon: Icon, field, form, className: customClassName, ...props }) {
   const isDark = variant === "dark";
 
   // Extract special props and merge Formik field props
@@ -11,7 +11,7 @@ export default function Input({ label, error, variant = "dark", icon: Icon, fiel
     <div className={`mb-6 w-full group/input ${customClassName || ''}`}>
       {label && (
         <label className={`block mb-2 text-[10px] font-black uppercase tracking-[0.2em] transition-colors duration-300 ${error ? 'text-red-500' : isDark ? 'text-neutral-500 group-focus-within/input:text-orange-500' : 'text-neutral-400 group-focus-within/input:text-orange-600'}`}>
-          {label}
+          {label}{required && <span className="text-orange-500 ml-0.5">*</span>}
         </label>
       )}
       <div className="relative">

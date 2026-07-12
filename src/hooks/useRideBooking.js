@@ -127,8 +127,6 @@ export const useRideBooking = () => {
             async (position) => {
                 const { latitude, longitude, accuracy } = position.coords;
                 
-                console.log(`[Location] Device coordinates: Lat ${latitude.toFixed(6)}, Lon ${longitude.toFixed(6)} (±${accuracy.toFixed(0)}m)`);
-                
                 try {
                     // First, immediately set the fresh coordinates from device
                     dispatch(setPickupCoordinate({ lat: latitude, lng: longitude }));
@@ -149,8 +147,6 @@ export const useRideBooking = () => {
                         setPickupSuggestions([]);
                         toast.warning("Using GPS coordinates (address lookup unavailable)", { autoClose: 2000 });
                     } else {
-                        console.log(`[Location] Reverse geocoded to: ${address}`);
-
                         // Update the pickup location with fresh data
                         dispatch(setPickupLocation(address));
                         dispatch(setPickupCoordinate({ lat: latitude, lng: longitude, address: address }));

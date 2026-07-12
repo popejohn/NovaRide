@@ -32,7 +32,6 @@ export const useDriverSocket = (userId, rideId) => {
       });
 
       socketRef.current.on('connect', () => {
-        console.log('[Driver Socket] Connected');
         setIsConnected(true);
         reconnectAttemptRef.current = 0; // Reset on successful connection
         socketRef.current.emit('join', userId);
@@ -45,7 +44,6 @@ export const useDriverSocket = (userId, rideId) => {
       });
 
       socketRef.current.on('disconnect', (reason) => {
-        console.log('[Driver Socket] Disconnected:', reason);
         setIsConnected(false);
         if (reason === 'io server disconnect') {
           // Manually reconnect if server disconnects

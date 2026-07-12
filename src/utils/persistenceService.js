@@ -1,24 +1,11 @@
 // Persistence service to handle storage operations for Redux state
 // This abstracts storage logic from Redux slices
-import StorageService from './storageService.js';
+// User data is NOT persisted to localStorage — only the JWT token is stored.
+// On page refresh, App.jsx re-verifies the token with the backend to restore user state.
 
 class PersistenceService {
   static loadUserState() {
-    try {
-      const userData = StorageService.getUser();
-      if (userData) {
-        const token = StorageService.getToken();
-        return {
-          user: userData.user || null,
-          role: userData.role || null,
-          isAuthenticated: !!(userData.user && token),
-          profileCompleted: userData.profileCompleted || false,
-          isOnline: userData.isOnline || false,
-        };
-      }
-    } catch (error) {
-      console.error('Error loading user data:', error);
-    }
+    // Always return empty defaults — user data is fetched fresh from the API
     return {
       user: null,
       role: null,
@@ -28,19 +15,11 @@ class PersistenceService {
     };
   }
 
-  static saveUserState(state) {
-    const userData = {
-      user: state.user,
-      role: state.role,
-      profileCompleted: state.profileCompleted,
-      isOnline: state.isOnline,
-    };
-    StorageService.setUser(userData);
-  }
+  // No-op: user data must not be written to localStorage
+  static saveUserState(_state) {}
 
-  static clearUserState() {
-    StorageService.clearUser();
-  }
+  // No-op: nothing to clear for user data
+  static clearUserState() {}
 }
 
 export default PersistenceService;

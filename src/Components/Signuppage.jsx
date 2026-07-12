@@ -32,10 +32,10 @@ function SignUp() {
       role: ""
     },
     validationSchema: Yup.object({
-      firstname: Yup.string().required("First name is required").min(2, "Please enter a valid first name"),
-      lastname: Yup.string().required("Last name is required").min(2, "Please enter a valid last name"),
+      firstname: Yup.string().required("First name is required").matches(/^[A-Za-z]{2,} *$/,"Please enter a valid name"),
+      lastname: Yup.string().required("Last name is required").matches(/^[A-Za-z]{2,} *$/,"Please enter a valid name"),
       email: Yup.string().email("Please enter a valid email").required("Email is required"),
-      phone: Yup.string().matches(/^0\d{10}$/, "Please enter a valid phone number").required("Phone number is required"),
+      phone: Yup.string().matches(/^(070|071|080|081|090|091)\d{8}$/, "Please enter a valid phone nigerian number").required("Phone number is required"),
       password: Yup.string().required('Password is required').matches(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/, "Must be 8+ chars with letters & numbers"),
       confirmpassword: Yup.string().oneOf([Yup.ref("password"), null], "Passwords do not match").required('Please confirm password'),
       role: Yup.string().required("Please select your role"),
@@ -100,6 +100,7 @@ function SignUp() {
                 label="First Name"
                 name="firstname"
                 placeholder="John"
+                required
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 value={formik.values.firstname}
@@ -109,6 +110,7 @@ function SignUp() {
                 label="Last Name"
                 name="lastname"
                 placeholder="Doe"
+                required
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 value={formik.values.lastname}
@@ -120,6 +122,7 @@ function SignUp() {
               label="Phone number"
               name="phone"
               placeholder="08012345678"
+              required
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               value={formik.values.phone}
@@ -131,6 +134,7 @@ function SignUp() {
               name="email"
               type="email"
               placeholder="you@example.com"
+              required
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               value={formik.values.email}
@@ -144,6 +148,7 @@ function SignUp() {
                   name="password"
                   type={showPassword ? "text" : "password"}
                   placeholder="••••••••"
+                  required
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   value={formik.values.password}
@@ -159,6 +164,7 @@ function SignUp() {
                   name="confirmpassword"
                   type={showConfirm ? "text" : "password"}
                   placeholder="••••••••"
+                  required
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   value={formik.values.confirmpassword}
@@ -171,7 +177,9 @@ function SignUp() {
             </div>
 
             <div className="space-y-3">
-              <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-neutral-500 ml-1">Account Role</label>
+              <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-neutral-500 ml-1">
+                Account Role<span className="text-orange-500 ml-0.5">*</span>
+              </label>
               <div className="grid grid-cols-3 gap-3">
                 {roles.map((r) => (
                   <button

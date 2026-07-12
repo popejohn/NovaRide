@@ -12,9 +12,6 @@ export const useRidePayment = (distance, duration, pickupLocation, destination, 
             setIsProcessing(true);
             const token = localStorage.getItem('nvcr_tk');
             const fare = distance * 150;
-
-            console.log('🎫 Ride Booking: Checking balance for fare ₦' + fare);
-
             // Check balance first
             const walletResponse = await api.get('/user/wallet-data', {
                 headers: { 
@@ -31,7 +28,6 @@ export const useRidePayment = (distance, duration, pickupLocation, destination, 
             }
 
             const balance = walletResponse.data.walletBalance;
-            console.log('💰 Wallet Balance:', balance, 'Required Fare:', fare);
 
             // If balance is insufficient, redirect to wallet to add money
             if (balance < fare) {
@@ -42,7 +38,6 @@ export const useRidePayment = (distance, duration, pickupLocation, destination, 
             }
 
             // If balance is sufficient, create ride and redirect to driver selection
-            console.log('✅ Balance sufficient. Creating ride...');
             await proceedToCreateRide(fare, token);
 
         } catch (error) {
@@ -56,7 +51,6 @@ export const useRidePayment = (distance, duration, pickupLocation, destination, 
             
             // Skip errors from verify-token or non-critical calls
             if (error.config?.url?.includes('verify-token')) {
-                console.warn('Verify-token error (non-critical), continuing...');
                 return;
             }
             
@@ -79,7 +73,6 @@ export const useRidePayment = (distance, duration, pickupLocation, destination, 
 
     const proceedToCreateRide = async (fare, token) => {
         try {
-            console.log('🚗 Creating ride with fare:', fare);
             
             const rideData = {
                 pickupLocation,
@@ -97,10 +90,8 @@ export const useRidePayment = (distance, duration, pickupLocation, destination, 
                 }
             };
 
-            console.log('📤 Ride data:', rideData);
             const response = await api.post('/ride/create-ride', rideData);
 
-            console.log('✅ Ride created:', response.data);
             if (response.status === 200) {
                 toast.success("Ride created! Select a rider...");
                 navigate(`/driver-selection?rideId=${response.data.ride._id}`);

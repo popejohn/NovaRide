@@ -32,63 +32,60 @@ export const useLiveTracking = (rideId, user, userRoles) => {
   const fetchRideStatus = useCallback(async () => {
     if (!rideId) return;
     try {
-      const token = localStorage.getItem('nvcr_tk');
-      const response = await fetch(`/api/ride/${rideId}`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      if (response.ok) {
-        const data = await response.json();
-        const ride = data.ride;
-        setRideDetails(ride);
+  const response = await api.get(`/ride/${rideId}`);
+  const ride = response.data.ride;
 
-        const statusMap = {
-          'pending': 'Ride cancelled',
-          'accepted': 'Driver is on the way',
-          'at_pickup': 'Driver is at pickup location',
-          'starting': 'Awaiting driver agreement',
-          'in_progress': 'Trip in progress',
-          'awaiting_completion': 'Awaiting passenger confirmation',
-          'completed': 'Ride completed',
-          'cancelled': 'Ride cancelled'
-        };
-        setRideStatus(statusMap[ride.rideStatus] || ride.rideStatus);
+  setRideDetails(ride);
 
-        const currentIsPassenger = ride.user?._id === user?._id || ride.user === user?._id;
-        const currentIsRider = ride.assignedDriver?.riderInfo?._id === user?._id || ride.assignedDriver?.riderInfo === user?._id;
+  const statusMap = {
+    pending: 'Ride cancelled',
+    accepted: 'Driver is on the way',
+    at_pickup: 'Driver is at pickup location',
+    starting: 'Awaiting driver agreement',
+    in_progress: 'Trip in progress',
+    awaiting_completion: 'Awaiting passenger confirmation',
+    completed: 'Ride completed',
+    cancelled: 'Ride cancelled'
+  };
 
-        if (ride.rideStatus === 'pending') {
-          if (currentIsPassenger) {
-            toast.info("Ride cancelled. Redirecting to driver selection...");
-            navigate(`/driver-selection?rideId=${rideId}`);
-          } else if (currentIsRider) {
-            toast.info("Ride cancelled by passenger.");
-            navigate('/riderdashboard');
-          }
-        }
+  setRideStatus(statusMap[ride.rideStatus] || ride.rideStatus);
 
-        if (ride.rideStatus === 'starting' && currentIsRider) {
-          setShowStartRideModal(true);
-        } else {
-          setShowStartRideModal(false);
-        }
+  const currentIsPassenger =
+    ride.user?._id === user?._id || ride.user === user?._id;
 
-        if (ride.rideStatus === 'awaiting_completion' && currentIsPassenger) {
-          setShowCompletionModal(true);
-        } else {
-          setShowCompletionModal(false);
-        }
+  const currentIsRider =
+    ride.assignedDriver?.riderInfo?._id === user?._id ||
+    ride.assignedDriver?.riderInfo === user?._id;
 
-        if (ride.rideStatus === 'completed') {
-          setTimeout(() => {
-            navigate(`/ride-completion?rideId=${rideId}`);
-          }, 2000);
-        }
-      }
-    } catch (error) {
-      console.error('Error fetching ride status:', error);
-    } finally {
-      setLoading(false);
+  if (ride.rideStatus === 'pending') {
+    if (currentIsPassenger) {
+      toast.info("Ride cancelled. Redirecting to driver selection...");
+      navigate(`/driver-selection?rideId=${rideId}`);
+    } else if (currentIsRider) {
+      toast.info("Ride cancelled by passenger.");
+      navigate('/riderdashboard');
     }
+  }
+
+  setShowStartRideModal(
+    ride.rideStatus === 'starting' && currentIsRider
+  );
+
+  setShowCompletionModal(
+    ride.rideStatus === 'awaiting_completion' && currentIsPassenger
+  );
+
+  if (ride.rideStatus === 'completed') {
+    setTimeout(() => {
+      navigate(`/ride-completion?rideId=${rideId}`);
+    }, 2000);
+  }
+
+} catch (error) {
+  console.error('Error fetching ride status:', error);
+} finally {
+  setLoading(false);
+}
   }, [rideId, navigate, user]);
 
   useEffect(() => {
@@ -181,23 +178,17 @@ export const useLiveTracking = (rideId, user, userRoles) => {
 
   const updateRideStatus = async (newStatus) => {
     try {
-      const token = localStorage.getItem('nvcr_tk');
-      const response = await fetch(`/api/ride/${rideId}/status`, {
-        method: 'PATCH',
-        headers: { 
-          'Content-Type': 'application/json', 
-          'Authorization': `Bearer ${token}` 
-        },
-        body: JSON.stringify({ status: newStatus })
-      });
-      if (!response.ok) {
-        const errData = await response.json();
-        toast.error(errData.message || "Failed to update ride status");
-      }
-      fetchRideStatus();
-    } catch (error) {
-      console.error('Error updating ride status:', error);
-    }
+  await api.patch(`/ride/${rideId}/status`, {
+    status: newStatus,
+  });
+
+  fetchRideStatus();
+
+} catch (error) {
+  toast.error(
+    error.response?.data?.message || "Failed to update ride status"
+  );
+}
   };
 
   const submitComplaint = async (complaintText) => {

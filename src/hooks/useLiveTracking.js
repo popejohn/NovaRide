@@ -32,60 +32,60 @@ export const useLiveTracking = (rideId, user, userRoles) => {
   const fetchRideStatus = useCallback(async () => {
     if (!rideId) return;
     try {
-  const response = await api.get(`/ride/${rideId}`);
-  const ride = response.data.ride;
+      const response = await api.get(`/ride/${rideId}`);
+      const ride = response.data.ride;
 
-  setRideDetails(ride);
+      setRideDetails(ride);
 
-  const statusMap = {
-    pending: 'Ride cancelled',
-    accepted: 'Driver is on the way',
-    at_pickup: 'Driver is at pickup location',
-    starting: 'Awaiting driver agreement',
-    in_progress: 'Trip in progress',
-    awaiting_completion: 'Awaiting passenger confirmation',
-    completed: 'Ride completed',
-    cancelled: 'Ride cancelled'
-  };
+      const statusMap = {
+        pending: 'Ride cancelled',
+        accepted: 'Driver is on the way',
+        at_pickup: 'Driver is at pickup location',
+        starting: 'Awaiting driver agreement',
+        in_progress: 'Trip in progress',
+        awaiting_completion: 'Awaiting passenger confirmation',
+        completed: 'Ride completed',
+        cancelled: 'Ride cancelled'
+      };
 
-  setRideStatus(statusMap[ride.rideStatus] || ride.rideStatus);
+      setRideStatus(statusMap[ride.rideStatus] || ride.rideStatus);
 
-  const currentIsPassenger =
-    ride.user?._id === user?._id || ride.user === user?._id;
+      const currentIsPassenger =
+        ride.user?._id === user?._id || ride.user === user?._id;
 
-  const currentIsRider =
-    ride.assignedDriver?.riderInfo?._id === user?._id ||
-    ride.assignedDriver?.riderInfo === user?._id;
+      const currentIsRider =
+        ride.assignedDriver?.riderInfo?._id === user?._id ||
+        ride.assignedDriver?.riderInfo === user?._id;
 
-  if (ride.rideStatus === 'pending') {
-    if (currentIsPassenger) {
-      toast.info("Ride cancelled. Redirecting to driver selection...");
-      navigate(`/driver-selection?rideId=${rideId}`);
-    } else if (currentIsRider) {
-      toast.info("Ride cancelled by passenger.");
-      navigate('/riderdashboard');
+      if (ride.rideStatus === 'pending') {
+        if (currentIsPassenger) {
+          toast.info("Ride cancelled. Redirecting to driver selection...");
+          navigate(`/driver-selection?rideId=${rideId}`);
+        } else if (currentIsRider) {
+          toast.info("Ride cancelled by passenger.");
+          navigate('/riderdashboard');
+        }
+      }
+
+      setShowStartRideModal(
+        ride.rideStatus === 'starting' && currentIsRider
+      );
+
+      setShowCompletionModal(
+        ride.rideStatus === 'awaiting_completion' && currentIsPassenger
+      );
+
+      if (ride.rideStatus === 'completed') {
+        setTimeout(() => {
+          navigate(`/ride-completion?rideId=${rideId}`);
+        }, 2000);
+      }
+
+    } catch (error) {
+      console.error('Error fetching ride status:', error);
+    } finally {
+      setLoading(false);
     }
-  }
-
-  setShowStartRideModal(
-    ride.rideStatus === 'starting' && currentIsRider
-  );
-
-  setShowCompletionModal(
-    ride.rideStatus === 'awaiting_completion' && currentIsPassenger
-  );
-
-  if (ride.rideStatus === 'completed') {
-    setTimeout(() => {
-      navigate(`/ride-completion?rideId=${rideId}`);
-    }, 2000);
-  }
-
-} catch (error) {
-  console.error('Error fetching ride status:', error);
-} finally {
-  setLoading(false);
-}
   }, [rideId, navigate, user]);
 
   useEffect(() => {
@@ -96,7 +96,9 @@ export const useLiveTracking = (rideId, user, userRoles) => {
 
     if (user && user._id && token && rideId) {
       const connectSocket = () => {
-        socket = io(apiUrl, { 
+        console.log("Socket URL:", apiUrl);
+        console.log("VITE_API_URL:", import.meta.env.VITE_API_URL);
+        socket = io(apiUrl, {
           auth: { token },
           reconnection: true,
           reconnectionDelay: getReconnectDelay(reconnectAttemptRef.current),
@@ -123,14 +125,14 @@ export const useLiveTracking = (rideId, user, userRoles) => {
           // For riders: send location updates every 8 seconds
           const minDistanceMeters = 10;
           let lastLocation = null;
-          
+
           locationInterval = setInterval(() => {
             if (navigator.geolocation && socket?.connected) {
               navigator.geolocation.getCurrentPosition(
                 (position) => {
                   const { latitude, longitude } = position.coords;
                   const currentLocation = { lat: latitude, lng: longitude };
-                  
+
                   if (!lastLocation || getDistance(lastLocation, currentLocation) > minDistanceMeters) {
                     socket.emit('updateLocation', {
                       rideId,
@@ -178,17 +180,17 @@ export const useLiveTracking = (rideId, user, userRoles) => {
 
   const updateRideStatus = async (newStatus) => {
     try {
-  await api.patch(`/ride/${rideId}/status`, {
-    status: newStatus,
-  });
+      await api.patch(`/ride/${rideId}/status`, {
+        status: newStatus,
+      });
 
-  fetchRideStatus();
+      fetchRideStatus();
 
-} catch (error) {
-  toast.error(
-    error.response?.data?.message || "Failed to update ride status"
-  );
-}
+    } catch (error) {
+      toast.error(
+        error.response?.data?.message || "Failed to update ride status"
+      );
+    }
   };
 
   const submitComplaint = async (complaintText) => {
@@ -233,11 +235,11 @@ function getDistance(loc1, loc2) {
   const lat2 = (loc2.lat * Math.PI) / 180;
   const deltaLat = ((loc2.lat - loc1.lat) * Math.PI) / 180;
   const deltaLng = ((loc2.lng - loc1.lng) * Math.PI) / 180;
-  
+
   const a = Math.sin(deltaLat / 2) * Math.sin(deltaLat / 2) +
     Math.cos(lat1) * Math.cos(lat2) *
     Math.sin(deltaLng / 2) * Math.sin(deltaLng / 2);
-  
+
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   return R * c;
 }

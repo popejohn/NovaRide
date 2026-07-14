@@ -93,8 +93,47 @@ export const useLiveTracking = (rideId, user, userRoles) => {
   console.log("userRoles:", userRoles);
   console.log("isPassenger:", isPassenger);
   console.log("isRider:", isRider);
+
+  const previous = useRef({});
+
   useEffect(() => {
     console.log("[useLiveTracking] Effect started");
+
+    // Temporary
+    console.log("Dependency changes:", {
+      rideIdChanged: previous.current.rideId !== rideId,
+      userChanged: previous.current.user !== user,
+      userRolesChanged: previous.current.userRoles !== userRoles,
+      fetchRideStatusChanged: previous.current.fetchRideStatus !== fetchRideStatus,
+      isPassengerChanged: previous.current.isPassenger !== isPassenger,
+      isRiderChanged: previous.current.isRider !== isRider,
+    });
+
+    previous.current = {
+      rideId,
+      user,
+      userRoles,
+      fetchRideStatus,
+      isPassenger,
+      isRider,
+    };
+
+    //Temorary ends
+    if (
+      previous.current.user?._id === user?._id &&
+      previous.current.rideId === rideId &&
+      previous.current.userRoles === userRoles &&
+      previous.current.isPassenger === isPassenger &&
+      previous.current.isRider === isRider
+    ) {
+      return;
+    }
+    previous.current.user = user;
+    previous.current.rideId = rideId;
+    previous.current.userRoles = userRoles;
+    previous.current.isPassenger = isPassenger;
+    previous.current.isRider = isRider;
+
     let socket;
     let locationInterval;
     let statusPollInterval;

@@ -87,8 +87,14 @@ export const useLiveTracking = (rideId, user, userRoles) => {
       setLoading(false);
     }
   }, [rideId, navigate, user]);
-
+  // Temorary
+  console.log("rideId:", rideId);
+  console.log("user:", user?._id);
+  console.log("userRoles:", userRoles);
+  console.log("isPassenger:", isPassenger);
+  console.log("isRider:", isRider);
   useEffect(() => {
+    console.log("[useLiveTracking] Effect started");
     let socket;
     let locationInterval;
     let statusPollInterval;

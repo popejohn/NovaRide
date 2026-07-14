@@ -172,9 +172,16 @@ export const useLiveTracking = (rideId, user, userRoles) => {
     }
 
     return () => {
+      console.log("[useLiveTracking] Cleaning up socket");
+
       if (statusPollInterval) clearInterval(statusPollInterval);
+
       if (locationInterval) clearInterval(locationInterval);
-      if (socket) socket.disconnect();
+
+      if (socket) {
+        console.log("[useLiveTracking] Disconnecting socket:", socket.id);
+        socket.disconnect();
+      }
     };
   }, [rideId, navigate, user, userRoles, fetchRideStatus, isPassenger, isRider]);
 

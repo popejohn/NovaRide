@@ -24,7 +24,7 @@ const IncomingRideRequest = () => {
   useEffect(() => {
     const fetchRide = async () => {
       try {
-        const response = await api.get(`/api/ride/${rideId}`);
+        const response = await api.get(`/ride/${rideId}`);
         setRideDetails(response.data.ride);
       } catch (error) {
         console.error('Error fetching ride:', error);
@@ -47,7 +47,7 @@ const IncomingRideRequest = () => {
 
   const handleAcceptRide = async () => {
     try {
-      await api.post('/api/ride/accept-ride', { rideId });
+      await api.post('/ride/accept-ride', { rideId });
       setIsAccepted(true);
       setTimeout(() => {
         navigate(`/live-tracking?rideId=${rideId}`);
@@ -60,7 +60,7 @@ const IncomingRideRequest = () => {
 
   const handleDecline = async () => {
     try {
-      await api.post('/api/ride/reject-ride', { rideId });
+      await api.post('/ride/reject-ride', { rideId });
       setIsDeclined(true);
       setTimeout(() => {
         navigate('/riderdashboard');

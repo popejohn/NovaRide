@@ -8,7 +8,7 @@ export const useRideActions = (onRideUpdate) => {
 
     const handleAcceptRide = async (rideId) => {
         try {
-            await api.post('/api/ride/accept-ride', { rideId });
+            await api.post('/ride/accept-ride', { rideId });
             setSelectedRide(null);
             navigate(`/live-tracking?rideId=${rideId}`);
         } catch (error) {
@@ -19,7 +19,7 @@ export const useRideActions = (onRideUpdate) => {
 
     const handleRejectRide = async (rideId) => {
         try {
-            await api.post('/api/ride/reject-ride', { rideId });
+            await api.post('/ride/reject-ride', { rideId });
             setSelectedRide(null);
             if (onRideUpdate) onRideUpdate(); // Refresh rides
         } catch (error) {

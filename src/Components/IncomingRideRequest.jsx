@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import api from '../services/axios';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import Navbar from './Navbar';
@@ -23,14 +24,8 @@ const IncomingRideRequest = () => {
   useEffect(() => {
     const fetchRide = async () => {
       try {
-        const token = localStorage.getItem('nvcr_tk');
-        const response = await fetch(`/api/ride/${rideId}`, {
-          headers: { 'Authorization': `Bearer ${token}` }
-        });
-        if (response.ok) {
-          const data = await response.json();
-          setRideDetails(data.ride);
-        }
+        const response = await api.get(`/api/ride/${rideId}`);
+        setRideDetails(response.data.ride);
       } catch (error) {
         console.error('Error fetching ride:', error);
       } finally {
@@ -52,55 +47,27 @@ const IncomingRideRequest = () => {
 
   const handleAcceptRide = async () => {
     try {
-      const token = localStorage.getItem('nvcr_tk');
-      const response = await fetch('/api/ride/accept-ride', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({ rideId })
-      });
-
-      if (response.ok) {
-        setIsAccepted(true);
-        setTimeout(() => {
-          navigate(`/live-tracking?rideId=${rideId}`);
-        }, 2000);
-      } else {
-        const errorData = await response.json();
-        alert(errorData.message || 'Failed to accept ride');
-      }
+      await api.post('/api/ride/accept-ride', { rideId });
+      setIsAccepted(true);
+      setTimeout(() => {
+        navigate(`/live-tracking?rideId=${rideId}`);
+      }, 2000);
     } catch (error) {
       console.error('Error accepting ride:', error);
-      alert('An error occurred while accepting the ride');
+      alert(error.response?.data?.message || 'An error occurred while accepting the ride');
     }
   };
 
   const handleDecline = async () => {
     try {
-      const token = localStorage.getItem('nvcr_tk');
-      const response = await fetch('/api/ride/reject-ride', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({ rideId })
-      });
-
-      if (response.ok) {
-        setIsDeclined(true);
-        setTimeout(() => {
-          navigate('/riderdashboard');
-        }, 2000);
-      } else {
-        const errorData = await response.json();
-        alert(errorData.message || 'Failed to reject ride');
-      }
+      await api.post('/api/ride/reject-ride', { rideId });
+      setIsDeclined(true);
+      setTimeout(() => {
+        navigate('/riderdashboard');
+      }, 2000);
     } catch (error) {
       console.error('Error rejecting ride:', error);
-      alert('An error occurred while rejecting the ride');
+      alert(error.response?.data?.message || 'An error occurred while rejecting the ride');
     }
   };
 

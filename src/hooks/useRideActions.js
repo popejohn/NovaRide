@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import StorageService from '../utils/storageService.js';
+import api from '../services/axios';
 
 export const useRideActions = (onRideUpdate) => {
     const navigate = useNavigate();
@@ -8,51 +8,23 @@ export const useRideActions = (onRideUpdate) => {
 
     const handleAcceptRide = async (rideId) => {
         try {
-            const token = StorageService.getToken();
-            const response = await fetch('/api/ride/accept-ride', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({ rideId })
-            });
-
-            if (response.ok) {
-                setSelectedRide(null);
-                navigate(`/live-tracking?rideId=${rideId}`);
-            } else {
-                const errorData = await response.json();
-                alert(errorData.message || 'Failed to accept ride');
-            }
+            await api.post('/api/ride/accept-ride', { rideId });
+            setSelectedRide(null);
+            navigate(`/live-tracking?rideId=${rideId}`);
         } catch (error) {
             console.error('Error accepting ride:', error);
-            alert('An error occurred while accepting the ride');
+            alert(error.response?.data?.message || 'An error occurred while accepting the ride');
         }
     };
 
     const handleRejectRide = async (rideId) => {
         try {
-            const token = StorageService.getToken();
-            const response = await fetch('/api/ride/reject-ride', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({ rideId })
-            });
-
-            if (response.ok) {
-                setSelectedRide(null);
-                if (onRideUpdate) onRideUpdate(); // Refresh rides
-            } else {
-                const errorData = await response.json();
-                alert(errorData.message || 'Failed to reject ride');
-            }
+            await api.post('/api/ride/reject-ride', { rideId });
+            setSelectedRide(null);
+            if (onRideUpdate) onRideUpdate(); // Refresh rides
         } catch (error) {
             console.error('Error rejecting ride:', error);
-            alert('An error occurred while rejecting the ride');
+            alert(error.response?.data?.message || 'An error occurred while rejecting the ride');
         }
     };
 

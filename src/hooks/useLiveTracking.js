@@ -87,35 +87,12 @@ export const useLiveTracking = (rideId, user, userRoles) => {
       setLoading(false);
     }
   }, [rideId, navigate, user]);
-  // Temorary
-  console.log("rideId:", rideId);
-  console.log("user:", user?._id);
-  console.log("userRoles:", userRoles);
-  console.log("isPassenger:", isPassenger);
-  console.log("isRider:", isRider);
+
 
   const previous = useRef({});
 
   useEffect(() => {
-    console.log("Dependency changes:", {
-      rideId:
-        previous.current.rideId !== rideId,
 
-      user:
-        previous.current.user !== user,
-
-      userRoles:
-        previous.current.userRoles !== userRoles,
-
-      fetchRideStatus:
-        previous.current.fetchRideStatus !== fetchRideStatus,
-
-      isPassenger:
-        previous.current.isPassenger !== isPassenger,
-
-      isRider:
-        previous.current.isRider !== isRider,
-    });
 
     previous.current = {
       rideId,
@@ -133,8 +110,6 @@ export const useLiveTracking = (rideId, user, userRoles) => {
 
     if (user && user._id && token && rideId) {
       const connectSocket = () => {
-        console.log("Socket URL:", apiUrl);
-        console.log("VITE_API_URL:", import.meta.env.VITE_API_URL);
         socket = io(apiUrl, {
           auth: { token },
           reconnection: true,
@@ -209,14 +184,12 @@ export const useLiveTracking = (rideId, user, userRoles) => {
     }
 
     return () => {
-      console.log("[useLiveTracking] Cleaning up socket");
 
       if (statusPollInterval) clearInterval(statusPollInterval);
 
       if (locationInterval) clearInterval(locationInterval);
 
       if (socket) {
-        console.log("[useLiveTracking] Disconnecting socket:", socket.id);
         socket.disconnect();
       }
     };

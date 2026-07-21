@@ -35,12 +35,10 @@ export const useAvailableRides = (isOnline) => {
             });
 
             socket.on('connect', () => {
-                console.log('[Socket] Connected for ride notifications');
             });
 
             // Listen for new rides being available
             socket.on('newRideAvailable', (data) => {
-                console.log('[Socket] New ride available:', data.ride._id);
                 setAvailableRides(prev => {
                     // Check if ride already exists
                     const rideExists = prev.some(r => r._id === data.ride._id);
@@ -53,7 +51,6 @@ export const useAvailableRides = (isOnline) => {
 
             // Listen for incoming ride requests (ride was assigned to this rider)
             socket.on('incomingRideRequest', (data) => {
-                console.log('[Socket] Incoming ride request:', data.rideId);
                 // Remove from available rides since it's now assigned to us
                 setAvailableRides(prev => 
                     prev.filter(r => r._id !== data.rideId)
@@ -62,7 +59,6 @@ export const useAvailableRides = (isOnline) => {
 
             // Listen for ride acceptances (remove if rider accepted it)
             socket.on('rideAccepted', (data) => {
-                console.log('[Socket] Ride accepted:', data.rideId);
                 setAvailableRides(prev => 
                     prev.filter(r => r._id !== data.rideId)
                 );

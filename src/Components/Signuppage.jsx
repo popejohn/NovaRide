@@ -205,8 +205,8 @@ function SignUp() {
             <Button
               type="submit"
               text={isLoading ? <Loader color='#ffffff' /> : "Create Account"}
-              classes={'w-full py-5 bg-orange-500 hover:bg-white hover:text-neutral-950 text-white rounded-2xl font-black text-[11px] uppercase tracking-[0.3em] shadow-2xl shadow-orange-500/20 transition-all duration-500 mt-6 active:scale-95 border-2 border-transparent hover:border-white'}
-              disabled={isLoading}
+              classes={'w-full py-5 bg-orange-500 hover:bg-white hover:text-neutral-950 text-white rounded-2xl font-black text-[11px] uppercase tracking-[0.3em] shadow-2xl shadow-orange-500/20 transition-all duration-500 mt-6 active:scale-95 border-2 border-transparent hover:border-white disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-orange-500 disabled:hover:text-white disabled:hover:border-transparent'}
+              disabled={isLoading || !formik.isValid || !formik.dirty}
             />
           </form>
 

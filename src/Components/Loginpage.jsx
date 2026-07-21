@@ -142,7 +142,7 @@ function Login() {
 
           <footer className="pt-12 border-t border-neutral-800 text-center">
             <p className="text-[10px] font-black text-neutral-600 uppercase tracking-[0.2em]">
-              New to the platform?
+              Have an account?
               <Link to="/signup" className="text-orange-500 hover:text-white transition-all ml-2 underline decoration-orange-500/30 underline-offset-4">
                 Create Account
               </Link>

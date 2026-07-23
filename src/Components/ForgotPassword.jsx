@@ -167,6 +167,7 @@ function ForgotPassword() {
             onSubmit={step === 1 ? phoneFormik.handleSubmit : otpFormik.handleSubmit}
             className="space-y-8"
           >
+            <fieldset disabled={isLoading || otpVerifying} className="border-0 p-0 m-0 min-w-0">
             {step === 1 ? (
               <div className="space-y-6">
                 <Input
@@ -308,6 +309,7 @@ function ForgotPassword() {
                 </button>
               </div>
             )}
+            </fieldset>
           </form>
 
           <footer className="pt-10 border-t border-neutral-800 text-center">

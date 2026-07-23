@@ -20,40 +20,53 @@ import Wallet from './Components/Wallet'
 import ProfileManagement from './Components/ProfileManagement'
 import Help from './Components/Help'
 import FloatingChatSupport from './Components/FloatingChatSupport'
+import ProtectedRoute from './Components/ProtectedRoute'
 import useSessionTimeout from './utils/useSessionTimeout'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
 
 import { useSelector, useDispatch } from 'react-redux'
-import { setUser, logout } from './Redux/verifiedUserslice'
+import { setUser, logout, authInitializationComplete } from './Redux/verifiedUserslice'
 import api from './services/axios'
+import StorageService from './utils/storageService'
 
 
 function App() {
   const dispatch = useDispatch();
-  const { isAuthenticated } = useSelector(state => state.verifiedUser);
+  const { isAuthenticated, isInitializing } = useSelector(state => state.verifiedUser);
   useSessionTimeout(isAuthenticated); // Enable conditional session timeout
 
   useEffect(() => {
     const verifyUser = async () => {
-      const token = localStorage.getItem('nvcr_tk');
-      if (token) {
-        try {
-          const response = await api.get('/auth/verify-token');
-          if (response.data.success) {
-            dispatch(setUser({ user: response.data.data, isAuthenticated: true }));
-          } else {
-            dispatch(logout());
-          }
-        } catch (error) {
-          console.error('Verification failed:', error);
+      const token = StorageService.getToken();
+      if (!token) {
+        dispatch(authInitializationComplete(false));
+        return;
+      }
+
+      try {
+        const response = await api.get('/auth/verify-token');
+        if (response.data.success && response.data.data) {
+          dispatch(setUser({ user: response.data.data }));
+          dispatch(authInitializationComplete(true));
+        } else {
           dispatch(logout());
+          dispatch(authInitializationComplete(false));
+        }
+      } catch (error) {
+        console.error('Verification failed:', error);
+        if (error.response?.status === 401) {
+          dispatch(logout());
+          dispatch(authInitializationComplete(false));
+        } else {
+          // Keep the cached session during temporary API/network failures.
+          dispatch(authInitializationComplete(isAuthenticated));
         }
       }
     };
     verifyUser();
-  }, [dispatch]);
+  }, [dispatch, isAuthenticated]);
 
   const [pickupCoordinate, setPickupCoordinate] = useState({})
   const [destinationCoordinate, setDestinationCoordinate] = useState({})
@@ -61,25 +74,25 @@ function App() {
     <>
       <ToastContainer position="bottom-right" autoClose={3000} hideProgressBar theme="dark" />
       <Routes>
-        <Route path='/' element={!isAuthenticated ? <LandingPage /> : <Bookride pickupCoordinate={pickupCoordinate} destinationCoordinate={destinationCoordinate} setPickupCoordinate={setPickupCoordinate} setDestinationCoordinate={setDestinationCoordinate} />} />
+        <Route path='/' element={isInitializing ? <ProtectedRoute><LandingPage /></ProtectedRoute> : !isAuthenticated ? <LandingPage /> : <Bookride pickupCoordinate={pickupCoordinate} destinationCoordinate={destinationCoordinate} setPickupCoordinate={setPickupCoordinate} setDestinationCoordinate={setDestinationCoordinate} />} />
         <Route path='signup' element={<SignUp />} />
         <Route path='login' element={<Login />} />
         <Route path='forgot-password' element={<ForgotPassword />} />
         <Route path='new-password' element={<NewPassword />} />
-        <Route path='bookride' element={isAuthenticated ? <Bookride /> : <Navigate to='/login' replace />} />
-        <Route path='driver-selection' element={<DriverSelection />} />
-        <Route path='live-tracking' element={<LiveTracking />} />
-        <Route path='ride-completion' element={<RideCompletion />} />
-        <Route path='rider-profile-setup' element={<RiderProfileSetup />} />
-        <Route path='ride-request' element={<IncomingRideRequest />} />
-        <Route path='rider-live-tracking' element={<LiveTracking />} />
-        <Route path='riderdashboard' element={<Riderdash />} />
-        <Route path='installment-profile-setup' element={<InstallmentProfileSetup />} />
-        <Route path='installment-application' element={<InstallmentApplication />} />
-        <Route path='installment-dashboard' element={<InstallmentDashboard />} />
-        <Route path='wallet' element={<Wallet />} />
-        <Route path='profile' element={<ProfileManagement />} />
-        <Route path='help' element={<Help />} />
+        <Route path='bookride' element={<ProtectedRoute><Bookride /></ProtectedRoute>} />
+        <Route path='driver-selection' element={<ProtectedRoute><DriverSelection /></ProtectedRoute>} />
+        <Route path='live-tracking' element={<ProtectedRoute><LiveTracking /></ProtectedRoute>} />
+        <Route path='ride-completion' element={<ProtectedRoute><RideCompletion /></ProtectedRoute>} />
+        <Route path='rider-profile-setup' element={<ProtectedRoute><RiderProfileSetup /></ProtectedRoute>} />
+        <Route path='ride-request' element={<ProtectedRoute><IncomingRideRequest /></ProtectedRoute>} />
+        <Route path='rider-live-tracking' element={<ProtectedRoute><LiveTracking /></ProtectedRoute>} />
+        <Route path='riderdashboard' element={<ProtectedRoute><Riderdash /></ProtectedRoute>} />
+        <Route path='installment-profile-setup' element={<ProtectedRoute><InstallmentProfileSetup /></ProtectedRoute>} />
+        <Route path='installment-application' element={<ProtectedRoute><InstallmentApplication /></ProtectedRoute>} />
+        <Route path='installment-dashboard' element={<ProtectedRoute><InstallmentDashboard /></ProtectedRoute>} />
+        <Route path='wallet' element={<ProtectedRoute><Wallet /></ProtectedRoute>} />
+        <Route path='profile' element={<ProtectedRoute><ProfileManagement /></ProtectedRoute>} />
+        <Route path='help' element={<ProtectedRoute><Help /></ProtectedRoute>} />
       </Routes>
       {isAuthenticated && <FloatingChatSupport />}
     </>

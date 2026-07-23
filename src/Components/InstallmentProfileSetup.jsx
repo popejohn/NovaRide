@@ -333,6 +333,7 @@ const InstallmentProfileSetup = () => {
             <div className="absolute top-0 right-0 w-64 h-64 bg-orange-500/5 blur-[100px] rounded-full -mr-32 -mt-32 pointer-events-none" />
             
             <form onSubmit={currentFormik.handleSubmit} className="relative z-10">
+              <fieldset disabled={currentFormik.isSubmitting} className="border-0 p-0 m-0 min-w-0">
               {renderStepContent()}
 
               {/* Navigation Buttons */}
@@ -356,6 +357,7 @@ const InstallmentProfileSetup = () => {
                   disabled={!currentFormik.isValid}
                 />
               </div>
+              </fieldset>
             </form>
           </div>
         </div>

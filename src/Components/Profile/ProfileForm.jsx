@@ -14,6 +14,7 @@ const ProfileForm = ({ initialValues, onSubmit, validationSchema }) => (
     >
         {({ isSubmitting, setFieldValue, values, errors, touched, handleSubmit }) => (
             <Form className="space-y-6" onSubmit={handleSubmit}>
+                <fieldset disabled={isSubmitting} className="border-0 p-0 m-0 min-w-0">
                 <div className="space-y-1">
                     <Field
                         name="firstname"
@@ -124,6 +125,7 @@ const ProfileForm = ({ initialValues, onSubmit, validationSchema }) => (
                         disabled={isSubmitting}
                     />
                 </motion.div>
+                </fieldset>
             </Form>
         )}
     </Formik>

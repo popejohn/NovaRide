@@ -13,6 +13,7 @@ const FloatingChatSupport = () => {
   const [inputText, setInputText] = useState('');
   const [unreadCount, setUnreadCount] = useState(0);
   const [connecting, setConnecting] = useState(false);
+  const [isSending, setIsSending] = useState(false);
   const socketRef = useRef(null);
   const messagesEndRef = useRef(null);
   const token = localStorage.getItem('nvcr_tk');
@@ -122,9 +123,10 @@ const FloatingChatSupport = () => {
   };
   const sendMessage = async (e) => {
     e.preventDefault();
-    if (!inputText.trim() || !chat) return;
+    if (!inputText.trim() || !chat || isSending) return;
     const messageText = inputText.trim();
     setInputText('');
+    setIsSending(true);
     try {
       await api.post(
         '/support/message',
@@ -138,6 +140,8 @@ const FloatingChatSupport = () => {
       );
     } catch (error) {
       console.error('Error sending support message:', error);
+    } finally {
+      setIsSending(false);
     }
   };
   if (!token) return null;
@@ -279,12 +283,13 @@ const FloatingChatSupport = () => {
                   type="text"
                   value={inputText}
                   onChange={(e) => setInputText(e.target.value)}
+                  disabled={isSending}
                   placeholder="Type your support message..."
                   className="flex-grow bg-neutral-950 border border-white/5 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-orange-500 transition-colors"
                 />
                 <button
                   type="submit"
-                  disabled={!inputText.trim()}
+                  disabled={isSending || !inputText.trim()}
                   className="w-12 h-12 bg-orange-500 hover:bg-orange-600 disabled:bg-neutral-800 disabled:text-neutral-500 rounded-xl flex items-center justify-center text-white cursor-pointer transition-colors"
                 >
                   <FaPaperPlane className="text-sm" />

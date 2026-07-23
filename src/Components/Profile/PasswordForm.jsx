@@ -25,6 +25,7 @@ const PasswordForm = ({ onSubmit }) => (
     >
         {({ isSubmitting, errors, touched, handleSubmit }) => (
             <Form className="space-y-6" onSubmit={handleSubmit}>
+                <fieldset disabled={isSubmitting} className="border-0 p-0 m-0 min-w-0">
                 <div className="space-y-1">
                     <Field
                         name="currentPassword"
@@ -72,6 +73,7 @@ const PasswordForm = ({ onSubmit }) => (
                         disabled={isSubmitting}
                     />
                 </motion.div>
+                </fieldset>
             </Form>
         )}
     </Formik>

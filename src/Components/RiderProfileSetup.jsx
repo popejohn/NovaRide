@@ -147,6 +147,7 @@ const RiderProfileSetup = () => {
           {/* Form Content */}
           <div className="bg-white rounded-lg shadow-lg p-6 md:p-8">
             <form onSubmit={currentFormik.handleSubmit}>
+              <fieldset disabled={currentFormik.isSubmitting} className="border-0 p-0 m-0 min-w-0">
               {renderStepContent()}
 
               {/* Navigation Buttons */}
@@ -170,6 +171,7 @@ const RiderProfileSetup = () => {
                   disabled={!currentFormik.isValid}
                 />
               </div>
+              </fieldset>
             </form>
           </div>
         </div>

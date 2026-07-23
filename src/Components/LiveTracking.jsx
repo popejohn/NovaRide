@@ -22,6 +22,7 @@ const LiveTracking = () => {
 
   const [complaintText, setComplaintText] = useState('');
   const [showComplaintForm, setShowComplaintForm] = useState(false);
+  const [isSubmittingComplaint, setIsSubmittingComplaint] = useState(false);
 
   const user = useSelector(state => state.verifiedUser.user);
   const userRoles = useSelector(state => state.verifiedUser.role);
@@ -42,11 +43,14 @@ const LiveTracking = () => {
   } = useLiveTracking(rideId, user, userRoles);
 
   const handleSubmitComplaint = async () => {
+    if (isSubmittingComplaint) return;
+    setIsSubmittingComplaint(true);
     const success = await submitComplaint(complaintText);
     if (success) {
       setComplaintText('');
       setShowComplaintForm(false);
     }
+    setIsSubmittingComplaint(false);
   };
 
   if (loading) {
@@ -181,6 +185,7 @@ const LiveTracking = () => {
                 complaintText={complaintText}
                 setComplaintText={setComplaintText}
                 handleSubmitComplaint={handleSubmitComplaint}
+                isSubmitting={isSubmittingComplaint}
               />
             </div>
           </div>

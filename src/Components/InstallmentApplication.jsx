@@ -220,6 +220,7 @@ const InstallmentApplication = () => {
               )}
 
               <form onSubmit={formik.handleSubmit} className="space-y-6">
+                <fieldset disabled={formik.isSubmitting} className="border-0 p-0 m-0 min-w-0">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <Input
                     label="Down Payment (₦)"
@@ -307,6 +308,7 @@ const InstallmentApplication = () => {
                   classes="w-full bg-yellow-400 text-black py-3 px-4 rounded font-semibold hover:bg-yellow-500 disabled:opacity-50"
                   disabled={!formik.isValid || !selectedVehicle || !installmentPlan}
                 />
+                </fieldset>
               </form>
             </div>
           </div>

@@ -3,6 +3,10 @@ import StorageService from './storageService.js';
 
 class ErrorHandler {
   static handleUnauthorized() {
+    if (!StorageService.getToken()) {
+      return;
+    }
+
     StorageService.clearAll();
     const publicPaths = ['/', '/login', '/signup', '/forgot-password'];
     const currentPath = window.location.pathname;

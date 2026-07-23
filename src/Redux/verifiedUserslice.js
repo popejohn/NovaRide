@@ -1,6 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import PersistenceService from '../utils/persistenceService.js';
 import RoleService from '../utils/roleService.js';
+import StorageService from '../utils/storageService.js';
 
 // Function to load initial state from persistence layer
 const loadInitialState = () => {
@@ -36,6 +37,15 @@ export const verifiedUserSlice = createSlice({
       // Persist to storage
       PersistenceService.saveUserState(state);
     },
+    authInitializationComplete(state, action) {
+      state.isInitializing = false;
+      if (!action.payload) {
+        state.user = null;
+        state.role = null;
+        state.isAuthenticated = false;
+        state.profileCompleted = false;
+      }
+    },
     setOnlineStatus(state, action) {
       state.isOnline = action.payload;
       PersistenceService.saveUserState(state);
@@ -50,14 +60,15 @@ export const verifiedUserSlice = createSlice({
       state.isAuthenticated = false;
       state.profileCompleted = false;
       state.isOnline = false;
+      state.isInitializing = false;
       // Clear storage
       PersistenceService.clearUserState();
-      // Note: token clearing should be handled by auth slice or service
+      StorageService.clearAll();
     },
   },
 });
 
-export const { setUser, setProfileCompleted, logout, setOnlineStatus } = verifiedUserSlice.actions;
+export const { setUser, authInitializationComplete, setProfileCompleted, logout, setOnlineStatus } = verifiedUserSlice.actions;
 export default verifiedUserSlice.reducer;
 
 

@@ -22,7 +22,6 @@ const Navbar = ({ userrole, nav, userverified, profilePic = '', button }) => {
         navigate('/login');
         setIsMenuOpen(false);
         setIsDropdownOpen(false);
-        localStorage.removeItem('nvcr_tk');
     };
 
     const predominantRole = getPredominantRole(userrole);

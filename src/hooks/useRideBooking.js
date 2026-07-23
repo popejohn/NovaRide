@@ -100,6 +100,8 @@ export const useRideBooking = () => {
     const cancelRide = () => {
         dispatch(setPickupLocation(''));
         dispatch(setDestination(''));
+        dispatch(setPickupCoordinate({ lat: null, lng: null }));
+        dispatch(setDestinationCoordinate({ lat: null, lng: null }));
         setEta('');
         setDistance('');
         setShowCostDist(false);
@@ -211,9 +213,11 @@ export const useRideBooking = () => {
     const clearInput = (type) => {
         if (type === 'pickup') {
             dispatch(setPickupLocation(''));
+            dispatch(setPickupCoordinate({ lat: null, lng: null }));
             setPickupSuggestions([]);
         } else {
             dispatch(setDestination(''));
+            dispatch(setDestinationCoordinate({ lat: null, lng: null }));
             setDestinationSuggestions([]);
         }
     };

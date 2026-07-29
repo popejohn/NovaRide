@@ -25,20 +25,15 @@ const Mapcontainer = () => {
 
     const handleMapClick = async ({ lat, lng }) => {
         const address = await reverseGeocode(lat, lng);
+        const displayAddress = address || 'Selected Location';
         if (!pickupLocation) {
-            dispatch(setPickupLocation(address));
-            dispatch(setPickupCoordinate({ lat, lng, address }))
+            dispatch(setPickupLocation(displayAddress));
+            dispatch(setPickupCoordinate({ lat, lng, address: displayAddress }));
         } else {
-            dispatch(setDestination(address));
-            dispatch(setDestinationCoordinate({ lat, lng, address }))
+            dispatch(setDestination(displayAddress));
+            dispatch(setDestinationCoordinate({ lat, lng, address: displayAddress }));
         }
     };
-
-
-    // const handlePickRider = (rider) => {
-    //   dispatch(setSelectedRider(rider));
-    //   dispatch(setRideCost(1500)); // mock calculation
-    // };
 
 
     const ibadanBounds = [
@@ -56,7 +51,7 @@ const Mapcontainer = () => {
                         attribution="&copy; OpenStreetMap contributors"
                     />
                     <LocationPicker onClick={handleMapClick} />
-                    {pickupCoordinate?.lat != null && pickupCoordinate?.lng != null && (
+                    {pickupCoordinate?.lat != null && !isNaN(pickupCoordinate.lat) && pickupCoordinate?.lng != null && !isNaN(pickupCoordinate.lng) && (
                         <Marker
                             position={[pickupCoordinate.lat, pickupCoordinate.lng]}
                             draggable={true}
@@ -64,13 +59,14 @@ const Mapcontainer = () => {
                                 dragend: async (e) => {
                                     const { lat, lng } = e.target.getLatLng();
                                     const address = await reverseGeocode(lat, lng);
-                                    dispatch(setPickupLocation(address));
-                                    dispatch(setPickupCoordinate({ lat, lng, address }));
+                                    const displayAddress = address || pickupLocation || 'Selected Location';
+                                    dispatch(setPickupLocation(displayAddress));
+                                    dispatch(setPickupCoordinate({ lat, lng, address: displayAddress }));
                                 }
                             }}
                         />
                     )}
-                    {destinationCoordinate?.lat != null && destinationCoordinate?.lng != null && (
+                    {destinationCoordinate?.lat != null && !isNaN(destinationCoordinate.lat) && destinationCoordinate?.lng != null && !isNaN(destinationCoordinate.lng) && (
                         <Marker
                             position={[destinationCoordinate.lat, destinationCoordinate.lng]}
                             draggable={true}
@@ -78,8 +74,9 @@ const Mapcontainer = () => {
                                 dragend: async (e) => {
                                     const { lat, lng } = e.target.getLatLng();
                                     const address = await reverseGeocode(lat, lng);
-                                    dispatch(setDestination(address));
-                                    dispatch(setDestinationCoordinate({ lat, lng, address }));
+                                    const displayAddress = address || destination || 'Selected Location';
+                                    dispatch(setDestination(displayAddress));
+                                    dispatch(setDestinationCoordinate({ lat, lng, address: displayAddress }));
                                 }
                             }}
                         />

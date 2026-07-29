@@ -15,12 +15,15 @@ export const reverseGeocode = async (lat, lon) => {
     const response = await api.get(
       `/location/reverse?lat=${lat}&lon=${lon}`
     );
-    const address = response.data.display_name;
-    locationCache.reverse[cacheKey] = address;
-    return address;
+    const address = response.data?.display_name;
+    if (address) {
+      locationCache.reverse[cacheKey] = address;
+      return address;
+    }
+    return null;
   } catch (error) {
     console.error('Reverse geocoding failed:', error);
-    return 'Unable to retrieve address';
+    return null;
   }
 };
 
@@ -52,7 +55,7 @@ export const forwardGeocode = async (address) => {
 
 export const calculateDistanceAndETA = async (pickup, destination) => {
   try {
-    // Use LocationIQ's directions API with proper coordinate format via backend proxy
+    // Calls backend directions proxy → Google Distance Matrix API
     const response = await api.get(
       `/location/directions/driving/${pickup.lng},${pickup.lat};${destination.lng},${destination.lat}`
     );

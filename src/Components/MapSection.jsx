@@ -82,7 +82,7 @@ const MapSection = ({ rideDetails, driverLocation, pickupLocation, destinationLo
         )}
 
         {/* Driver Marker */}
-        {driverLocation && (
+        {Array.isArray(driverLocation) && driverLocation.length === 2 && !isNaN(driverLocation[0]) && !isNaN(driverLocation[1]) && (
           <Marker position={driverLocation} icon={driverIcon}>
             <Popup>
               <div className="text-center">
@@ -94,7 +94,7 @@ const MapSection = ({ rideDetails, driverLocation, pickupLocation, destinationLo
         )}
 
         {/* Pickup Location Marker */}
-        {pickupLocation && (
+        {Array.isArray(pickupLocation) && pickupLocation.length === 2 && !isNaN(pickupLocation[0]) && !isNaN(pickupLocation[1]) && (
           <Marker position={pickupLocation} icon={pickupIcon}>
             <Popup>
               <div className="text-center">
@@ -106,7 +106,7 @@ const MapSection = ({ rideDetails, driverLocation, pickupLocation, destinationLo
         )}
 
         {/* Destination Marker */}
-        {destinationLocation && (
+        {Array.isArray(destinationLocation) && destinationLocation.length === 2 && !isNaN(destinationLocation[0]) && !isNaN(destinationLocation[1]) && (
           <Marker position={destinationLocation} icon={destinationIcon}>
             <Popup>
               <div className="text-center">

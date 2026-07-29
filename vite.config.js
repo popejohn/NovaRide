@@ -9,27 +9,13 @@ export default defineConfig({
   ],
   server: {
     proxy: {
-      '/api/locationiq': {
-        target: 'https://us1.locationiq.com',
-        changeOrigin: true,
-        secure: true,
-        rewrite: (path) => {
-          // Handle different LocationIQ endpoints
-          if (path.includes('/reverse.php')) {
-            return path.replace(/^\/api\/locationiq/, '/v1');
-          } else if (path.includes('/search.php')) {
-            return path.replace(/^\/api\/locationiq/, '/v1');
-          } else if (path.includes('/directions/driving')) {
-            return path.replace(/^\/api\/locationiq/, '/v1');
-          }
-          return path.replace(/^\/api\/locationiq/, '/v1');
-        }
-      },
+      // All API calls route through the Novaride backend (which calls Google Maps internally)
       '/api': {
-        target: 'https://novaride-backend-staging.onrender.com',
+        target: 'http://localhost:5000',
         changeOrigin: true,
         secure: false
       }
     }
   }
+
 })

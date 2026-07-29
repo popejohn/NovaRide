@@ -64,6 +64,11 @@ export const useAvailableRides = (isOnline) => {
                 );
             });
 
+            socket.on('rideLifecycleUpdated', (data) => {
+                if (!data?.rideId) return;
+                setAvailableRides(prev => prev.filter(r => r._id !== data.rideId));
+            });
+
             socketRef.current = socket;
         } else {
             setAvailableRides([]);

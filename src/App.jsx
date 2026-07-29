@@ -23,21 +23,23 @@ import FloatingChatSupport from './Components/FloatingChatSupport'
 import useSessionTimeout from './utils/useSessionTimeout'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
-
+import { ClipLoader } from 'react-spinners'
 
 import { useSelector, useDispatch } from 'react-redux'
 import { setUser, logout } from './Redux/verifiedUserslice'
 import api from './services/axios'
-
+import StorageService from './utils/storageService'
 
 function App() {
   const dispatch = useDispatch();
   const { isAuthenticated } = useSelector(state => state.verifiedUser);
+  const [isVerifying, setIsVerifying] = useState(() => !!StorageService.getToken());
+
   useSessionTimeout(isAuthenticated); // Enable conditional session timeout
 
   useEffect(() => {
     const verifyUser = async () => {
-      const token = localStorage.getItem('nvcr_tk');
+      const token = StorageService.getToken();
       if (token) {
         try {
           const response = await api.get('/auth/verify-token');
@@ -49,7 +51,11 @@ function App() {
         } catch (error) {
           console.error('Verification failed:', error);
           dispatch(logout());
+        } finally {
+          setIsVerifying(false);
         }
+      } else {
+        setIsVerifying(false);
       }
     };
     verifyUser();
@@ -57,28 +63,37 @@ function App() {
 
   const [pickupCoordinate, setPickupCoordinate] = useState({})
   const [destinationCoordinate, setDestinationCoordinate] = useState({})
+
+  if (isVerifying) {
+    return (
+      <div className="min-h-screen bg-neutral-950 flex items-center justify-center">
+        <ClipLoader color="#f97316" size={45} />
+      </div>
+    );
+  }
+
   return (
     <>
       <ToastContainer position="bottom-right" autoClose={3000} hideProgressBar theme="dark" />
       <Routes>
         <Route path='/' element={!isAuthenticated ? <LandingPage /> : <Bookride pickupCoordinate={pickupCoordinate} destinationCoordinate={destinationCoordinate} setPickupCoordinate={setPickupCoordinate} setDestinationCoordinate={setDestinationCoordinate} />} />
-        <Route path='signup' element={<SignUp />} />
-        <Route path='login' element={<Login />} />
+        <Route path='signup' element={!isAuthenticated ? <SignUp /> : <Navigate to='/bookride' replace />} />
+        <Route path='login' element={!isAuthenticated ? <Login /> : <Navigate to='/bookride' replace />} />
         <Route path='forgot-password' element={<ForgotPassword />} />
         <Route path='new-password' element={<NewPassword />} />
         <Route path='bookride' element={isAuthenticated ? <Bookride /> : <Navigate to='/login' replace />} />
-        <Route path='driver-selection' element={<DriverSelection />} />
-        <Route path='live-tracking' element={<LiveTracking />} />
-        <Route path='ride-completion' element={<RideCompletion />} />
-        <Route path='rider-profile-setup' element={<RiderProfileSetup />} />
-        <Route path='ride-request' element={<IncomingRideRequest />} />
-        <Route path='rider-live-tracking' element={<LiveTracking />} />
-        <Route path='riderdashboard' element={<Riderdash />} />
-        <Route path='installment-profile-setup' element={<InstallmentProfileSetup />} />
-        <Route path='installment-application' element={<InstallmentApplication />} />
-        <Route path='installment-dashboard' element={<InstallmentDashboard />} />
-        <Route path='wallet' element={<Wallet />} />
-        <Route path='profile' element={<ProfileManagement />} />
+        <Route path='driver-selection' element={isAuthenticated ? <DriverSelection /> : <Navigate to='/login' replace />} />
+        <Route path='live-tracking' element={isAuthenticated ? <LiveTracking /> : <Navigate to='/login' replace />} />
+        <Route path='ride-completion' element={isAuthenticated ? <RideCompletion /> : <Navigate to='/login' replace />} />
+        <Route path='rider-profile-setup' element={isAuthenticated ? <RiderProfileSetup /> : <Navigate to='/login' replace />} />
+        <Route path='ride-request' element={isAuthenticated ? <IncomingRideRequest /> : <Navigate to='/login' replace />} />
+        <Route path='rider-live-tracking' element={isAuthenticated ? <LiveTracking /> : <Navigate to='/login' replace />} />
+        <Route path='riderdashboard' element={isAuthenticated ? <Riderdash /> : <Navigate to='/login' replace />} />
+        <Route path='installment-profile-setup' element={isAuthenticated ? <InstallmentProfileSetup /> : <Navigate to='/login' replace />} />
+        <Route path='installment-application' element={isAuthenticated ? <InstallmentApplication /> : <Navigate to='/login' replace />} />
+        <Route path='installment-dashboard' element={isAuthenticated ? <InstallmentDashboard /> : <Navigate to='/login' replace />} />
+        <Route path='wallet' element={isAuthenticated ? <Wallet /> : <Navigate to='/login' replace />} />
+        <Route path='profile' element={isAuthenticated ? <ProfileManagement /> : <Navigate to='/login' replace />} />
         <Route path='help' element={<Help />} />
       </Routes>
       {isAuthenticated && <FloatingChatSupport />}

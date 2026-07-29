@@ -2,6 +2,7 @@ import { useEffect, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { logout } from '../Redux/verifiedUserslice';
+import api from '../services/axios';
 
 /**
  * Custom hook to manage session inactivity timeout.
@@ -12,9 +13,18 @@ const useSessionTimeout = (isAuthenticated, timeoutMs = 30 * 60 * 1000) => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    const handleLogout = useCallback(() => {
-        dispatch(logout());
-        navigate('/login');
+    const handleLogout = useCallback(async () => {
+        try {
+            const token = localStorage.getItem('nvcr_tk');
+            if (token) {
+                await api.post('/auth/logout');
+            }
+        } catch (error) {
+            console.warn('Session logout notification failed:', error?.message || error);
+        } finally {
+            dispatch(logout());
+            navigate('/login');
+        }
     }, [dispatch, navigate]);
 
     useEffect(() => {

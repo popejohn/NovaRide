@@ -116,9 +116,9 @@ const InstallmentProfileSetup = () => {
     },
     validationSchema: Yup.object({
       idType: Yup.string().oneOf(['national-id', 'drivers-license', 'international-passport']).required('ID type is required'),
-      idNumber: Yup.number("Enter a valid ID number").required('ID number is required'),
+      idNumber: Yup.string().required('ID number is required'),
       idExpiry: Yup.date().min(new Date(), 'ID must not be expired').required('ID expiry date is required').nullable(),
-      bvn: Yup.number().matches(/^\d{11}$/, 'BVN must be 11 digits').required('BVN is required'),
+      bvn: Yup.string().matches(/^\d{11}$/, 'BVN must be 11 digits').required('BVN is required'),
       nin: Yup.string().matches(/^\d{11}$/, 'NIN must be 11 digits').required('NIN is required')
     }),
     onSubmit: () => setCurrentStep(4)

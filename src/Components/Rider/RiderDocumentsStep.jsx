@@ -5,25 +5,27 @@ import Input from '../Input';
 
 const RiderDocumentsStep = ({ formik }) => {
   return (
-    <div className="space-y-4">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Input
-          label="Driver License Number*"
+          label="Driver License Number"
+          required
           value={formik.values.licenseNumber}
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
           name="licenseNumber"
           error={formik.touched.licenseNumber && formik.errors.licenseNumber}
-          variant="light"
         />
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">License Expiry Date*</label>
+        <div className="mb-6">
+          <label className="block mb-2 text-[10px] font-black uppercase tracking-[0.2em] text-neutral-400">
+            License Expiry Date <span className="text-orange-500">*</span>
+          </label>
           <DatePicker
             selected={formik.values.licenseExpiry}
             onChange={(date) => formik.setFieldValue('licenseExpiry', date)}
             onBlur={formik.handleBlur}
             name="licenseExpiry"
-            className="w-full px-4 py-2 rounded-lg border border-gray-300 outline-0 shadow-md focus:ring-1 focus:ring-yellow-400"
+            className="w-full px-5 py-4 rounded-[1.25rem] bg-neutral-800/40 border-2 border-neutral-800 text-white placeholder:text-neutral-600 focus:bg-neutral-800 focus:border-orange-500/50 outline-none transition-all duration-300 font-bold text-sm"
             dateFormat="yyyy-MM-dd"
             placeholderText="Select expiry date"
             minDate={new Date()}
@@ -32,12 +34,14 @@ const RiderDocumentsStep = ({ formik }) => {
             dropdownMode="select"
           />
           {formik.touched.licenseExpiry && formik.errors.licenseExpiry && (
-            <p className="text-red-500 text-sm mt-1">{formik.errors.licenseExpiry}</p>
+            <p className="mt-2 text-[10px] font-bold text-red-500 italic uppercase tracking-wider">
+              {formik.errors.licenseExpiry}
+            </p>
           )}
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Input
           label="Insurance Number"
           value={formik.values.insuranceNumber}
@@ -45,16 +49,17 @@ const RiderDocumentsStep = ({ formik }) => {
           onBlur={formik.handleBlur}
           name="insuranceNumber"
           error={formik.touched.insuranceNumber && formik.errors.insuranceNumber}
-          variant="light"
         />
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Insurance Expiry Date</label>
+        <div className="mb-6">
+          <label className="block mb-2 text-[10px] font-black uppercase tracking-[0.2em] text-neutral-400">
+            Insurance Expiry Date
+          </label>
           <DatePicker
             selected={formik.values.insuranceExpiry}
             onChange={(date) => formik.setFieldValue('insuranceExpiry', date)}
             onBlur={formik.handleBlur}
             name="insuranceExpiry"
-            className="w-full px-4 py-2 rounded-lg border border-gray-300 outline-0 shadow-md focus:ring-1 focus:ring-yellow-400"
+            className="w-full px-5 py-4 rounded-[1.25rem] bg-neutral-800/40 border-2 border-neutral-800 text-white placeholder:text-neutral-600 focus:bg-neutral-800 focus:border-orange-500/50 outline-none transition-all duration-300 font-bold text-sm"
             dateFormat="yyyy-MM-dd"
             placeholderText="Select expiry date"
             minDate={new Date()}
@@ -63,7 +68,9 @@ const RiderDocumentsStep = ({ formik }) => {
             dropdownMode="select"
           />
           {formik.touched.insuranceExpiry && formik.errors.insuranceExpiry && (
-            <p className="text-red-500 text-sm mt-1">{formik.errors.insuranceExpiry}</p>
+            <p className="mt-2 text-[10px] font-bold text-red-500 italic uppercase tracking-wider">
+              {formik.errors.insuranceExpiry}
+            </p>
           )}
         </div>
       </div>

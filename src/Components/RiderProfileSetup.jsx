@@ -91,89 +91,109 @@ const RiderProfileSetup = () => {
   const currentFormik = formHook.getCurrentFormik();
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-10">
-      {/* <Navbar userrole="rider" userverified={true} profilePic="/placeholderProfile.jpg" nav={<OtherNav userrole="rider" />}/> */}
+    <div className="min-h-screen bg-neutral-950 text-white py-12 px-4 sm:px-8 relative overflow-hidden">
+      {/* Decorative Background Elements */}
+      <div className="absolute top-0 left-0 w-full h-[500px] bg-gradient-to-b from-orange-500/10 via-orange-500/5 to-transparent pointer-events-none" />
+      <div className="absolute top-[15%] right-[-5%] w-[450px] h-[450px] bg-orange-500/10 blur-[130px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-[10%] left-[-5%] w-[400px] h-[400px] bg-orange-500/5 blur-[100px] rounded-full pointer-events-none" />
 
-      <div className="px-4 pt-10 md:px-8">
-        <div className="max-w-md md:max-w-4xl mx-auto">
-          <div className="mb-6 md:mb-8">
-            <h1 className="text-2xl text-center md:text-3xl font-bold text-gray-900 mb-2">
-              {user?.firstname} Complete Your Profile
-            </h1>
-            <p className="text-gray-600 text-center text-sm">
-              Set up your profile to start accepting rides
-            </p>
-          </div>
+      <div className="max-w-4xl mx-auto relative z-10">
+        <div className="mb-10 text-center">
+          <h1 className="text-3xl md:text-5xl font-black text-white tracking-tighter mb-3 leading-tight">
+            {user?.firstname ? `${user.firstname}, ` : ''}Complete Your <span className="text-orange-500">Rider Profile</span>
+          </h1>
+          <p className="text-neutral-400 font-bold text-xs md:text-sm tracking-wide uppercase">
+            Step {formHook.currentStep} of {steps.length}: {steps.find((s) => s.id === formHook.currentStep)?.title}
+          </p>
+        </div>
 
-          {/* Progress Steps */}
-          <div className="mb-6 md:mb-8">
-            <div className="flex items-center justify-between">
-              {steps.map((step, index) => (
-                <div key={step.id} className="flex items-center">
+        {/* Progress Steps */}
+        <div className="mb-10">
+          <div className="flex items-center justify-between bg-neutral-900/80 backdrop-blur-xl p-4 md:p-6 rounded-[2rem] border border-white/10 shadow-2xl">
+            {steps.map((step, index) => {
+              const isCurrent = step.id === formHook.currentStep;
+              const isCompleted = step.id < formHook.currentStep;
+              const StepIcon = step.icon;
+
+              return (
+                <div key={step.id} className="flex items-center group/step">
                   <div
-                    className={`flex items-center justify-center w-8 md:w-10 h-8 md:h-10 rounded-full ${
-                      step.id <= formHook.currentStep
-                        ? 'bg-yellow-400 text-black'
-                        : 'bg-gray-200 text-gray-400'
+                    className={`relative flex items-center justify-center w-10 md:w-12 h-10 md:h-12 rounded-[1.25rem] transition-all duration-500 ${
+                      isCurrent
+                        ? 'bg-orange-500 text-white shadow-lg shadow-orange-500/40 scale-110'
+                        : isCompleted
+                        ? 'bg-neutral-800 text-orange-400 border border-orange-500/40'
+                        : 'bg-neutral-900 text-neutral-600 border border-white/5'
                     }`}
                   >
-                    <step.icon className="text-xs md:text-sm" />
+                    <StepIcon className="text-xs md:text-base" />
+                    {isCompleted && (
+                      <div className="absolute -top-1 -right-1 w-4 h-4 bg-orange-500 rounded-full border-2 border-neutral-950 flex items-center justify-center">
+                        <div className="w-1.5 h-1.5 bg-white rounded-full" />
+                      </div>
+                    )}
                   </div>
-                  <div className="ml-2 md:ml-3">
+                  <div className="ml-3 mr-4 hidden md:block">
                     <div
-                      className={`text-xs md:text-sm font-medium hidden md:block ${
-                        step.id <= formHook.currentStep
-                          ? 'text-black'
-                          : 'text-gray-400'
+                      className={`text-[10px] font-black uppercase tracking-[0.2em] mb-0.5 ${
+                        isCurrent || isCompleted ? 'text-white' : 'text-neutral-600'
+                      }`}
+                    >
+                      Step 0{step.id}
+                    </div>
+                    <div
+                      className={`text-[11px] font-bold ${
+                        isCurrent ? 'text-orange-400' : isCompleted ? 'text-neutral-300' : 'text-neutral-600'
                       }`}
                     >
                       {step.title}
                     </div>
                   </div>
                   {index < steps.length - 1 && (
-                    <div
-                      className={`w-8 md:w-16 h-0.5 mx-2 md:mx-4 ${
-                        step.id < formHook.currentStep
-                          ? 'bg-yellow-400'
-                          : 'bg-gray-200'
-                      }`}
-                    />
+                    <div className="mx-2 hidden sm:block">
+                      <div
+                        className={`w-8 md:w-14 h-[2px] rounded-full transition-all duration-500 ${
+                          isCompleted ? 'bg-orange-500' : 'bg-neutral-800'
+                        }`}
+                      />
+                    </div>
                   )}
                 </div>
-              ))}
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Form Content */}
+        <div className="bg-neutral-900/90 border border-white/10 backdrop-blur-xl rounded-[2.5rem] p-6 md:p-12 shadow-2xl shadow-black/60 relative overflow-hidden">
+          {/* Accent glow behind form */}
+          <div className="absolute top-0 right-0 w-64 h-64 bg-orange-500/5 blur-[90px] rounded-full -mr-20 -mt-20 pointer-events-none" />
+
+          <form onSubmit={currentFormik.handleSubmit} className="relative z-10">
+            {renderStepContent()}
+
+            {/* Navigation Buttons */}
+            <div className="flex justify-between items-center mt-10 pt-8 border-t border-white/10">
+              <Button
+                type="button"
+                text="Previous"
+                classes={`px-6 py-4.5 rounded-xl font-bold text-xs uppercase tracking-[0.15em] transition-all duration-300 ${
+                  formHook.currentStep === 1
+                    ? 'bg-neutral-800/50 text-neutral-600 cursor-not-allowed border border-white/5'
+                    : 'bg-white/10 text-white hover:bg-white/20 active:scale-95 border border-white/10'
+                }`}
+                onClick={() => formHook.setCurrentStep((prev) => prev - 1)}
+                disabled={formHook.currentStep === 1}
+              />
+
+              <Button
+                type="submit"
+                text={formHook.currentStep === 4 ? 'Complete Setup' : 'Next Step'}
+                classes="bg-orange-500 text-white px-8 py-4.5 rounded-xl font-black text-xs uppercase tracking-[0.2em] hover:bg-orange-600 active:scale-95 transition-all shadow-lg shadow-orange-500/25"
+                disabled={!currentFormik.isValid}
+              />
             </div>
-          </div>
-
-          {/* Form Content */}
-          <div className="bg-white rounded-lg shadow-lg p-6 md:p-8">
-            <form onSubmit={currentFormik.handleSubmit}>
-              <fieldset disabled={currentFormik.isSubmitting} className="border-0 p-0 m-0 min-w-0">
-              {renderStepContent()}
-
-              {/* Navigation Buttons */}
-              <div className="flex justify-between mt-6 md:mt-8">
-                <Button
-                  type="button"
-                  text="Previous"
-                  classes={`px-4 md:px-6 py-2 rounded font-semibold text-sm md:text-base ${
-                    formHook.currentStep === 1
-                      ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                      : 'bg-gray-600 text-white hover:bg-gray-700'
-                  }`}
-                  onClick={() => formHook.setCurrentStep((prev) => prev - 1)}
-                  disabled={formHook.currentStep === 1}
-                />
-
-                <Button
-                  type="submit"
-                  text={formHook.currentStep === 4 ? 'Complete Setup' : 'Next'}
-                  classes="bg-yellow-400 text-black px-4 md:px-6 py-2 rounded font-semibold hover:bg-yellow-500 text-sm md:text-base"
-                  disabled={!currentFormik.isValid}
-                />
-              </div>
-              </fieldset>
-            </form>
-          </div>
+          </form>
         </div>
       </div>
     </div>

@@ -13,7 +13,8 @@ const LocationSearch = ({
     onClear,
     onUseMyLocation,
     inputRef,
-    theme = 'dark'
+    theme = 'dark',
+    disabled = false
 }) => {
     const Motion = motion;
     const Icon = type === 'pickup' ? FaLocationDot : FaLocationArrow;
@@ -44,13 +45,14 @@ const LocationSearch = ({
                     value={value}
                     onChange={(e) => onValueChange(e.target.value)}
                     ref={inputRef}
-                    className={`p-3 w-full border-0 outline-0 bg-transparent ${isDark ? 'text-white placeholder:text-neutral-400' : 'text-neutral-900 placeholder:text-neutral-500'}`}
+                    disabled={disabled}
+                    className={`p-3 w-full border-0 outline-0 bg-transparent ${isDark ? 'text-white placeholder:text-neutral-400' : 'text-neutral-900 placeholder:text-neutral-500'} ${disabled ? 'opacity-70 cursor-not-allowed' : ''}`}
                 />
                 <div className="flex items-center gap-2">
                     {type === 'pickup' && onUseMyLocation && (
                         <motion.button
                             onClick={handleUseMyLocation}
-                            disabled={isLoadingLocation}
+                            disabled={isLoadingLocation || disabled}
                             whileHover={{ scale: 1.1 }}
                             whileTap={{ scale: 0.95 }}
                             title="Use my current location"
@@ -66,19 +68,26 @@ const LocationSearch = ({
                     )}
                     {value && (
                         <IoClose
-                            className={`cursor-pointer mx-2 transition-colors ${
+                            className={`mx-2 transition-colors ${
+                                disabled
+                                    ? 'cursor-not-allowed opacity-50'
+                                    : 'cursor-pointer'
+                            } ${
                                 isDark 
                                     ? 'text-neutral-400 hover:text-white' 
                                     : 'text-neutral-500 hover:text-neutral-900'
                             }`}
-                            onClick={onClear}
+                            onClick={() => {
+                                if (disabled) return;
+                                onClear();
+                            }}
                         />
                     )}
                 </div>
             </div>
 
             <AnimatePresence>
-                {suggestions.length > 0 && (
+                {!disabled && suggestions.length > 0 && (
                     <Motion.div
                         initial={{ opacity: 0, y: -10 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -97,7 +106,10 @@ const LocationSearch = ({
                                         ? 'text-white hover:bg-white/10 border-white/5' 
                                         : 'text-neutral-900 hover:bg-neutral-100 border-neutral-100'
                                 }`}
-                                onClick={() => onSuggestionClick(item)}
+                                onClick={() => {
+                                    if (disabled) return;
+                                    onSuggestionClick(item);
+                                }}
                             >
                                 {item.display}
                             </div>

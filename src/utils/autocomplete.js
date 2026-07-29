@@ -8,11 +8,17 @@ export const getSuggestions = async (query) => {
       `/location/autocomplete?q=${encodeURIComponent(query)}`
     );
 
-    return response.data.map(item => ({
-      display: item.display_name,
-      lat: parseFloat(item.lat),
-      lng: parseFloat(item.lon),
-    }));
+    return response.data
+      .map(item => {
+        const lat = parseFloat(item.lat);
+        const lng = parseFloat(item.lon);
+        return {
+          display: item.display_name,
+          lat: isNaN(lat) ? null : lat,
+          lng: isNaN(lng) ? null : lng,
+        };
+      })
+      .filter(item => item.lat !== null && item.lng !== null);
   } catch (error) {
     console.error("Autocomplete error:", error);
     return [];

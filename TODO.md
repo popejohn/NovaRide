@@ -1,8 +1,6 @@
-- [ ] Create centralized Axios instance at src/services/axios.js
-- [ ] Replace all `client` imports with shared axios instance
-- [ ] Replace backend direct `axios` imports/usages with shared axios instance
-- [ ] Convert API calls to relative paths only (no manual VITE_API_URL concat)
-- [ ] Remove old src/api/client.js
-- [ ] Scan for hard-coded backend URLs and duplicate /api/api patterns
-- [ ] Run frontend build to verify
-- [ ] Prepare modified-files summary and list any non-convertible API calls
+# Bookride Loading-State Input Disable TODO
+
+- [x] Add `disabled` support in `LocationSearch` component.
+- [x] Disable input editing and related interactions when `disabled` is true.
+- [x] Pass `disabled={loading}` from `RideBookingSidebar` to pickup and destination `LocationSearch`.
+- [x] Mark task complete after updates.

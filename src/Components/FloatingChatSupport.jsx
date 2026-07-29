@@ -146,7 +146,7 @@ const FloatingChatSupport = () => {
   };
   if (!token) return null;
   return (
-    <div className="fixed bottom-6 right-6 z-50 font-sans">
+    <div className="fixed bottom-6 right-6 z-[8000] font-sans">
       {/* Floating Action Button (FAB) */}
       <button
         id="floating-chat-trigger"

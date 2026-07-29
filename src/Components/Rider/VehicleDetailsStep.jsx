@@ -3,35 +3,41 @@ import Input from '../Input';
 
 const VehicleDetailsStep = ({ formik }) => {
   return (
-    <div className="space-y-4">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Vehicle Type*</label>
+          <label className="block mb-2 text-[10px] font-black uppercase tracking-[0.2em] text-neutral-400">
+            Vehicle Type <span className="text-orange-500">*</span>
+          </label>
           <select
             name="vehicleType"
             value={formik.values.vehicleType}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
-            className={`w-full px-4 py-2 rounded-lg border outline-0 shadow-md focus:ring-1 focus:ring-yellow-400 ${formik.touched.vehicleType && formik.errors.vehicleType ? 'border-red-500' : 'border-gray-300'}`}
+            className={`w-full px-5 py-4 rounded-[1.25rem] bg-neutral-800/40 border-2 text-white outline-none focus:bg-neutral-800 focus:border-orange-500/50 transition-all duration-300 font-bold text-sm ${
+              formik.touched.vehicleType && formik.errors.vehicleType ? 'border-red-500/50 bg-red-500/5' : 'border-neutral-800'
+            }`}
           >
-            <option value="">Select vehicle type</option>
-            <option value="car">Car</option>
-            <option value="bike">Motorcycle</option>
-            <option value="tricycle">Tricycle</option>
+            <option value="" className="bg-neutral-900 text-neutral-400">Select vehicle type</option>
+            <option value="car" className="bg-neutral-900 text-white">Car</option>
+            <option value="bike" className="bg-neutral-900 text-white">Motorcycle</option>
+            <option value="tricycle" className="bg-neutral-900 text-white">Tricycle</option>
           </select>
           {formik.touched.vehicleType && formik.errors.vehicleType && (
-            <p className="text-red-500 text-xs mt-1">{formik.errors.vehicleType}</p>
+            <p className="mt-2 text-[10px] font-bold text-red-500 italic uppercase tracking-wider">
+              {formik.errors.vehicleType}
+            </p>
           )}
         </div>
         <Input
-          label="Plate Number*"
+          label="Plate Number"
+          required
           value={formik.values.plateNumber}
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
           name="plateNumber"
           placeholder="ABC 123 XY"
           error={formik.touched.plateNumber && formik.errors.plateNumber}
-          variant="light"
         />
       </div>
     </div>

@@ -43,57 +43,96 @@ export const useRideBooking = () => {
     }, [dispatch, user]);
 
     const handleFare = async () => {
+        // First check if both pickup and destination inputs are present
+        if (!pickupLocation || !destination) {
+            toast.error("Please pick a valid location");
+            return;
+        }
+
+        // Verify pickup coordinate on map
+        let pickCoord = pickupCoordinate;
+        const isPickValid = pickCoord?.lat != null && !isNaN(pickCoord.lat) && pickCoord?.lng != null && !isNaN(pickCoord.lng);
+        if (!isPickValid && pickupLocation) {
+            const forwardRes = await forwardGeocode(pickupLocation);
+            if (forwardRes && forwardRes.lat != null && !isNaN(forwardRes.lat)) {
+                pickCoord = { lat: forwardRes.lat, lng: forwardRes.lng, address: pickupLocation };
+                dispatch(setPickupCoordinate(pickCoord));
+            } else {
+                pickCoord = null;
+            }
+        }
+
+        // Verify destination coordinate on map
+        let destCoord = destinationCoordinate;
+        const isDestValid = destCoord?.lat != null && !isNaN(destCoord.lat) && destCoord?.lng != null && !isNaN(destCoord.lng);
+        if (!isDestValid && destination) {
+            const forwardRes = await forwardGeocode(destination);
+            if (forwardRes && forwardRes.lat != null && !isNaN(forwardRes.lat)) {
+                destCoord = { lat: forwardRes.lat, lng: forwardRes.lng, address: destination };
+                dispatch(setDestinationCoordinate(destCoord));
+            } else {
+                destCoord = null;
+            }
+        }
+
+        // Must have TWO valid location markers on the map
+        const hasValidPickupMarker = pickCoord?.lat != null && !isNaN(pickCoord.lat) && pickCoord?.lng != null && !isNaN(pickCoord.lng);
+        const hasValidDestMarker = destCoord?.lat != null && !isNaN(destCoord.lat) && destCoord?.lng != null && !isNaN(destCoord.lng);
+
+        if (!hasValidPickupMarker || !hasValidDestMarker) {
+            toast.error("Please pick a valid location");
+            return;
+        }
+
         dispatch(itemLoading());
         setShowCostDist(false);
         try {
-            let pickCoord = pickupCoordinate;
-            if (!pickupCoordinate || !pickupCoordinate.lat || pickupCoordinate.address !== pickupLocation) {
-                const forwardRes = await forwardGeocode(pickupLocation);
-                if (forwardRes) {
-                    pickCoord = { lat: forwardRes.lat, lng: forwardRes.lng, address: pickupLocation };
-                    dispatch(setPickupCoordinate(pickCoord));
-                } else {
-                    pickCoord = null;
-                }
-            }
-
-            let destCoord = destinationCoordinate;
-            if (!destinationCoordinate || !destinationCoordinate.lat || destinationCoordinate.address !== destination) {
-                const forwardRes = await forwardGeocode(destination);
-                if (forwardRes) {
-                    destCoord = { lat: forwardRes.lat, lng: forwardRes.lng, address: destination };
-                    dispatch(setDestinationCoordinate(destCoord));
-                } else {
-                    destCoord = null;
-                }
-            }
-
-            if (destCoord && pickCoord && destCoord.lat && pickCoord.lat) {
-                const distanceData = await calculateDistanceAndETA(pickCoord, destCoord);
-                if (distanceData) {
-                    setDistance(distanceData.distanceInKm);
-                    setEta(distanceData.durationInMin);
-                }
+            const distanceData = await calculateDistanceAndETA(pickCoord, destCoord);
+            if (distanceData) {
+                setDistance(distanceData.distanceInKm);
+                setEta(distanceData.durationInMin);
             }
             setTimeout(() => {
                 setShowCostDist(true);
                 dispatch(itemLoaded());
-            }, 2000);
+            }, 1000);
         } catch (error) {
             console.error('Error in handleFare:', error);
+            toast.error("Please pick a valid location");
             dispatch(itemLoaded());
         }
     };
 
-    const handleSuggestionClick = (item, type) => {
-        if (type === "pickup") {
-            dispatch(setPickupLocation(item.display));
-            dispatch(setPickupCoordinate({ lat: item.lat, lng: item.lng, address: item.display }));
-            setPickupSuggestions([]);
+    const handleSuggestionClick = async (item, type) => {
+        let lat = item.lat;
+        let lng = item.lng;
+
+        if (lat == null || isNaN(lat) || lng == null || isNaN(lng)) {
+            const forwardRes = await forwardGeocode(item.display);
+            if (forwardRes) {
+                lat = forwardRes.lat;
+                lng = forwardRes.lng;
+            }
+        }
+
+        if (lat != null && !isNaN(lat) && lng != null && !isNaN(lng)) {
+            if (type === "pickup") {
+                dispatch(setPickupLocation(item.display));
+                dispatch(setPickupCoordinate({ lat, lng, address: item.display }));
+                setPickupSuggestions([]);
+            } else {
+                dispatch(setDestination(item.display));
+                dispatch(setDestinationCoordinate({ lat, lng, address: item.display }));
+                setDestinationSuggestions([]);
+            }
         } else {
-            dispatch(setDestination(item.display));
-            dispatch(setDestinationCoordinate({ lat: item.lat, lng: item.lng, address: item.display }));
-            setDestinationSuggestions([]);
+            if (type === "pickup") {
+                dispatch(setPickupLocation(item.display));
+                setPickupSuggestions([]);
+            } else {
+                dispatch(setDestination(item.display));
+                setDestinationSuggestions([]);
+            }
         }
     };
 
@@ -142,19 +181,19 @@ export const useRideBooking = () => {
                         normalizedAddress.includes('unable to retrieve address');
 
                     if (isAddressLookupFailure) {
-                        // Keep coordinates, but avoid showing an error text in the pickup input
+                        // Keep coordinates, but use clean fallback in pickup input
                         const fallbackLocation = 'Current Location';
                         dispatch(setPickupLocation(fallbackLocation));
                         dispatch(setPickupCoordinate({ lat: latitude, lng: longitude, address: fallbackLocation }));
                         setPickupSuggestions([]);
-                        toast.warning("Using GPS coordinates (address lookup unavailable)", { autoClose: 2000 });
+                        toast.success("Location fetched successfully", { autoClose: 2500 });
                     } else {
                         // Update the pickup location with fresh data
                         dispatch(setPickupLocation(address));
                         dispatch(setPickupCoordinate({ lat: latitude, lng: longitude, address: address }));
                         setPickupSuggestions([]); // Clear any suggestions
 
-                        toast.success(`📍 Location updated: ${address}`, { autoClose: 2500 });
+                        toast.success("Location fetched successfully", { autoClose: 2500 });
                     }
                 } catch (error) {
                     console.error("Error reverse geocoding:", error);

@@ -23,6 +23,8 @@ const RideBookingSidebar = ({
     children
 }) => {
     const Motion = motion;
+    const isFindRideDisabled = loading || !pickupLocation?.trim() || !destination?.trim();
+
     return (
         <Motion.aside
             initial={{ opacity: 0, x: -50 }}
@@ -78,8 +80,8 @@ const RideBookingSidebar = ({
                         text={loading
                             ? <div className="flex justify-center items-center w-full"><ClipLoader color="#fff" size={20} /></div>
                             : 'Find Rides'}
-                        classes={`flex-1 h-14 rounded-xl transition-all duration-300 font-bold text-lg shadow-lg ${loading ? 'bg-neutral-700 text-neutral-400 cursor-not-allowed' : 'bg-orange-500 text-white hover:bg-orange-600 active:scale-95 cursor-pointer'}`}
-                        disabled={loading}
+                        classes={`flex-1 h-14 rounded-xl transition-all duration-300 font-bold text-lg shadow-lg ${isFindRideDisabled ? 'bg-neutral-700 text-neutral-400 cursor-not-allowed' : 'bg-orange-500 text-white hover:bg-orange-600 active:scale-95 cursor-pointer'}`}
+                        disabled={isFindRideDisabled}
                         onClick={handleFare}
                     />
 

@@ -24,6 +24,8 @@ const RideBookingSidebar = ({
 }) => {
     const Motion = motion;
     const isFindRideDisabled = loading || !pickupLocation?.trim() || !destination?.trim();
+    const isPickupDisabled = loading;
+    const isDestinationDisabled = loading;
 
     return (
         <Motion.aside
@@ -60,7 +62,7 @@ const RideBookingSidebar = ({
                     onSuggestionClick={(item) => handleSuggestionClick(item, "pickup")}
                     onClear={() => clearInput("pickup")}
                     onUseMyLocation={handleUseMyLocation}
-                    disabled={loading}
+                    disabled={isPickupDisabled}
                 />
 
                 <LocationSearch
@@ -72,7 +74,7 @@ const RideBookingSidebar = ({
                     onSuggestionClick={(item) => handleSuggestionClick(item, "destination")}
                     onClear={() => clearInput("destination")}
                     inputRef={destinationInputRef}
-                    disabled={loading}
+                    disabled={isDestinationDisabled}
                 />
 
                 <div className='flex justify-start items-center gap-4 mt-8'>

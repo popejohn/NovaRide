@@ -48,7 +48,9 @@ const ClickToReveal = ({ distance, duration, cancelRide }) => {
 
             <div className='mt-2 flex items-center justify-between px-2'>
               <span className='text-neutral-400 font-medium'>Estimated Fare</span>
-              <span className='text-2xl font-bold text-orange-400'>#{distance && distance * 150}</span>
+              <span className='text-2xl font-bold text-orange-400'>
+                #{distance ? Math.round(distance * 150 * 3) : 0}
+              </span>
             </div>
 
             <div className='flex gap-4 mt-2'>

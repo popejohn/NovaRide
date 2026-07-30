@@ -177,16 +177,15 @@ export const useRideBooking = () => {
                     const normalizedAddress = (address || '').toLowerCase().trim();
                     const isAddressLookupFailure =
                         !address ||
+                        normalizedAddress === 'current location' ||
                         normalizedAddress.includes('unable to retrieve location') ||
                         normalizedAddress.includes('unable to retrieve address');
 
                     if (isAddressLookupFailure) {
-                        // Keep coordinates, but use clean fallback in pickup input
-                        const fallbackLocation = 'Current Location';
-                        dispatch(setPickupLocation(fallbackLocation));
-                        dispatch(setPickupCoordinate({ lat: latitude, lng: longitude, address: fallbackLocation }));
+                        dispatch(setPickupLocation(''));
+                        dispatch(setPickupCoordinate({ lat: null, lng: null }));
                         setPickupSuggestions([]);
-                        toast.success("Location fetched successfully", { autoClose: 2500 });
+                        toast.error("Failed to fetch current location");
                     } else {
                         // Update the pickup location with fresh data
                         dispatch(setPickupLocation(address));
@@ -197,12 +196,10 @@ export const useRideBooking = () => {
                     }
                 } catch (error) {
                     console.error("Error reverse geocoding:", error);
-                    
-                    // Even if address lookup fails, we have valid coordinates from device
-                    const fallbackLocation = 'Current Location';
-                    dispatch(setPickupLocation(fallbackLocation));
-                    dispatch(setPickupCoordinate({ lat: latitude, lng: longitude, address: fallbackLocation }));
-                    toast.warning("Using GPS coordinates (address lookup unavailable)", { autoClose: 2000 });
+                    dispatch(setPickupLocation(''));
+                    dispatch(setPickupCoordinate({ lat: null, lng: null }));
+                    setPickupSuggestions([]);
+                    toast.error("Failed to fetch current location");
                 } finally {
                     dispatch(itemLoaded());
                 }

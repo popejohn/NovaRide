@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { toast } from 'react-toastify';
 import api from '../services/axios';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
@@ -54,7 +55,7 @@ const IncomingRideRequest = () => {
       }, 2000);
     } catch (error) {
       console.error('Error accepting ride:', error);
-      alert(error.response?.data?.message || 'An error occurred while accepting the ride');
+      toast.error(error.response?.data?.message || 'An error occurred while accepting the ride');
     }
   };
 
@@ -67,7 +68,7 @@ const IncomingRideRequest = () => {
       }, 2000);
     } catch (error) {
       console.error('Error rejecting ride:', error);
-      alert(error.response?.data?.message || 'An error occurred while rejecting the ride');
+      toast.error(error.response?.data?.message || 'An error occurred while rejecting the ride');
     }
   };
 

@@ -1,4 +1,5 @@
 import React from 'react';
+import { toast } from 'react-toastify';
 import { useMapInstance } from './MapContext';
 import { FaLocationArrow } from 'react-icons/fa';
 
@@ -7,7 +8,7 @@ const CurrentLocationButton = ({ onLocationFound = null }) => {
 
   const handleLocateUser = () => {
     if (!navigator.geolocation) {
-      alert('Geolocation is not supported by your browser');
+      toast.error('Geolocation is not supported by your browser');
       return;
     }
 

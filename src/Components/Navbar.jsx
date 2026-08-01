@@ -53,7 +53,7 @@ const Navbar = ({ userrole, nav, userverified, profilePic = '', button }) => {
         { icon: <FaUser />, label: 'My profile', path: '/profile' },
         { icon: <FaWallet />, label: 'Wallet', path: '/wallet' },
         ...(!hasRiderRole ? [{ icon: <FaCarSide />, label: 'Earn as a rider', path: '/earn' }] : []),
-        { icon: <FaQuestionCircle />, label: 'Support', path: '/support' },
+        { icon: <FaQuestionCircle />, label: 'Support', path: '/help' },
     ];
 
     return (

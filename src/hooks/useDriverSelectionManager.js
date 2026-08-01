@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { toast } from 'react-toastify';
 import api from '../services/axios';
 import { useDispatch } from 'react-redux';
 import { setSelectedRider } from '../Redux/riderslice';
@@ -98,12 +99,12 @@ export const useDriverSelectionManager = (rideId, bookingStatus, setBookingStatu
 
         if (response.status !== 200) {
           setBookingStatus('idle');
-          alert('Failed to assign driver. Please try again.');
+          toast.error('Failed to assign driver. Please try again.');
         }
       } catch (error) {
         console.error('Error assigning driver:', error);
         setBookingStatus('idle');
-        alert('Failed to confirm booking. Please try again.');
+        toast.error('Failed to confirm booking. Please try again.');
       }
     }
   };

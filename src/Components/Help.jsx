@@ -48,7 +48,7 @@ const Help = () => {
         profilePic={user?.profilePic || "/placeholderProfile.jpg"}
         nav={<OtherNav userrole={userRoles} userverified={isAuthenticated} />}
       />
-      <div className="mt-28 px-4 md:px-8 pb-16">
+      <div className="pt-24 md:pt-28 px-4 md:px-8 pb-16">
         <div className="max-w-6xl mx-auto">
           {/* Header */}
           <div className="text-center mb-12">

@@ -3,7 +3,11 @@ import { motion } from 'framer-motion';
 import { FaStar, FaCar, FaMapMarkerAlt, FaShieldAlt } from 'react-icons/fa';
 import profilePicPlaceholder from '../assets/placeholderProfile.jpg';
 
-const DriverCard = ({ driver, onSelect, selected }) => (
+const DriverCard = ({ driver, onSelect, selected }) => {
+  const fareValue = Number(driver?.fare);
+  const fareDisplay = Number.isFinite(fareValue) ? `₦${fareValue.toLocaleString()}` : 'N/A';
+
+  return (
   <motion.div
     layout
     initial={{ opacity: 0, y: 20 }}
@@ -37,7 +41,7 @@ const DriverCard = ({ driver, onSelect, selected }) => (
         </div>
       </div>
       <div className="text-right">
-        <div className="text-2xl font-black text-white">₦{driver.fare.toLocaleString()}</div>
+        <div className="text-2xl font-black text-white">{fareDisplay}</div>
         <div className="text-sm font-medium text-orange-500">{driver.eta} mins away</div>
       </div>
     </div>
@@ -70,7 +74,8 @@ const DriverCard = ({ driver, onSelect, selected }) => (
       </motion.div>
     )}
   </motion.div>
-);
+  );
+};
 
 export default DriverCard;
 

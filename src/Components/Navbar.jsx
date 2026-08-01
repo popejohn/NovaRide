@@ -57,8 +57,8 @@ const Navbar = ({ userrole, nav, userverified, profilePic = '', button }) => {
     ];
 
     return (
-        <div className='z-[9000] relative'>
-            <header className='fixed top-0 left-0 right-0 z-[9000]'>
+        <div className='z-[5000] relative'>
+            <header className='fixed top-0 left-0 right-0 z-[5000]'>
                 <nav className='flex items-center justify-between h-16 md:h-20 px-6 md:px-12 bg-white border-b border-neutral-200 shadow-sm transition-all duration-300'>
                     {/* Logo Section */}
                     <Link to={userverified ? dashboardPath : '/'} className='flex items-center gap-3 group'>
@@ -113,7 +113,7 @@ const Navbar = ({ userrole, nav, userverified, profilePic = '', button }) => {
                                                 animate={{ opacity: 1, y: 0, scale: 1 }}
                                                 exit={{ opacity: 0, y: 10, scale: 0.95 }}
                                                 transition={{ type: 'spring', damping: 20, stiffness: 300 }}
-                                                className='absolute right-0 mt-3 w-64 bg-white border border-neutral-200 rounded-2xl shadow-xl overflow-hidden z-[9001]'
+                                                className='absolute right-0 mt-3 w-64 bg-white border border-neutral-200 rounded-2xl shadow-xl overflow-hidden z-[5002]'
                                             >
                                                 <div className='p-2'>
                                                     {(predominantRole === 'rider' || predominantRole === 'installment') && (
@@ -172,7 +172,7 @@ const Navbar = ({ userrole, nav, userverified, profilePic = '', button }) => {
                         initial={{ opacity: 0, y: -20 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -20 }}
-                        className='lg:hidden fixed inset-x-0 top-16 md:top-20 z-[8999] bg-white border-b border-neutral-200 shadow-xl p-8 max-h-[calc(100vh-80px)] overflow-y-auto'
+                        className='lg:hidden fixed inset-x-0 top-16 md:top-20 z-[4999] bg-white border-b border-neutral-200 shadow-xl p-8 max-h-[calc(100vh-80px)] overflow-y-auto'
                     >
                         <div className='space-y-8'>
                             {userverified && (
@@ -233,7 +233,7 @@ const Navbar = ({ userrole, nav, userverified, profilePic = '', button }) => {
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         onClick={() => setIsMenuOpen(false)}
-                        className='lg:hidden fixed inset-0 bg-black/40 z-[8998]'
+                        className='lg:hidden fixed inset-0 bg-black/40 z-[4998]'
                     />
                 )}
             </AnimatePresence>

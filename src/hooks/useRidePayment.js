@@ -3,6 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import api from '../services/axios';
 import { toast } from 'react-toastify';
 
+export const calculateEstimatedFare = (distance) => {
+    const numericDistance = Number(distance);
+    if (!Number.isFinite(numericDistance) || numericDistance <= 0) return 0;
+    return Math.round(numericDistance * 150 * 3);
+};
+
 export const useRidePayment = (distance, duration, pickupLocation, destination, pickupCoordinate, destinationCoordinate) => {
     const navigate = useNavigate();
     const [isProcessing, setIsProcessing] = useState(false);
@@ -11,7 +17,7 @@ export const useRidePayment = (distance, duration, pickupLocation, destination, 
         try {
             setIsProcessing(true);
             const token = localStorage.getItem('nvcr_tk');
-            const fare = distance * 150;
+            const fare = calculateEstimatedFare(distance);
             // Check balance first
             const walletResponse = await api.get('/user/wallet-data', {
                 headers: { 

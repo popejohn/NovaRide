@@ -41,12 +41,13 @@ export const useDriverSelectionManager = (rideId, bookingStatus, setBookingStatu
               params: { lat, lng, maxDistance: 5000 }
             });
 
+            const normalizedRideFare = Number(currentRideDetails?.fare);
             const transformedDrivers = driverResponse.data.drivers.map(driver => ({
               id: driver._id,
               name: `${driver.riderInfo.firstname} ${driver.riderInfo.lastname}`,
               rating: 4.8,
               totalRides: 156,
-              fare: currentRideDetails?.fare || 2500,
+              fare: Number.isFinite(normalizedRideFare) ? normalizedRideFare : null,
               distance: parseFloat(driver.distance?.toFixed(1)) || 1.2,
               eta: Math.ceil((driver.distance || 1.2) * 4),
               profilePic: driver.riderInfo.profilePic,

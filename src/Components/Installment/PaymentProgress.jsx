@@ -1,4 +1,5 @@
 import React from 'react';
+import { toast } from 'react-toastify';
 import { FaChartLine } from 'react-icons/fa';
 import { PaystackButton } from 'react-paystack';
 import { motion } from 'framer-motion';
@@ -70,15 +71,15 @@ export const PaymentProgress = ({ totalAmount, paidAmount, nextPaymentDate, onPa
                       headers: { Authorization: `Bearer ${token}` }
                   });
                   
-                  alert("Payment successful!");
+                  toast.success('Payment successful!');
                   if(onPaymentSuccess) onPaymentSuccess();
               } catch (verifyError) {
                   console.error("Verification failed:", verifyError);
-                  alert("Payment verification failed. Please contact support.");
+                  toast.error('Payment verification failed. Please contact support.');
               }
           }}
           onClose={() => {
-              alert("Payment cancelled.");
+              toast.info('Payment cancelled.');
           }}
         />
       </div>

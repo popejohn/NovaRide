@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { toast } from 'react-toastify';
 import { motion } from 'framer-motion';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
@@ -71,7 +72,7 @@ const RideCompletion = () => {
       setSubmitted(true);
     } catch (error) {
       console.error('Error submitting rating:', error);
-      alert('Failed to submit rating. Please try again.');
+      toast.error('Failed to submit rating. Please try again.');
     }
   };
 

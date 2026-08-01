@@ -13,6 +13,7 @@ const getReconnectDelay = (attempt) => {
 
 export const useRiderSocket = (userId, isOnline, onRideRequest) => {
     const socketRef = useRef(null);
+    const heartbeatRef = useRef(null);
     const [isConnected, setIsConnected] = useState(false);
     const reconnectAttemptRef = useRef(0);
     const onRideRequestRef = useRef(onRideRequest);
@@ -23,58 +24,82 @@ export const useRiderSocket = (userId, isOnline, onRideRequest) => {
     }, [onRideRequest]);
 
     useEffect(() => {
-        if (isOnline && userId) {
-            const token = StorageService.getToken();
-            socketRef.current = io(apiUrl, {
-                auth: { token },
-                reconnection: true,
-                reconnectionDelay: getReconnectDelay(reconnectAttemptRef.current),
-                reconnectionDelayMax: 30000,
-                reconnectionAttempts: 10,
-                transports: ['websocket', 'polling']
-            });
-
-            socketRef.current.on('connect', () => {
-                setIsConnected(true);
-                reconnectAttemptRef.current = 0; // Reset on successful connection
-                socketRef.current.emit('join', userId);
-            });
-
-            socketRef.current.on('connect_error', (error) => {
-                console.warn('[Rider Socket] Connection error:', error);
-                reconnectAttemptRef.current += 1;
-                setIsConnected(false);
-            });
-
-            socketRef.current.on('disconnect', (reason) => {
-                setIsConnected(false);
-                if (reason === 'io server disconnect') {
-                    // Manually reconnect if server disconnects
-                    setTimeout(() => {
-                        socketRef.current?.connect();
-                    }, getReconnectDelay(reconnectAttemptRef.current));
-                }
-            });
-
-            socketRef.current.on('incomingRideRequest', (data) => {
-                // Play notification sound with error handling
-                const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
-                audio.play().catch(e => console.warn('Audio play failed:', e));
-
-                if (onRideRequestRef.current) onRideRequestRef.current(data);
-            });
-
-            socketRef.current.on('error', (error) => {
-                console.error('[Rider Socket] Socket error:', error);
-            });
-
-            return () => {
-                if (socketRef.current) {
-                    socketRef.current.disconnect();
-                    setIsConnected(false);
-                }
-            };
+        if (!isOnline || !userId) {
+            if (heartbeatRef.current) {
+                clearInterval(heartbeatRef.current);
+                heartbeatRef.current = null;
+            }
+            if (socketRef.current) {
+                socketRef.current.disconnect();
+                socketRef.current = null;
+            }
+            setIsConnected(false);
+            return;
         }
+
+        const token = StorageService.getToken();
+        socketRef.current = io(apiUrl, {
+            auth: { token },
+            reconnection: true,
+            reconnectionDelay: getReconnectDelay(reconnectAttemptRef.current),
+            reconnectionDelayMax: 30000,
+            reconnectionAttempts: 10,
+            transports: ['websocket', 'polling']
+        });
+
+        socketRef.current.on('connect', () => {
+            setIsConnected(true);
+            reconnectAttemptRef.current = 0;
+            socketRef.current.emit('join', userId);
+            socketRef.current.emit('rider:presence', { online: true });
+
+            if (heartbeatRef.current) clearInterval(heartbeatRef.current);
+            heartbeatRef.current = setInterval(() => {
+                socketRef.current?.emit('heartbeat');
+            }, 25000);
+        });
+
+        socketRef.current.on('connect_error', (error) => {
+            console.warn('[Rider Socket] Connection error:', error);
+            reconnectAttemptRef.current += 1;
+            setIsConnected(false);
+        });
+
+        socketRef.current.on('disconnect', (reason) => {
+            setIsConnected(false);
+            if (heartbeatRef.current) {
+                clearInterval(heartbeatRef.current);
+                heartbeatRef.current = null;
+            }
+            if (reason === 'io server disconnect') {
+                setTimeout(() => {
+                    socketRef.current?.connect();
+                }, getReconnectDelay(reconnectAttemptRef.current));
+            }
+        });
+
+        socketRef.current.on('incomingRideRequest', (data) => {
+            const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
+            audio.play().catch(e => console.warn('Audio play failed:', e));
+
+            if (onRideRequestRef.current) onRideRequestRef.current(data);
+        });
+
+        socketRef.current.on('error', (error) => {
+            console.error('[Rider Socket] Socket error:', error);
+        });
+
+        return () => {
+            if (heartbeatRef.current) {
+                clearInterval(heartbeatRef.current);
+                heartbeatRef.current = null;
+            }
+            if (socketRef.current) {
+                socketRef.current.disconnect();
+                socketRef.current = null;
+            }
+            setIsConnected(false);
+        };
     }, [isOnline, userId]);
 
     return {

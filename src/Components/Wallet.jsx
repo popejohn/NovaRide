@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { toast } from 'react-toastify';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -32,67 +33,136 @@ const AddMoneyButtonWrapper = ({ userEmail, setWalletBalance, setTransactions })
                     }, {
                         headers: { Authorization: `Bearer ${token}` }
                     });
-                    
-                    alert("Wallet funded successfully!");
-                    // refresh data
+
+                    toast.success('Wallet funded successfully!');
                     const refreshRes = await api.get('/user/wallet-data', {
                         headers: { 'Authorization': `Bearer ${token}` }
                     });
                     setWalletBalance(refreshRes.data.walletBalance);
                     setTransactions(refreshRes.data.transactions);
                 } catch (verifyError) {
-                    console.error("Verification failed:", verifyError);
-                    alert("Payment verification failed. Please contact support.");
+                    console.error('Verification failed:', verifyError);
+                    toast.error('Payment verification failed. Please contact support.');
                 }
             }}
-            onClose={() => {}}
+            onClose={() => {
+                toast.info('Payment cancelled.');
+            }}
         />
     );
 };
 
 const WithdrawButtonWrapper = ({ walletBalance, setWalletBalance, setTransactions }) => {
+    const [amount, setAmount] = useState('');
+    const [showModal, setShowModal] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
     const handleWithdraw = async () => {
-        const amountStr = prompt("Enter amount to withdraw (₦):", "1000");
-        const amountToWithdraw = parseInt(amountStr, 10);
-        
-        if (!amountStr || isNaN(amountToWithdraw) || amountToWithdraw <= 0) {
-            alert("Please enter a valid amount.");
+        const amountToWithdraw = Number(amount);
+
+        if (!amount || Number.isNaN(amountToWithdraw) || amountToWithdraw <= 0) {
+            toast.error('Please enter a valid amount.');
             return;
         }
 
         if (amountToWithdraw > walletBalance) {
-            alert("Insufficient balance. You can only withdraw up to ₦" + walletBalance.toLocaleString());
+            toast.error(`Insufficient balance. You can only withdraw up to ₦${walletBalance.toLocaleString()}`);
             return;
         }
 
         try {
+            setIsSubmitting(true);
             const token = localStorage.getItem('nvcr_tk');
-            const response = await api.post('/paystack/withdraw', {
+            await api.post('/paystack/withdraw', {
                 amount: amountToWithdraw
             }, {
                 headers: { Authorization: `Bearer ${token}` }
             });
 
-            alert("Withdrawal request submitted successfully! You will receive ₦" + amountToWithdraw.toLocaleString() + " within 1-3 business days.");
-            
-            // Refresh wallet data
+            toast.success(`Withdrawal request submitted successfully! You will receive ₦${amountToWithdraw.toLocaleString()} within 1-3 business days.`);
+            setShowModal(false);
+            setAmount('');
+
             const refreshRes = await api.get('/user/wallet-data', {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             setWalletBalance(refreshRes.data.walletBalance);
             setTransactions(refreshRes.data.transactions);
         } catch (error) {
-            console.error("Withdrawal error:", error);
-            alert(error?.response?.data?.message || "Withdrawal failed. Please try again.");
+            console.error('Withdrawal error:', error);
+            toast.error(error?.response?.data?.message || 'Withdrawal failed. Please try again.');
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
     return (
-        <Button
-            onClick={handleWithdraw}
-            text={<div className="flex items-center gap-2"><FaMinus className="text-[10px]" /> Withdraw</div>}
-            classes="bg-white text-neutral-900 font-black uppercase tracking-widest text-[10px] py-4 px-8 rounded-2xl shadow-lg hover:bg-neutral-100 transition-all border border-neutral-200"
-        />
+        <>
+            <button
+                type="button"
+                onClick={() => setShowModal(true)}
+                className="bg-white text-neutral-900 font-black uppercase tracking-widest text-[10px] py-4 px-8 rounded-2xl shadow-lg hover:bg-neutral-100 transition-colors border border-neutral-200 focus:outline-none focus:ring-2 focus:ring-orange-500/40"
+            >
+                <span className="flex items-center gap-2"><FaMinus className="text-[10px]" /> Withdraw</span>
+            </button>
+
+            {showModal && (
+                <div
+                    className="fixed inset-0 z-50 flex items-center justify-center bg-neutral-950/60 backdrop-blur-sm p-4"
+                    onClick={(event) => {
+                        if (event.target === event.currentTarget) {
+                            setShowModal(false);
+                        }
+                    }}
+                >
+                    <div className="w-full max-w-md rounded-[2rem] bg-white p-6 shadow-2xl border border-neutral-100 relative z-10">
+                        <div className="flex items-center justify-between mb-4">
+                            <div>
+                                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-neutral-400">Withdraw</p>
+                                <h3 className="text-xl font-black text-neutral-900 tracking-tight">Enter amount</h3>
+                            </div>
+                            <button
+                                type="button"
+                                onClick={() => setShowModal(false)}
+                                className="text-neutral-400 hover:text-neutral-700 text-xl leading-none"
+                                aria-label="Close withdrawal modal"
+                            >
+                                ×
+                            </button>
+                        </div>
+
+                        <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-neutral-400 mb-2">Amount (₦)</label>
+                        <input
+                            type="number"
+                            min="100"
+                            step="100"
+                            value={amount}
+                            onChange={(e) => setAmount(e.target.value)}
+                            placeholder="1000"
+                            className="w-full rounded-2xl border border-neutral-200 bg-neutral-50 px-4 py-3 text-neutral-900 outline-none focus:border-orange-500"
+                        />
+
+                        <div className="mt-6 flex gap-3">
+                            <button
+                                type="button"
+                                onClick={() => setShowModal(false)}
+                                className="flex-1 rounded-2xl border border-neutral-200 bg-white px-4 py-3 text-[10px] font-black uppercase tracking-widest text-neutral-700"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                type="button"
+                                onClick={handleWithdraw}
+                                disabled={isSubmitting}
+                                className="flex-1 rounded-2xl bg-orange-500 px-4 py-3 text-[10px] font-black uppercase tracking-widest text-white disabled:opacity-60"
+                            >
+                                {isSubmitting ? 'Submitting...' : 'Confirm'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+        </>
     );
 };
 
@@ -224,9 +294,6 @@ const Wallet = () => {
               <SidebarButton active={activeTab === 'transactions'} onClick={() => setActiveTab('transactions')} icon={FaHistory}>
                 Transactions
               </SidebarButton>
-              <SidebarButton active={activeTab === 'cards'} onClick={() => setActiveTab('cards')} icon={FaCreditCard}>
-                Payments
-              </SidebarButton>
             </div>
           </aside>
 
@@ -261,13 +328,11 @@ const Wallet = () => {
                         </div>
                         <div className="flex gap-3">
                           {canWithdraw && (
-                            <Motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                              <WithdrawButtonWrapper walletBalance={walletBalance} setWalletBalance={setWalletBalance} setTransactions={setTransactions} />
-                            </Motion.div>
+                            <WithdrawButtonWrapper walletBalance={walletBalance} setWalletBalance={setWalletBalance} setTransactions={setTransactions} />
                           )}
-                          <Motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                          <div>
                             <AddMoneyButtonWrapper userEmail={user?.email} setWalletBalance={setWalletBalance} setTransactions={setTransactions} />
-                          </Motion.div>
+                          </div>
                         </div>
                       </div>
 
@@ -333,63 +398,6 @@ const Wallet = () => {
                     </div>
                   )}
 
-                  {activeTab === 'cards' && (
-                    <div className="space-y-10">
-                      <div>
-                        <h3 className="text-2xl font-black text-neutral-900 tracking-tight">Payment Methods</h3>
-                        <p className="text-sm text-neutral-500 mt-1">Manage your saved cards and payment sources.</p>
-                      </div>
-
-                      <div className="grid grid-cols-1 gap-6">
-                        {/* Example Card */}
-                        <Motion.div
-                          whileHover={{ scale: 1.01 }}
-                          className="p-8 bg-neutral-900 rounded-[2.5rem] border border-neutral-800 shadow-2xl relative overflow-hidden group"
-                        >
-                          <div className="absolute top-0 right-0 w-64 h-64 bg-orange-500/5 rounded-full blur-3xl" />
-                          <div className="flex items-center justify-between relative z-10">
-                            <div className="flex items-center gap-6">
-                              <div className="p-4 bg-white/5 backdrop-blur-md rounded-2xl border border-white/5">
-                                <FaCreditCard className="text-3xl text-orange-500" />
-                              </div>
-                              <div>
-                                <div className="text-lg font-black text-white tracking-tighter">**** **** **** 1234</div>
-                                <div className="text-[10px] font-black uppercase tracking-widest text-neutral-500 mt-1">Expires 12/27</div>
-                              </div>
-                            </div>
-                            <div className="px-4 py-1.5 bg-green-500/10 text-green-500 rounded-full text-[10px] font-black uppercase tracking-widest">Primary</div>
-                          </div>
-                        </Motion.div>
-
-                        <Motion.div
-                          whileHover={{ scale: 1.01 }}
-                          className="p-8 bg-white border border-neutral-100 rounded-[2.5rem] shadow-xl flex items-center justify-between group hover:border-orange-500/30 transition-all"
-                        >
-                          <div className="flex items-center gap-6">
-                            <div className="p-4 bg-orange-50 rounded-2xl">
-                              <FaWallet className="text-3xl text-orange-500" />
-                            </div>
-                            <div>
-                              <div className="text-lg font-black text-neutral-900 tracking-tighter">Maruwa Wallet</div>
-                              <div className="text-[10px] font-black uppercase tracking-widest text-neutral-400 mt-1">Default payment source</div>
-                            </div>
-                          </div>
-                          <div className="px-4 py-1.5 bg-neutral-100 text-neutral-500 rounded-full text-[10px] font-black uppercase tracking-widest">Active</div>
-                        </Motion.div>
-
-                        <Motion.button
-                          whileHover={{ y: -5 }}
-                          whileTap={{ scale: 0.98 }}
-                          className="w-full py-6 bg-neutral-50 border-2 border-dashed border-neutral-200 rounded-[2.5rem] flex flex-col items-center gap-2 hover:bg-neutral-100 hover:border-orange-500/30 transition-all group"
-                        >
-                          <div className="p-2 bg-white rounded-full text-neutral-400 group-hover:text-orange-500 transition-colors shadow-sm">
-                            <FaPlus />
-                          </div>
-                          <span className="text-[10px] font-black uppercase tracking-widest text-neutral-500 group-hover:text-neutral-900 transition-colors">Add New Payment Method</span>
-                        </Motion.button>
-                      </div>
-                    </div>
-                  )}
                 </Motion.div>
               </AnimatePresence>
             </div>

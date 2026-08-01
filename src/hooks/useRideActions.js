@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/axios';
 
@@ -13,7 +14,7 @@ export const useRideActions = (onRideUpdate) => {
             navigate(`/live-tracking?rideId=${rideId}`);
         } catch (error) {
             console.error('Error accepting ride:', error);
-            alert(error.response?.data?.message || 'An error occurred while accepting the ride');
+            toast.error(error.response?.data?.message || 'An error occurred while accepting the ride');
         }
     };
 
@@ -24,7 +25,7 @@ export const useRideActions = (onRideUpdate) => {
             if (onRideUpdate) onRideUpdate(); // Refresh rides
         } catch (error) {
             console.error('Error rejecting ride:', error);
-            alert(error.response?.data?.message || 'An error occurred while rejecting the ride');
+            toast.error(error.response?.data?.message || 'An error occurred while rejecting the ride');
         }
     };
 

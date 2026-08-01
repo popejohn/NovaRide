@@ -1,6 +1,5 @@
-# Bookride Loading-State Input Disable TODO
+# Wallet Withdraw Role Guard TODO (`/wallet`)
 
-- [x] Add `disabled` support in `LocationSearch` component.
-- [x] Disable input editing and related interactions when `disabled` is true.
-- [x] Pass `disabled={loading}` from `RideBookingSidebar` to pickup and destination `LocationSearch`.
-- [x] Mark task complete after updates.
+- [x] Inspect wallet role handling and withdraw button render condition.
+- [x] Add rider-role-array guard so withdraw button only shows when roles include `rider`.
+- [x] Verify no unconditional withdraw render remains in wallet overview.

@@ -177,6 +177,13 @@ const Wallet = () => {
 
   const navigate = useNavigate();
 
+  const normalizedRoles = Array.isArray(user?.role)
+    ? user.role
+    : user?.role
+      ? [user.role]
+      : [];
+  const canWithdraw = normalizedRoles.includes('rider');
+
   return (
     <div className="min-h-screen bg-neutral-50/50">
       <Navbar
@@ -253,9 +260,11 @@ const Wallet = () => {
                           </div>
                         </div>
                         <div className="flex gap-3">
-                          <Motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                            <WithdrawButtonWrapper walletBalance={walletBalance} setWalletBalance={setWalletBalance} setTransactions={setTransactions} />
-                          </Motion.div>
+                          {canWithdraw && (
+                            <Motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                              <WithdrawButtonWrapper walletBalance={walletBalance} setWalletBalance={setWalletBalance} setTransactions={setTransactions} />
+                            </Motion.div>
+                          )}
                           <Motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                             <AddMoneyButtonWrapper userEmail={user?.email} setWalletBalance={setWalletBalance} setTransactions={setTransactions} />
                           </Motion.div>

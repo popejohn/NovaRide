@@ -39,6 +39,7 @@ const RideRequestModal = ({ ride, onAccept, onDecline, onClose }) => {
                     <div className="relative h-32 bg-gradient-to-br from-orange-500 to-orange-600 p-8">
                         <button
                             onClick={onClose}
+                            aria-label="Close ride request"
                             className="absolute top-6 right-6 p-2 bg-black/20 hover:bg-black/40 rounded-full text-white transition-colors"
                         >
                             <FaTimes />

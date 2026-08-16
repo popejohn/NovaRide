@@ -2,35 +2,40 @@ import React from 'react';
 import { toast } from 'react-toastify';
 import { useMapInstance } from './MapContext';
 import { FaLocationArrow } from 'react-icons/fa';
+import { requestCurrentPosition, GEO_ERROR_CODES } from '../../utils/geolocation';
 
 const CurrentLocationButton = ({ onLocationFound = null }) => {
   const { map } = useMapInstance();
 
-  const handleLocateUser = () => {
-    if (!navigator.geolocation) {
-      toast.error('Geolocation is not supported by your browser');
-      return;
-    }
+  const handleLocateUser = async () => {
+    try {
+      const { latitude, longitude } = await requestCurrentPosition();
 
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        const { latitude, longitude } = pos.coords;
-        if (map) {
-          map.flyTo({
-            center: [longitude, latitude],
-            zoom: 15,
-            duration: 1000
-          });
-        }
-        if (onLocationFound) {
-          onLocationFound({ lat: latitude, lng: longitude });
-        }
-      },
-      (err) => {
-        console.warn('Geolocation error:', err);
-      },
-      { enableHighAccuracy: true }
-    );
+      if (map) {
+        map.flyTo([latitude, longitude], 15, { duration: 1 });
+      }
+      if (onLocationFound) {
+        onLocationFound({ lat: latitude, lng: longitude });
+      }
+    } catch (err) {
+      console.warn('[CurrentLocationButton] Geolocation failed:', err.code, err.message);
+
+      if (err.code === GEO_ERROR_CODES.LOW_ACCURACY) {
+        toast.error(
+          'Location accuracy is too low. Please enable GPS or Wi-Fi positioning on your device.',
+          { autoClose: 6000 }
+        );
+      } else if (err.code === GEO_ERROR_CODES.PERMISSION_DENIED) {
+        toast.error(
+          'Location permission denied. Please allow location access in your browser settings.',
+          { autoClose: 6000 }
+        );
+      } else if (err.code === GEO_ERROR_CODES.TIMEOUT) {
+        toast.error('Location request timed out. Please try again.', { autoClose: 5000 });
+      } else {
+        toast.error('Unable to fetch your current location.', { autoClose: 5000 });
+      }
+    }
   };
 
   return (

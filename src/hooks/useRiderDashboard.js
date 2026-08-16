@@ -5,7 +5,6 @@ import { useRiderOnlineStatus } from './useRiderOnlineStatus.js';
 import { useRiderDashboardData } from './useRiderDashboardData.js';
 import { useAvailableRides } from './useAvailableRides.js';
 import { useRideActions } from './useRideActions.js';
-import { useRiderSocket } from './useRiderSocket.js';
 import riderService from '../api/riderService';
 
 export const useRiderDashboard = () => {
@@ -16,11 +15,14 @@ export const useRiderDashboard = () => {
     // Use segregated hooks
     const { isOnline, locationError, handleOnlineToggle } = useRiderOnlineStatus();
     const { walletBalance, transactions, journeys, totalKm, monthlyKm } = useRiderDashboardData();
-    const { availableRides, refetchRides } = useAvailableRides(isOnline);
+    const { availableRides, incomingRide, refetchRides } = useAvailableRides(isOnline);
     const { selectedRide, setSelectedRide, handleAcceptRide, handleRejectRide } = useRideActions(refetchRides);
 
-    // Socket management
-    useRiderSocket(user?._id, isOnline, () => refetchRides());
+    useEffect(() => {
+        if (incomingRide && window.matchMedia('(max-width: 767px)').matches) {
+            setSelectedRide(incomingRide);
+        }
+    }, [incomingRide, setSelectedRide]);
 
     // Profile verification
     useEffect(() => {

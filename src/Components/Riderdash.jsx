@@ -1,5 +1,5 @@
-import React from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import React, { useEffect, useRef } from 'react';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaChartLine, FaWallet, FaRoute, FaUsers, FaArrowTrendUp } from 'react-icons/fa6';
 import { MdSpaceDashboard } from 'react-icons/md';
@@ -20,6 +20,8 @@ import RideRequestModal from './Rider/RideRequestModal';
 
 const Riderdash = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const incomingRequestsRef = useRef(null);
   const {
     user,
     role,
@@ -39,6 +41,18 @@ const Riderdash = () => {
     handleRejectRide,
     handleOnlineToggle
   } = useRiderDashboard();
+
+  useEffect(() => {
+    const shouldShowIncomingRequests = new URLSearchParams(location.search).get('view') === 'available';
+    if (!shouldShowIncomingRequests) return;
+
+    if (view !== 'available') {
+      setView('available');
+      return;
+    }
+
+    incomingRequestsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, [location.search, setView, view]);
 
   return (
     <div className="min-h-screen bg-stone-50 relative overflow-hidden">
@@ -142,7 +156,11 @@ const Riderdash = () => {
                 )}
                 {view === 'kilometers' && <KilometersChart monthly={monthlyKm} />}
                 {view === 'journeys' && <Journeys items={journeys} />}
-                {view === 'available' && <AvailablePassengers list={availableRides} onViewRequest={setSelectedRide} />}
+                {view === 'available' && (
+                  <div ref={incomingRequestsRef} id="incoming-requests">
+                    <AvailablePassengers list={availableRides} onViewRequest={setSelectedRide} />
+                  </div>
+                )}
               </motion.div>
             </AnimatePresence>
           </div>

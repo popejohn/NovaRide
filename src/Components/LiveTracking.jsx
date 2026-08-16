@@ -1,15 +1,14 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { motion } from 'framer-motion';
 import Navbar from './Navbar';
 import OtherNav from './VerifiedNav';
 import Button from './Button';
-import { FaStar, FaCar } from 'react-icons/fa';
+import { FaStar, FaCar, FaExpand, FaTimes } from 'react-icons/fa';
 import MapSection from './MapSection';
 import RideControls from './RideControls';
 import TripDetailsCard from './TripDetailsCard';
-import ComplaintForm from './ComplaintForm';
 import RideCompletionModal from './RideCompletionModal';
 import RideStartModal from './RideStartModal';
 import { useLiveTracking } from '../hooks/useLiveTracking';
@@ -20,8 +19,7 @@ const LiveTracking = () => {
   const queryParams = new URLSearchParams(location.search);
   const rideId = queryParams.get('rideId');
 
-  const [complaintText, setComplaintText] = useState('');
-  const [showComplaintForm, setShowComplaintForm] = useState(false);
+  const [showMapModal, setShowMapModal] = useState(false);
 
   const user = useSelector(state => state.verifiedUser.user);
   const userRoles = useSelector(state => state.verifiedUser.role);
@@ -37,17 +35,16 @@ const LiveTracking = () => {
     setShowCompletionModal,
     showStartRideModal,
     setShowStartRideModal,
-    updateRideStatus,
-    submitComplaint
+    updateRideStatus
   } = useLiveTracking(rideId, user, userRoles);
 
-  const handleSubmitComplaint = async () => {
-    const success = await submitComplaint(complaintText);
-    if (success) {
-      setComplaintText('');
-      setShowComplaintForm(false);
+  const shouldShowMap = rideDetails?.rideStatus === 'in_progress';
+
+  useEffect(() => {
+    if (shouldShowMap && window.matchMedia('(max-width: 767px)').matches) {
+      setShowMapModal(true);
     }
-  };
+  }, [shouldShowMap]);
 
   if (loading) {
     return (
@@ -83,15 +80,14 @@ const LiveTracking = () => {
     <div className="min-h-screen bg-neutral-950 text-white selection:bg-orange-500 selection:text-white">
       <Navbar userrole={userRoles} userverified={true} profilePic={user?.profilePic || "/placeholderProfile.jpg"} nav={<OtherNav userrole={userRoles} />} />
 
-      <div className="mt-28 px-4 md:px-8 pb-12">
+      <div className="pt-28 px-4 md:px-8 pb-12">
         <div className="max-w-7xl mx-auto">
           {/* Header */}
           <div className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
             <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
               <h1 className="text-4xl font-black uppercase tracking-tighter italic">Live <span className="text-orange-500">Tracking</span></h1>
-              <p className="text-[10px] text-neutral-500 font-bold uppercase tracking-[0.3em] mt-1 pl-1 border-l-2 border-orange-500/30">Ride ID: {rideId}</p>
             </motion.div>
-            {((isPassenger) || (isRider)) && (
+            {isPassenger && rideDetails.rideStatus === 'at_pickup' && (
               <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -100,14 +96,14 @@ const LiveTracking = () => {
                 <div className="relative">
                   <div className={`w-3 h-3 rounded-full ${rideDetails.rideStatus === 'completed' ? 'bg-green-500' : 'bg-orange-500 shadow-[0_0_15px_rgba(249,115,22,0.6)] animate-pulse'}`} />
                 </div>
-                <span className="text-sm font-black uppercase tracking-widest text-neutral-300">{rideStatus}</span>
+                <span className="text-sm font-black uppercase tracking-widest text-neutral-300">Driver is on the way</span>
               </motion.div>
             )}
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            {/* Map Column */}
-            <div className="lg:col-span-8 order-2 lg:order-1">
+            {shouldShowMap && (
+              <div className="hidden md:block lg:col-span-8 order-2 lg:order-1">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -118,12 +114,14 @@ const LiveTracking = () => {
                   driverLocation={driverCoords}
                   pickupLocation={pickupCoords}
                   destinationLocation={destinationCoords}
+                  containerClassName="h-[500px] lg:h-[700px] rounded-[3rem]"
                 />
               </motion.div>
-            </div>
+              </div>
+            )}
 
             {/* Controls Column */}
-            <div className="lg:col-span-4 space-y-6 order-1 lg:order-2">
+            <div className={`${shouldShowMap ? 'lg:col-span-4' : 'lg:col-span-12 max-w-2xl'} space-y-6 order-1 lg:order-2`}>
               {/* User Info Card */}
               <motion.div
                 initial={{ opacity: 0, x: 20 }}
@@ -174,18 +172,50 @@ const LiveTracking = () => {
               {/* Trip Details Card */}
               <TripDetailsCard rideDetails={rideDetails} />
 
-              {/* Complaint Form */}
-              <ComplaintForm
-                showComplaintForm={showComplaintForm}
-                setShowComplaintForm={setShowComplaintForm}
-                complaintText={complaintText}
-                setComplaintText={setComplaintText}
-                handleSubmitComplaint={handleSubmitComplaint}
-              />
             </div>
           </div>
+
+          {shouldShowMap && (
+            <div className="relative mt-8 overflow-hidden rounded-2xl border border-white/10 md:hidden">
+              <MapSection
+                rideDetails={rideDetails}
+                driverLocation={driverCoords}
+                pickupLocation={pickupCoords}
+                destinationLocation={destinationCoords}
+                containerClassName="h-56 rounded-none"
+              />
+              <button
+                onClick={() => setShowMapModal(true)}
+                aria-label="Maximize map"
+                className="absolute right-3 top-3 flex h-10 w-10 items-center justify-center rounded-full bg-black/75 text-white shadow-lg"
+              >
+                <FaExpand />
+              </button>
+            </div>
+          )}
         </div>
       </div>
+
+      {shouldShowMap && showMapModal && (
+        <div className="fixed inset-0 z-[6000] bg-black md:hidden">
+          <div className="h-screen w-full">
+            <MapSection
+              rideDetails={rideDetails}
+              driverLocation={driverCoords}
+              pickupLocation={pickupCoords}
+              destinationLocation={destinationCoords}
+              containerClassName="h-screen rounded-none"
+            />
+            <button
+              onClick={() => setShowMapModal(false)}
+              aria-label="Close full-screen map"
+              className="absolute right-5 top-5 flex h-11 w-11 items-center justify-center rounded-full bg-black/75 text-white shadow-lg"
+            >
+              <FaTimes />
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Ride Start Modal */}
       <RideStartModal

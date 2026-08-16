@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaCar } from 'react-icons/fa';
+import { FaCar, FaTimes } from 'react-icons/fa';
 import Button from './Button';
 
 const RideStartModal = ({ showStartRideModal, setShowStartRideModal, isRider, updateRideStatus }) => {
@@ -44,6 +44,12 @@ const RideStartModal = ({ showStartRideModal, setShowStartRideModal, isRider, up
                 updateRideStatus('in_progress');
                 setShowStartRideModal(false);
               }}
+            />
+            <Button
+              text="CANCEL RIDE"
+              icon={<FaTimes className="text-xs" />}
+              classes="w-full bg-red-600 text-white py-4 rounded-[1.5rem] font-black text-[10px] lg:text-xs uppercase tracking-[0.25em] hover:bg-red-700 transition-all"
+              onClick={() => updateRideStatus('cancelled')}
             />
             <button
               onClick={() => setShowStartRideModal(false)}

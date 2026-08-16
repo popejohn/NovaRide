@@ -27,15 +27,22 @@ const FitBounds = ({ bounds }) => {
   const map = useMap();
   
   useEffect(() => {
-    if (bounds && bounds.length > 0) {
-      map.fitBounds(bounds, { padding: [50, 50], maxZoom: 15 });
+    if (!map || !bounds || bounds.length === 0) return;
+    try {
+      map.invalidateSize();
+      const size = map.getSize();
+      if (size && size.x > 0 && size.y > 0) {
+        map.fitBounds(bounds, { padding: [50, 50], maxZoom: 15 });
+      }
+    } catch (err) {
+      console.warn('[MapSection] fitBounds warning:', err);
     }
   }, [bounds, map]);
   
   return null;
 };
 
-const MapSection = ({ rideDetails, driverLocation, pickupLocation, destinationLocation }) => {
+const MapSection = ({ rideDetails, driverLocation, pickupLocation, destinationLocation, containerClassName = 'h-96 md:h-[500px]' }) => {
   // Default center if no locations available
   const defaultCenter = [6.5244, 3.3792]; // Lagos coordinates
   const center = driverLocation || pickupLocation || defaultCenter;
@@ -57,7 +64,7 @@ const MapSection = ({ rideDetails, driverLocation, pickupLocation, destinationLo
   if (destinationLocation) routeCoordinates.push(destinationLocation);
 
   return (
-    <div className="relative w-full h-96 md:h-[500px] rounded-[2.5rem] overflow-hidden shadow-3xl">
+    <div className={`relative w-full ${containerClassName} overflow-hidden shadow-3xl`}>
       <MapContainer
         center={center}
         zoom={13}

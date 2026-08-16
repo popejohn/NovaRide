@@ -17,3 +17,39 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   input[type="date"]::-webkit-clear-button {
     display: none;
 }
+
+  .Toastify__toast-container--top-right {
+    top: 5.5rem;
+  }
+
+  .rider-ride-request-toast {
+    min-height: auto;
+    padding: 0.875rem 1rem;
+    border: 1px solid rgb(249 115 22 / 0.75);
+    border-radius: 0.75rem;
+    background: #f97316;
+    box-shadow: 0 12px 24px rgb(249 115 22 / 0.3);
+    color: #ffffff;
+    cursor: pointer;
+    font-size: 0.875rem;
+    font-weight: 800;
+    letter-spacing: 0;
+    transition: background-color 160ms ease, transform 160ms ease;
+  }
+
+  .rider-ride-request-toast:hover {
+    background: #ea580c;
+    transform: translateY(-1px);
+  }
+
+  .rider-ride-request-toast .Toastify__toast-icon,
+  .rider-ride-request-toast .Toastify__close-button {
+    color: #ffffff;
+    opacity: 0.9;
+  }
+
+  @media (max-width: 480px) {
+    .Toastify__toast-container--top-right {
+      top: 4.75rem;
+    }
+  }

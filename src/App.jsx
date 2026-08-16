@@ -21,6 +21,7 @@ import ProfileManagement from './Components/ProfileManagement'
 import Help from './Components/Help'
 import FloatingChatSupport from './Components/FloatingChatSupport'
 import useSessionTimeout from './utils/useSessionTimeout'
+import { useRiderSessionPresence } from './hooks/useRiderSessionPresence'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { ClipLoader } from 'react-spinners'
@@ -36,6 +37,7 @@ function App() {
   const [isVerifying, setIsVerifying] = useState(() => !!StorageService.getToken());
 
   useSessionTimeout(isAuthenticated); // Enable conditional session timeout
+  useRiderSessionPresence();
 
   useEffect(() => {
     const verifyUser = async () => {
@@ -83,6 +85,7 @@ function App() {
         <Route path='new-password' element={<NewPassword />} />
         <Route path='bookride' element={isAuthenticated ? <Bookride /> : <Navigate to='/login' replace />} />
         <Route path='driver-selection' element={isAuthenticated ? <DriverSelection /> : <Navigate to='/login' replace />} />
+        <Route path='rider-selection' element={isAuthenticated ? <DriverSelection /> : <Navigate to='/login' replace />} />
         <Route path='live-tracking' element={isAuthenticated ? <LiveTracking /> : <Navigate to='/login' replace />} />
         <Route path='ride-completion' element={isAuthenticated ? <RideCompletion /> : <Navigate to='/login' replace />} />
         <Route path='rider-profile-setup' element={isAuthenticated ? <RiderProfileSetup /> : <Navigate to='/login' replace />} />

@@ -8,6 +8,7 @@ import { toast } from 'react-toastify';
 import api from '../services/axios';
 import { getSuggestions } from "../utils/autocomplete";
 import { forwardGeocode, reverseGeocode, calculateDistanceAndETA } from '../utils/reverseGeo';
+import { requestCurrentPosition, GEO_ERROR_CODES } from '../utils/geolocation';
 
 export const useRideBooking = () => {
     const dispatch = useDispatch();
@@ -146,82 +147,44 @@ export const useRideBooking = () => {
         setShowCostDist(false);
     };
 
-    const handleUseMyLocation = () => {
-        if (!navigator.geolocation) {
-            toast.error("Geolocation is not supported by your browser");
-            return;
-        }
-
+    const handleUseMyLocation = async () => {
         dispatch(itemLoading());
-        // Clear any previous suggestions first
         setPickupSuggestions([]);
-        toast.info("Fetching your current location...", { autoClose: 1500 });
+        toast.info('Fetching your current location...', { autoClose: 1500 });
 
-        // Use high accuracy and don't cache
-        const geoOptions = {
-            enableHighAccuracy: true,
-            timeout: 15000,
-            maximumAge: 0 // Always get fresh position, never use cached
-        };
+        try {
+            // requestCurrentPosition validates accuracy before resolving.
+            // If the browser returns an IP-based location (e.g. accuracy = 100,000 m),
+            // it will throw a GEO_ERROR_CODES.LOW_ACCURACY error and we never
+            // write anything to Redux state.
+            const { latitude, longitude, accuracy } = await requestCurrentPosition();
 
-        navigator.geolocation.getCurrentPosition(
-            async (position) => {
-                const { latitude, longitude, accuracy } = position.coords;
-                
-                try {
-                    // First, immediately set the fresh coordinates from device
-                    dispatch(setPickupCoordinate({ lat: latitude, lng: longitude }));
-                    
-                    // Reverse geocode the fresh coordinates to get current address
-                    const address = await reverseGeocode(latitude, longitude);
-                    const normalizedAddress = (address || '').toLowerCase().trim();
-                    const isAddressLookupFailure =
-                        !address ||
-                        normalizedAddress === 'current location' ||
-                        normalizedAddress.includes('unable to retrieve location') ||
-                        normalizedAddress.includes('unable to retrieve address');
+            // Reverse geocode the validated device coordinates - must be successful
+            const address = await reverseGeocode(latitude, longitude);
 
-                    if (isAddressLookupFailure) {
-                        dispatch(setPickupLocation(''));
-                        dispatch(setPickupCoordinate({ lat: null, lng: null }));
-                        setPickupSuggestions([]);
-                        toast.error("Failed to fetch current location");
-                    } else {
-                        // Update the pickup location with fresh data
-                        dispatch(setPickupLocation(address));
-                        dispatch(setPickupCoordinate({ lat: latitude, lng: longitude, address: address }));
-                        setPickupSuggestions([]); // Clear any suggestions
-
-                        toast.success("Location fetched successfully", { autoClose: 2500 });
-                    }
-                } catch (error) {
-                    console.error("Error reverse geocoding:", error);
-                    dispatch(setPickupLocation(''));
-                    dispatch(setPickupCoordinate({ lat: null, lng: null }));
-                    setPickupSuggestions([]);
-                    toast.error("Failed to fetch current location");
-                } finally {
-                    dispatch(itemLoaded());
-                }
-            },
-            (error) => {
-                console.error("[Location Error]", error);
+            if (!address) {
+                // Reverse geocoding failed - show error and don't set location
+                toast.error('Failed to fetch location, please check your internet', { autoClose: 5000 });
                 dispatch(itemLoaded());
-                
-                let errorMessage = "Unable to access your location";
-                
-                if (error.code === error.PERMISSION_DENIED) {
-                    errorMessage = "❌ Location permission denied. Please enable location in browser settings.";
-                } else if (error.code === error.POSITION_UNAVAILABLE) {
-                    errorMessage = "❌ Location services are unavailable. Please enable location services on your device.";
-                } else if (error.code === error.TIMEOUT) {
-                    errorMessage = "❌ Location request timed out. Check your internet connection and try again.";
-                }
-                
-                toast.error(errorMessage);
-            },
-            geoOptions
-        );
+                return;
+            }
+
+            // Only proceed if reverse geocoding was successful
+            dispatch(setPickupLocation(address));
+            dispatch(setPickupCoordinate({ lat: latitude, lng: longitude, address }));
+            setPickupSuggestions([]);
+            toast.success('Location fetched successfully', { autoClose: 2500 });
+        } catch (err) {
+            // IMPORTANT: on any error we do NOT write coordinates to Redux.
+            // We also do NOT overwrite an existing pickup that the user may
+            // have manually selected before clicking this button.
+            console.error('[handleUseMyLocation] Geolocation failed:', err.code, err.message);
+
+            // All errors show the same generic message as requested
+            toast.error('Failed to fetch location, please check your internet', { autoClose: 5000 });
+        } finally {
+            dispatch(itemLoaded());
+        }
     };
 
     const handleLocationChange = async (value, type) => {

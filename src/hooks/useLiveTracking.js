@@ -22,6 +22,7 @@ export const useLiveTracking = (rideId, user, userRoles) => {
   const [driverLocation, setDriverLocation] = useState(null);
   const [showCompletionModal, setShowCompletionModal] = useState(false);
   const [showStartRideModal, setShowStartRideModal] = useState(false);
+  const cancellationHandledRef = useRef(false);
 
   // Derived role flags
   const isPassenger = rideDetails?.user?._id === user?._id || rideDetails?.user === user?._id;
@@ -39,8 +40,8 @@ export const useLiveTracking = (rideId, user, userRoles) => {
 
       const statusMap = {
         pending: 'Ride cancelled',
-        accepted: 'Driver is on the way',
-        at_pickup: 'Driver is at pickup location',
+        accepted: 'Ride accepted',
+        at_pickup: 'Driver is on the way',
         starting: 'Awaiting driver agreement',
         in_progress: 'Trip in progress',
         awaiting_completion: 'Awaiting passenger confirmation',
@@ -57,7 +58,19 @@ export const useLiveTracking = (rideId, user, userRoles) => {
         ride.assignedDriver?.riderInfo?._id === user?._id ||
         ride.assignedDriver?.riderInfo === user?._id;
 
-      if (ride.rideStatus === 'pending') {
+      if (ride.rideStatus === 'cancelled' && !cancellationHandledRef.current) {
+        cancellationHandledRef.current = true;
+        const cancelledByPassenger = ride.cancellationReason === 'passenger_cancelled';
+        const cancelledByCurrentUser = (cancelledByPassenger && currentIsPassenger) || (!cancelledByPassenger && currentIsRider);
+        const redirectPath = currentIsPassenger ? `/rider-selection?rideId=${rideId}` : '/riderdashboard';
+
+        if (cancelledByCurrentUser) {
+          navigate(redirectPath);
+        } else {
+          toast.info('The other participant cancelled this ride.');
+          window.setTimeout(() => navigate(redirectPath), 2500);
+        }
+      } else if (ride.rideStatus === 'pending') {
         if (currentIsPassenger) {
           toast.info("Ride cancelled. Redirecting to driver selection...");
           navigate(`/driver-selection?rideId=${rideId}`);
@@ -200,6 +213,12 @@ export const useLiveTracking = (rideId, user, userRoles) => {
       await api.patch(`/ride/${rideId}/status`, {
         status: newStatus,
       });
+
+      if (newStatus === 'cancelled') {
+        cancellationHandledRef.current = true;
+        navigate(isPassenger ? `/rider-selection?rideId=${rideId}` : '/riderdashboard');
+        return;
+      }
 
       fetchRideStatus();
 

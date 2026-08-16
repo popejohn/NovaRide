@@ -18,10 +18,20 @@ const riderService = {
         });
     },
 
-    updateLocation: async (latitude, longitude, isAvailable) => {
+    // Heartbeat - only updates location and presence timestamp, NOT status
+    updateLocation: async (latitude, longitude) => {
         const token = localStorage.getItem('nvcr_tk');
         return api.put('/rider/update-location',
-            { latitude, longitude, isAvailable },
+            { latitude, longitude },
+            { headers: { 'Authorization': `Bearer ${token}` } }
+        );
+    },
+
+    // Status change - called only when going online/offline
+    updateStatus: async (isAvailable, latitude, longitude) => {
+        const token = localStorage.getItem('nvcr_tk');
+        return api.put('/rider/update-status',
+            { isAvailable, latitude, longitude },
             { headers: { 'Authorization': `Bearer ${token}` } }
         );
     },

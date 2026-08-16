@@ -18,17 +18,25 @@ const RideControls = ({ rideStatus, isPassenger, isRider, updateRideStatus }) =>
             text="CANCEL RIDE"
             icon={<FaTimes className="text-xs" />}
             classes="w-full bg-red-600 text-white py-4 rounded-[1.5rem] font-black text-sm uppercase tracking-[0.2em] shadow-2xl shadow-red-600/20 hover:bg-red-700 transition-all"
-            onClick={() => updateRideStatus('pending')}
+            onClick={() => updateRideStatus('cancelled')}
           />
         </div>
       );
     }
     if (rideStatus === 'starting') {
       return (
-        <div className="text-center py-4 bg-orange-500/10 border border-orange-500/20 rounded-2xl">
-          <p className="text-orange-500 font-bold uppercase tracking-widest text-xs animate-pulse">
-            Awaiting Driver Agreement...
-          </p>
+        <div className="space-y-4">
+          <div className="text-center py-4 bg-orange-500/10 border border-orange-500/20 rounded-2xl">
+            <p className="text-orange-500 font-bold uppercase tracking-widest text-xs animate-pulse">
+              Awaiting Driver Agreement...
+            </p>
+          </div>
+          <Button
+            text="CANCEL RIDE"
+            icon={<FaTimes className="text-xs" />}
+            classes="w-full bg-red-600 text-white py-4 rounded-[1.5rem] font-black text-sm uppercase tracking-[0.2em] shadow-2xl shadow-red-600/20 hover:bg-red-700 transition-all"
+            onClick={() => updateRideStatus('cancelled')}
+          />
         </div>
       );
     }
@@ -38,11 +46,39 @@ const RideControls = ({ rideStatus, isPassenger, isRider, updateRideStatus }) =>
   const renderRiderControls = () => {
     if (rideStatus === 'accepted') {
       return (
+        <div className="space-y-4">
+          <Button
+            text="I'M ON MY WAY"
+            icon={<FaPlay className="text-xs" />}
+            classes="w-full bg-blue-600 text-white py-4 rounded-[1.5rem] font-black text-sm uppercase tracking-[0.2em] shadow-2xl shadow-blue-600/20 hover:bg-blue-700 transition-all"
+            onClick={() => updateRideStatus('at_pickup')}
+          />
+          <Button
+            text="CANCEL RIDE"
+            icon={<FaTimes className="text-xs" />}
+            classes="w-full bg-red-600 text-white py-4 rounded-[1.5rem] font-black text-sm uppercase tracking-[0.2em] shadow-2xl shadow-red-600/20 hover:bg-red-700 transition-all"
+            onClick={() => updateRideStatus('cancelled')}
+          />
+        </div>
+      );
+    }
+    if (rideStatus === 'at_pickup') {
+      return (
         <Button
-          text="I'M ON MY WAY"
-          icon={<FaPlay className="text-xs" />}
-          classes="w-full bg-blue-600 text-white py-4 rounded-[1.5rem] font-black text-sm uppercase tracking-[0.2em] shadow-2xl shadow-blue-600/20 hover:bg-blue-700 transition-all"
-          onClick={() => updateRideStatus('at_pickup')}
+          text="CANCEL RIDE"
+          icon={<FaTimes className="text-xs" />}
+          classes="w-full bg-red-600 text-white py-4 rounded-[1.5rem] font-black text-sm uppercase tracking-[0.2em] shadow-2xl shadow-red-600/20 hover:bg-red-700 transition-all"
+          onClick={() => updateRideStatus('cancelled')}
+        />
+      );
+    }
+    if (rideStatus === 'starting') {
+      return (
+        <Button
+          text="CANCEL RIDE"
+          icon={<FaTimes className="text-xs" />}
+          classes="w-full bg-red-600 text-white py-4 rounded-[1.5rem] font-black text-sm uppercase tracking-[0.2em] shadow-2xl shadow-red-600/20 hover:bg-red-700 transition-all"
+          onClick={() => updateRideStatus('cancelled')}
         />
       );
     }

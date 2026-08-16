@@ -7,7 +7,6 @@ import { toast } from 'react-toastify';
 
 const BookingConfirmation = ({ selectedDriver, bookingStatus, handleConfirmBooking, rideId, rideDetails }) => {
   const navigate = useNavigate();
-  const [isProcessing, setIsProcessing] = React.useState(false);
 
   React.useEffect(() => {
     if (bookingStatus === 'accepted') {
@@ -17,7 +16,6 @@ const BookingConfirmation = ({ selectedDriver, bookingStatus, handleConfirmBooki
   }, [bookingStatus, navigate, rideId]);
 
   const handleConfirmClick = async () => {
-    setIsProcessing(true);
     await handleConfirmBooking();
   };
 
@@ -44,10 +42,17 @@ const BookingConfirmation = ({ selectedDriver, bookingStatus, handleConfirmBooki
               
               {bookingStatus === 'idle' && (
                 <Button
-                  text={isProcessing ? "Confirming..." : "Confirm Booking"}
-                  disabled={isProcessing}
-                  classes={`${isProcessing ? 'bg-neutral-600' : 'bg-orange-500 hover:bg-orange-600'} text-white px-8 py-4 rounded-2xl font-black text-sm transition-all active:scale-95 shadow-lg shadow-orange-500/20`}
+                  text="Confirm Booking"
+                  classes="bg-orange-500 hover:bg-orange-600 text-white px-8 py-4 rounded-2xl font-black text-sm transition-all active:scale-95 shadow-lg shadow-orange-500/20"
                   onClick={handleConfirmClick}
+                />
+              )}
+
+              {bookingStatus === 'confirming' && (
+                <Button
+                  text="Confirming..."
+                  disabled={true}
+                  classes="bg-neutral-600 text-white px-8 py-4 rounded-2xl font-black text-sm transition-all shadow-lg"
                 />
               )}
 

@@ -1,10 +1,13 @@
 import { useState, useEffect, useRef } from 'react';
+import { useSelector } from 'react-redux';
 import { io } from 'socket.io-client';
 import riderService from '../api/riderService';
 
 export const useAvailableRides = (isOnline) => {
     const [availableRides, setAvailableRides] = useState([]);
+    const [incomingRide, setIncomingRide] = useState(null);
     const socketRef = useRef(null);
+    const { user } = useSelector((state) => state.verifiedUser);
 
     const fetchRides = async () => {
         try {
@@ -24,7 +27,7 @@ export const useAvailableRides = (isOnline) => {
 
             // Connect to Socket.io for real-time updates
             const token = localStorage.getItem('nvcr_tk');
-            const apiUrl = import.meta.env.VITE_API_URL || 'https://novaride-backend-staging.onrender.com';
+            const apiUrl = import.meta.env.VITE_API_URL?.replace(/\/api$/, '') || 'http://localhost:5000';
             
             socket = io(apiUrl, {
                 auth: { token },
@@ -35,6 +38,9 @@ export const useAvailableRides = (isOnline) => {
             });
 
             socket.on('connect', () => {
+                if (user?._id) {
+                    socket.emit('join', user._id);
+                }
             });
 
             // Listen for new rides being available
@@ -51,10 +57,16 @@ export const useAvailableRides = (isOnline) => {
 
             // Listen for incoming ride requests (ride was assigned to this rider)
             socket.on('incomingRideRequest', (data) => {
-                // Remove from available rides since it's now assigned to us
-                setAvailableRides(prev => 
-                    prev.filter(r => r._id !== data.rideId)
-                );
+                if (!data?.ride) {
+                    fetchRides();
+                    return;
+                }
+
+                setIncomingRide(data.ride);
+                setAvailableRides((previousRides) => {
+                    const alreadyListed = previousRides.some((ride) => ride._id === data.ride._id);
+                    return alreadyListed ? previousRides : [data.ride, ...previousRides];
+                });
             });
 
             // Listen for ride acceptances (remove if rider accepted it)
@@ -72,6 +84,7 @@ export const useAvailableRides = (isOnline) => {
             socketRef.current = socket;
         } else {
             setAvailableRides([]);
+            setIncomingRide(null);
             if (socketRef.current) {
                 socketRef.current.disconnect();
                 socketRef.current = null;
@@ -83,10 +96,11 @@ export const useAvailableRides = (isOnline) => {
                 socket.disconnect();
             }
         };
-    }, [isOnline]);
+    }, [isOnline, user?._id]);
 
     return {
         availableRides,
+        incomingRide,
         refetchRides: fetchRides
     };
 };

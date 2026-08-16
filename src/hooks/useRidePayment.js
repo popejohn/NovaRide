@@ -16,14 +16,9 @@ export const useRidePayment = (distance, duration, pickupLocation, destination, 
     const checkBalanceAndPay = async () => {
         try {
             setIsProcessing(true);
-            const token = localStorage.getItem('nvcr_tk');
             const fare = calculateEstimatedFare(distance);
             // Check balance first
-            const walletResponse = await api.get('/user/wallet-data', {
-                headers: { 
-                    Authorization: `Bearer ${token}`
-                }
-            });
+            const walletResponse = await api.get('/user/wallet-data');
 
             // Handle potential 304 or missing data
             if (!walletResponse.data || walletResponse.data.walletBalance === undefined) {
@@ -44,7 +39,7 @@ export const useRidePayment = (distance, duration, pickupLocation, destination, 
             }
 
             // If balance is sufficient, create ride and redirect to driver selection
-            await proceedToCreateRide(fare, token);
+            await proceedToCreateRide(fare);
 
         } catch (error) {
             console.error('❌ Balance check error:', error);
@@ -60,7 +55,7 @@ export const useRidePayment = (distance, duration, pickupLocation, destination, 
                 return;
             }
             
-            const errorMessage = error.response?.data?.message || error.message;
+            const errorMessage = error.response?.data?.message || error.message || 'Unable to process your ride request';
 
             if (errorMessage.toLowerCase().includes('expired') || error.response?.status === 401) {
                 localStorage.removeItem('nvcr_tk');
@@ -77,7 +72,7 @@ export const useRidePayment = (distance, duration, pickupLocation, destination, 
         }
     };
 
-    const proceedToCreateRide = async (fare, token) => {
+    const proceedToCreateRide = async (fare) => {
         try {
             
             const rideData = {
@@ -100,6 +95,7 @@ export const useRidePayment = (distance, duration, pickupLocation, destination, 
 
             if (response.status === 200) {
                 toast.success("Ride created! Select a rider...");
+                setIsProcessing(false);
                 navigate(`/driver-selection?rideId=${response.data.ride._id}`);
             }
         } catch (error) {

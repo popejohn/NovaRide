@@ -46,10 +46,12 @@ export const useRiderSocket = (userId, isOnline, onRideRequest) => {
             reconnectionAttempts: 10,
             transports: ['websocket', 'polling']
         });
+        window.__novaSocket = socketRef.current;
 
         socketRef.current.on('connect', () => {
             setIsConnected(true);
             reconnectAttemptRef.current = 0;
+            window.__novaSocket = socketRef.current;
             socketRef.current.emit('join', userId);
             socketRef.current.emit('rider:presence', { online: true });
 
@@ -97,6 +99,9 @@ export const useRiderSocket = (userId, isOnline, onRideRequest) => {
             if (socketRef.current) {
                 socketRef.current.disconnect();
                 socketRef.current = null;
+            }
+            if (window.__novaSocket === socketRef.current) {
+                delete window.__novaSocket;
             }
             setIsConnected(false);
         };

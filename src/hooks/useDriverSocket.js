@@ -68,6 +68,16 @@ export const useDriverSocket = (userId, rideId) => {
         }
       });
 
+      socketRef.current.on('rideLifecycleUpdated', (data) => {
+        if (String(data?.rideId) !== String(rideId)) return;
+
+        const inactiveStatuses = ['cancelled', 'expired', 'timed_out'];
+        if (inactiveStatuses.includes(data.status)) {
+          setBookingStatus(data.status);
+          toast.error(data.reason === 'expired' ? 'This ride request has expired.' : 'This ride request is no longer available.');
+        }
+      });
+
       socketRef.current.on('error', (error) => {
         console.error('[Driver Socket] Socket error:', error);
         toast.error('Connection error: ' + error.message);

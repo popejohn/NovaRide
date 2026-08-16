@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { setOnlineStatus } from '../Redux/verifiedUserslice';
 import riderService from '../api/riderService';
@@ -7,7 +7,6 @@ export const useRiderOnlineStatus = () => {
     const dispatch = useDispatch();
     const { isOnline } = useSelector(state => state.verifiedUser);
     const [locationError, setLocationError] = useState(null);
-    const locationIntervalRef = useRef(null);
 
     const getCurrentLocation = () => {
         return new Promise((resolve, reject) => {
@@ -23,28 +22,27 @@ export const useRiderOnlineStatus = () => {
                     });
                 },
                 (error) => reject(error),
-                { enableHighAccuracy: true, timeout: 10000, maximumAge: 300000 }
+                { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
             );
         });
     };
 
     const handleOnlineToggle = async () => {
         const newOnlineState = !isOnline;
-        dispatch(setOnlineStatus(newOnlineState));
 
         if (newOnlineState) {
             try {
                 const location = await getCurrentLocation();
-                await riderService.updateLocation(location.latitude, location.longitude, true);
+                // ONLY call updateStatus when status actually changes
+                await riderService.updateStatus(true, location.latitude, location.longitude);
+                dispatch(setOnlineStatus(true));
 
-                locationIntervalRef.current = setInterval(async () => {
-                    try {
-                        const currentLocation = await getCurrentLocation();
-                        await riderService.updateLocation(currentLocation.latitude, currentLocation.longitude, true);
-                    } catch (error) {
-                        console.error('Error updating location during interval:', error);
-                    }
-                }, 60000);
+                if (window.__novaSocket) {
+                    window.__novaSocket.emit('rider:presence', {
+                        online: true,
+                        location: { lat: location.latitude, lng: location.longitude }
+                    });
+                }
             } catch (error) {
                 // Don't revert the online status — keep the rider's intent.
                 // The status will be synced on the next location interval.
@@ -52,26 +50,15 @@ export const useRiderOnlineStatus = () => {
                 console.error('Error enabling online status:', error);
             }
         } else {
-            if (locationIntervalRef.current) {
-                clearInterval(locationIntervalRef.current);
-                locationIntervalRef.current = null;
-            }
             try {
-                const location = await getCurrentLocation();
-                await riderService.updateLocation(location.latitude, location.longitude, false);
+                // ONLY call updateStatus when status actually changes
+                await riderService.updateStatus(false, null, null);
+                dispatch(setOnlineStatus(false));
             } catch (error) {
-                console.error('Error updating location during offline toggle:', error);
+                console.error('Error updating status during offline toggle:', error);
             }
         }
     };
-
-    useEffect(() => {
-        return () => {
-            if (locationIntervalRef.current) {
-                clearInterval(locationIntervalRef.current);
-            }
-        };
-    }, []);
 
     return {
         isOnline,

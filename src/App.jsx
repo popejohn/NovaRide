@@ -30,6 +30,21 @@ import { useSelector, useDispatch } from 'react-redux'
 import { setUser, logout } from './Redux/verifiedUserslice'
 import api from './services/axios'
 import StorageService from './utils/storageService'
+import RoleService from './utils/roleService'
+
+function RequireRole({ role, children }) {
+  const { isAuthenticated, user } = useSelector(state => state.verifiedUser);
+
+  if (!isAuthenticated) {
+    return <Navigate to='/login' replace />;
+  }
+
+  if (!RoleService.hasRole(user?.role, role)) {
+    return <Navigate to={RoleService.getDashboardPath(user?.role)} replace />;
+  }
+
+  return children;
+}
 
 function App() {
   const dispatch = useDispatch();
@@ -89,12 +104,12 @@ function App() {
         <Route path='live-tracking' element={isAuthenticated ? <LiveTracking /> : <Navigate to='/login' replace />} />
         <Route path='ride-completion' element={isAuthenticated ? <RideCompletion /> : <Navigate to='/login' replace />} />
         <Route path='rider-profile-setup' element={isAuthenticated ? <RiderProfileSetup /> : <Navigate to='/login' replace />} />
-        <Route path='ride-request' element={isAuthenticated ? <IncomingRideRequest /> : <Navigate to='/login' replace />} />
-        <Route path='rider-live-tracking' element={isAuthenticated ? <LiveTracking /> : <Navigate to='/login' replace />} />
-        <Route path='riderdashboard' element={isAuthenticated ? <Riderdash /> : <Navigate to='/login' replace />} />
+        <Route path='ride-request' element={<RequireRole role={RoleService.ROLES.RIDER}><IncomingRideRequest /></RequireRole>} />
+        <Route path='rider-live-tracking' element={<RequireRole role={RoleService.ROLES.RIDER}><LiveTracking /></RequireRole>} />
+        <Route path='riderdashboard' element={<RequireRole role={RoleService.ROLES.RIDER}><Riderdash /></RequireRole>} />
         <Route path='installment-profile-setup' element={isAuthenticated ? <InstallmentProfileSetup /> : <Navigate to='/login' replace />} />
         <Route path='installment-application' element={isAuthenticated ? <InstallmentApplication /> : <Navigate to='/login' replace />} />
-        <Route path='installment-dashboard' element={isAuthenticated ? <InstallmentDashboard /> : <Navigate to='/login' replace />} />
+        <Route path='installment-dashboard' element={<RequireRole role={RoleService.ROLES.INSTALLMENT}><InstallmentDashboard /></RequireRole>} />
         <Route path='wallet' element={isAuthenticated ? <Wallet /> : <Navigate to='/login' replace />} />
         <Route path='profile' element={isAuthenticated ? <ProfileManagement /> : <Navigate to='/login' replace />} />
         <Route path='help' element={<Help />} />

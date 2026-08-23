@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { toast } from 'react-toastify';
 import { setOnlineStatus } from '../Redux/verifiedUserslice';
 import riderService from '../api/riderService';
 
@@ -31,11 +32,22 @@ export const useRiderOnlineStatus = () => {
         const newOnlineState = !isOnline;
 
         if (newOnlineState) {
+            const toastId = toast.loading('Going live...', {
+                position: 'top-right'
+            });
+
             try {
                 const location = await getCurrentLocation();
                 // ONLY call updateStatus when status actually changes
                 await riderService.updateStatus(true, location.latitude, location.longitude);
                 dispatch(setOnlineStatus(true));
+
+                toast.update(toastId, {
+                    render: 'You are now live',
+                    type: 'success',
+                    isLoading: false,
+                    autoClose: 2500
+                });
 
                 if (window.__novaSocket) {
                     window.__novaSocket.emit('rider:presence', {
@@ -48,6 +60,12 @@ export const useRiderOnlineStatus = () => {
                 // The status will be synced on the next location interval.
                 setLocationError(error.message);
                 console.error('Error enabling online status:', error);
+                toast.update(toastId, {
+                    render: 'Unable to go live. Please try again.',
+                    type: 'error',
+                    isLoading: false,
+                    autoClose: 4000
+                });
             }
         } else {
             try {

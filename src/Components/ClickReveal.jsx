@@ -3,12 +3,12 @@ import { useSelector } from 'react-redux';
 import { GiPathDistance } from "react-icons/gi";
 import { IoMdTimer } from "react-icons/io";
 import Button from './Button';
-import { useRidePayment, calculateEstimatedFare } from '../hooks/useRidePayment';
+import { useRidePayment } from '../hooks/useRidePayment';
 
-const ClickToReveal = ({ distance, duration, cancelRide }) => {
+const ClickToReveal = ({ distance, duration, fare, cancelRide }) => {
   const { pickupLocation, destination } = useSelector((state) => state.getRide);
   const { pickupCoordinate, destinationCoordinate } = useSelector((state) => state.location);
-  const { checkBalanceAndPay, isProcessing } = useRidePayment(distance, duration, pickupLocation, destination, pickupCoordinate, destinationCoordinate);
+  const { checkBalanceAndPay, isProcessing } = useRidePayment(fare, pickupLocation, destination, pickupCoordinate, destinationCoordinate);
 
   return (
     <div className="mt-5 w-full">
@@ -49,7 +49,7 @@ const ClickToReveal = ({ distance, duration, cancelRide }) => {
             <div className='mt-2 flex items-center justify-between px-2'>
               <span className='text-neutral-400 font-medium'>Estimated Fare</span>
               <span className='text-2xl font-bold text-orange-400'>
-                #{calculateEstimatedFare(distance)}
+                #{Number(fare).toLocaleString()}
               </span>
             </div>
 

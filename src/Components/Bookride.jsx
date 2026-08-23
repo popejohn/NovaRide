@@ -32,6 +32,7 @@ const Bookride = () => {
     showCostDist,
     distance,
     eta,
+    fare,
     pickupSuggestions,
     destinationSuggestions,
     activeInput,
@@ -90,6 +91,7 @@ const Bookride = () => {
             <ClickToReveal
               distance={distance}
               duration={eta}
+              fare={fare}
               cancelRide={cancelRide}
             />
           )}

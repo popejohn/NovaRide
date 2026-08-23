@@ -11,26 +11,41 @@ class RoleService {
   static PRIORITY = {
     [this.ROLES.ADMIN]: 4,
     [this.ROLES.RIDER]: 3,
-    [this.ROLES.PASSENGER]: 2,
-    [this.ROLES.INSTALLMENT]: 1
+    [this.ROLES.INSTALLMENT]: 2,
+    [this.ROLES.PASSENGER]: 1
   };
 
   static getPredominantRole(roles) {
-    if (!roles || !Array.isArray(roles)) return this.ROLES.PASSENGER;
-
-    const sortedRoles = roles
+    const sortedRoles = this.getRoles(roles)
+      .filter(role => this.PRIORITY[role])
       .map(role => ({ role, priority: this.PRIORITY[role] || 0 }))
       .sort((a, b) => b.priority - a.priority);
 
     return sortedRoles[0]?.role || this.ROLES.PASSENGER;
   }
 
-  static canAcceptRides(role) {
-    return role === this.ROLES.RIDER;
+  static getRoles(roles) {
+    return Array.isArray(roles) ? roles : [roles].filter(Boolean);
   }
 
-  static canBookRides(role) {
-    return [this.ROLES.PASSENGER, this.ROLES.INSTALLMENT].includes(role);
+  static hasRole(roles, role) {
+    return this.getRoles(roles).includes(role);
+  }
+
+  static getDashboardPath(roles) {
+    const predominantRole = this.getPredominantRole(this.getRoles(roles));
+
+    if (predominantRole === this.ROLES.RIDER) return '/riderdashboard';
+    if (predominantRole === this.ROLES.INSTALLMENT) return '/installment-dashboard';
+    return '/bookride';
+  }
+
+  static canAcceptRides(roles) {
+    return this.hasRole(roles, this.ROLES.RIDER);
+  }
+
+  static canBookRides() {
+    return true;
   }
 
   static hasPermission(role, action) {

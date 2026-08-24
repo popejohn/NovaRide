@@ -25,7 +25,9 @@ class RoleService {
   }
 
   static getRoles(roles) {
-    return Array.isArray(roles) ? roles : [roles].filter(Boolean);
+    return (Array.isArray(roles) ? roles : [roles])
+      .filter(Boolean)
+      .map(role => role === 'partner' ? this.ROLES.INSTALLMENT : role);
   }
 
   static hasRole(roles, role) {
@@ -37,6 +39,34 @@ class RoleService {
 
     if (predominantRole === this.ROLES.RIDER) return '/riderdashboard';
     if (predominantRole === this.ROLES.INSTALLMENT) return '/installment-dashboard';
+    return '/bookride';
+  }
+
+  static isProfileCompleted(user, role) {
+    if (role === this.ROLES.RIDER) {
+      return typeof user?.riderProfileCompleted === 'boolean'
+        ? user.riderProfileCompleted
+        : Boolean(user?.profileCompleted);
+    }
+    if (role === this.ROLES.INSTALLMENT) {
+      return typeof user?.installmentProfileCompleted === 'boolean'
+        ? user.installmentProfileCompleted
+        : Boolean(user?.profileCompleted);
+    }
+    return true;
+  }
+
+  static getLoginDestination(user) {
+    const role = this.getPredominantRole(user?.role);
+
+    if (role === this.ROLES.RIDER) {
+      return this.isProfileCompleted(user, role) ? '/riderdashboard' : '/rider-profile-setup';
+    }
+
+    if (role === this.ROLES.INSTALLMENT) {
+      return this.isProfileCompleted(user, role) ? '/installment-dashboard' : '/installment-profile-setup';
+    }
+
     return '/bookride';
   }
 

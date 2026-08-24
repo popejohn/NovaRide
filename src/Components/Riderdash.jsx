@@ -60,9 +60,9 @@ const Riderdash = () => {
       <div className="absolute top-[20%] right-[-10%] w-[500px] h-[500px] bg-orange-500/5 blur-[120px] rounded-full pointer-events-none" />
 
       <Navbar
-        userrole={role}
+        userrole={user?.role}
         userverified={true}
-        nav={<OtherNav userrole={role} />}
+        nav={<OtherNav userrole={user?.role} />}
         profilePic={user?.profilePic}
       />
 

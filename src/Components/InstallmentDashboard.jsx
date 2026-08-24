@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import Navbar from './Navbar';
 import OtherNav from './VerifiedNav';
 import Button from './Button';
+import RoleService from '../utils/roleService';
 import api from '../services/axios';
 import { FaCar, FaCalculator, FaClock, FaMoneyBillWave, FaChartLine, FaMotorcycle, FaMapMarkerAlt } from 'react-icons/fa';
 import { PaystackButton } from 'react-paystack';
@@ -58,6 +59,7 @@ import { PaymentHistory } from './Installment/PaymentHistory';
 const InstallmentDashboard = () => {
   const navigate = useNavigate();
   const { user } = useSelector(state => state.verifiedUser);
+  const hasRiderRole = RoleService.hasRole(user?.role, RoleService.ROLES.RIDER);
   const [activeTab, setActiveTab] = useState('overview');
   const [installmentData, setInstallmentData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -97,7 +99,7 @@ const InstallmentDashboard = () => {
       <div className="absolute top-0 left-0 w-full h-[500px] bg-gradient-to-b from-orange-500/5 to-transparent pointer-events-none" />
       <div className="absolute top-[20%] right-[-10%] w-[500px] h-[500px] bg-orange-500/5 blur-[120px] rounded-full pointer-events-none" />
 
-      <Navbar userrole="installment" userverified={true} profilePic={user?.profilePic} nav={<OtherNav userrole="installment" />} />
+      <Navbar userrole={user?.role} userverified={true} profilePic={user?.profilePic} nav={<OtherNav userrole={user?.role} />} />
 
       <div className="pt-32 pb-20 px-4 md:px-8 lg:px-12 max-w-[1600px] mx-auto relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
@@ -145,9 +147,11 @@ const InstallmentDashboard = () => {
                 <ActionButton onClick={() => navigate('/bookride')} icon={FaMapMarkerAlt}>
                   Book a Ride
                 </ActionButton>
-                <ActionButton onClick={() => navigate('/rider-profile-setup')} icon={FaMotorcycle} color="neutral">
-                  Become a Rider
-                </ActionButton>
+                {!hasRiderRole && (
+                  <ActionButton onClick={() => navigate('/rider-profile-setup')} icon={FaMotorcycle} color="neutral">
+                    Become a Rider
+                  </ActionButton>
+                )}
               </div>
 
               <div className="mt-8 pt-8 border-t border-neutral-50">

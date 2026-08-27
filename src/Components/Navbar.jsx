@@ -76,7 +76,7 @@ const Navbar = ({ userrole, nav, userverified, profilePic = '', button }) => {
                     <div className='flex items-center gap-4'>
                             {!userverified && (
                             <Link to={'/login'}>
-                                <button className='font-bold text-sm uppercase tracking-widest bg-neutral-100 text-neutral-700 hover:bg-neutral-200 hover:text-orange-500 transition-all px-6 py-2.5 rounded-xl'>
+                                <button className='font-bold text-sm uppercase tracking-widest bg-black text-white hover:bg-neutral-800 hover:text-orange-500 transition-all px-6 py-2.5 rounded-xl'>
                                     Login
                                 </button>
                             </Link>

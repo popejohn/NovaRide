@@ -19,6 +19,7 @@ import InstallmentDashboard from './Components/InstallmentDashboard'
 import Wallet from './Components/Wallet'
 import ProfileManagement from './Components/ProfileManagement'
 import Help from './Components/Help'
+import FAQ from './Components/FAQ'
 import FloatingChatSupport from './Components/FloatingChatSupport'
 import useSessionTimeout from './utils/useSessionTimeout'
 import { useRiderSessionPresence } from './hooks/useRiderSessionPresence'
@@ -120,6 +121,8 @@ function App() {
         <Route path='wallet' element={isAuthenticated ? <Wallet /> : <Navigate to='/login' replace />} />
         <Route path='profile' element={isAuthenticated ? <ProfileManagement /> : <Navigate to='/login' replace />} />
         <Route path='help' element={<Help />} />
+        <Route path='faq' element={<FAQ />} />
+        <Route path='FAQ' element={<FAQ />} />
       </Routes>
       {isAuthenticated && <FloatingChatSupport />}
     </>

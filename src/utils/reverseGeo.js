@@ -55,7 +55,7 @@ export const forwardGeocode = async (address) => {
 
 export const calculateDistanceAndETA = async (pickup, destination) => {
   try {
-    // Calls backend directions proxy → Google Distance Matrix API
+    // Calls backend directions proxy → Google Routes API
     const response = await api.get(
       `/location/directions/driving/${pickup.lng},${pickup.lat};${destination.lng},${destination.lat}`
     );

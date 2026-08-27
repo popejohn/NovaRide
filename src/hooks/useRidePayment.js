@@ -3,20 +3,19 @@ import { useNavigate } from 'react-router-dom';
 import api from '../services/axios';
 import { toast } from 'react-toastify';
 
-export const calculateEstimatedFare = (distance) => {
-    const numericDistance = Number(distance);
-    if (!Number.isFinite(numericDistance) || numericDistance <= 0) return 0;
-    return Math.round(numericDistance * 150 * 3);
-};
-
-export const useRidePayment = (distance, duration, pickupLocation, destination, pickupCoordinate, destinationCoordinate) => {
+export const useRidePayment = (fare, pickupLocation, destination, pickupCoordinate, destinationCoordinate) => {
     const navigate = useNavigate();
     const [isProcessing, setIsProcessing] = useState(false);
 
     const checkBalanceAndPay = async () => {
         try {
             setIsProcessing(true);
-            const fare = calculateEstimatedFare(distance);
+            const estimatedFare = Number(fare);
+            if (!Number.isFinite(estimatedFare) || estimatedFare <= 0) {
+                toast.error('Please calculate your road fare before selecting a rider.');
+                setIsProcessing(false);
+                return;
+            }
             // Check balance first
             const walletResponse = await api.get('/user/wallet-data');
 
@@ -31,7 +30,7 @@ export const useRidePayment = (distance, duration, pickupLocation, destination, 
             const balance = walletResponse.data.walletBalance;
 
             // If balance is insufficient, redirect to wallet to add money
-            if (balance < fare) {
+            if (balance < estimatedFare) {
                 toast.error("Insufficient balance. Redirecting to wallet...");
                 setIsProcessing(false);
                 navigate('/wallet');
@@ -39,7 +38,7 @@ export const useRidePayment = (distance, duration, pickupLocation, destination, 
             }
 
             // If balance is sufficient, create ride and redirect to driver selection
-            await proceedToCreateRide(fare);
+            await proceedToCreateRide();
 
         } catch (error) {
             console.error('❌ Balance check error:', error);
@@ -72,15 +71,12 @@ export const useRidePayment = (distance, duration, pickupLocation, destination, 
         }
     };
 
-    const proceedToCreateRide = async (fare) => {
+    const proceedToCreateRide = async () => {
         try {
             
             const rideData = {
                 pickupLocation,
                 destination,
-                eta: duration,
-                fare: fare,
-                distance: distance,
                 pickupCoordinates: {
                     type: 'Point',
                     coordinates: [pickupCoordinate.lng, pickupCoordinate.lat]

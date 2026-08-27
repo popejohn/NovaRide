@@ -7,7 +7,7 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { FaUser, FaIdCard, FaBriefcase, FaHome, FaMoneyBillWave, FaCalculator, FaUsers } from 'react-icons/fa';
 import { toast } from 'react-toastify';
-import { setProfileCompleted } from '../Redux/verifiedUserslice';
+import { setUser } from '../Redux/verifiedUserslice';
 import api from '../services/axios';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -207,11 +207,11 @@ const InstallmentProfileSetup = () => {
           paymentDetails: values,
         };
 
-        await api.post('/user/installment-profile', profileData, {
+        const response = await api.post('/user/installment-profile', profileData, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
 
-        dispatch(setProfileCompleted());
+        dispatch(setUser({ user: response.data.user }));
         toast.success('Profile setup completed successfully!');
         navigate('/installment-dashboard');
       } catch (error) {

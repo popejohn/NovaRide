@@ -19,6 +19,7 @@ import InstallmentDashboard from './Components/InstallmentDashboard'
 import Wallet from './Components/Wallet'
 import ProfileManagement from './Components/ProfileManagement'
 import Help from './Components/Help'
+import FAQ from './Components/FAQ'
 import FloatingChatSupport from './Components/FloatingChatSupport'
 import useSessionTimeout from './utils/useSessionTimeout'
 import { useRiderSessionPresence } from './hooks/useRiderSessionPresence'
@@ -30,10 +31,32 @@ import { useSelector, useDispatch } from 'react-redux'
 import { setUser, logout } from './Redux/verifiedUserslice'
 import api from './services/axios'
 import StorageService from './utils/storageService'
+import RoleService from './utils/roleService'
+
+function RequireRole({ role, requiresProfileCompletion = false, children }) {
+  const { isAuthenticated, user } = useSelector(state => state.verifiedUser);
+
+  if (!isAuthenticated) {
+    return <Navigate to='/login' replace />;
+  }
+
+  if (!RoleService.hasRole(user?.role, role)) {
+    return <Navigate to={RoleService.getDashboardPath(user?.role)} replace />;
+  }
+
+  if (requiresProfileCompletion && !RoleService.isProfileCompleted(user, role)) {
+    const setupPath = role === RoleService.ROLES.RIDER
+      ? '/rider-profile-setup'
+      : '/installment-profile-setup';
+    return <Navigate to={setupPath} replace />;
+  }
+
+  return children;
+}
 
 function App() {
   const dispatch = useDispatch();
-  const { isAuthenticated } = useSelector(state => state.verifiedUser);
+  const { isAuthenticated, user } = useSelector(state => state.verifiedUser);
   const [isVerifying, setIsVerifying] = useState(() => !!StorageService.getToken());
 
   useSessionTimeout(isAuthenticated); // Enable conditional session timeout
@@ -79,8 +102,8 @@ function App() {
       <ToastContainer position="bottom-right" autoClose={3000} hideProgressBar theme="dark" />
       <Routes>
         <Route path='/' element={!isAuthenticated ? <LandingPage /> : <Bookride pickupCoordinate={pickupCoordinate} destinationCoordinate={destinationCoordinate} setPickupCoordinate={setPickupCoordinate} setDestinationCoordinate={setDestinationCoordinate} />} />
-        <Route path='signup' element={!isAuthenticated ? <SignUp /> : <Navigate to='/bookride' replace />} />
-        <Route path='login' element={!isAuthenticated ? <Login /> : <Navigate to='/bookride' replace />} />
+        <Route path='signup' element={!isAuthenticated ? <SignUp /> : <Navigate to={RoleService.getLoginDestination(user)} replace />} />
+        <Route path='login' element={!isAuthenticated ? <Login /> : <Navigate to={RoleService.getLoginDestination(user)} replace />} />
         <Route path='forgot-password' element={<ForgotPassword />} />
         <Route path='new-password' element={<NewPassword />} />
         <Route path='bookride' element={isAuthenticated ? <Bookride /> : <Navigate to='/login' replace />} />
@@ -89,15 +112,17 @@ function App() {
         <Route path='live-tracking' element={isAuthenticated ? <LiveTracking /> : <Navigate to='/login' replace />} />
         <Route path='ride-completion' element={isAuthenticated ? <RideCompletion /> : <Navigate to='/login' replace />} />
         <Route path='rider-profile-setup' element={isAuthenticated ? <RiderProfileSetup /> : <Navigate to='/login' replace />} />
-        <Route path='ride-request' element={isAuthenticated ? <IncomingRideRequest /> : <Navigate to='/login' replace />} />
-        <Route path='rider-live-tracking' element={isAuthenticated ? <LiveTracking /> : <Navigate to='/login' replace />} />
-        <Route path='riderdashboard' element={isAuthenticated ? <Riderdash /> : <Navigate to='/login' replace />} />
+        <Route path='ride-request' element={<RequireRole role={RoleService.ROLES.RIDER}><IncomingRideRequest /></RequireRole>} />
+        <Route path='rider-live-tracking' element={<RequireRole role={RoleService.ROLES.RIDER}><LiveTracking /></RequireRole>} />
+        <Route path='riderdashboard' element={<RequireRole role={RoleService.ROLES.RIDER} requiresProfileCompletion><Riderdash /></RequireRole>} />
         <Route path='installment-profile-setup' element={isAuthenticated ? <InstallmentProfileSetup /> : <Navigate to='/login' replace />} />
         <Route path='installment-application' element={isAuthenticated ? <InstallmentApplication /> : <Navigate to='/login' replace />} />
-        <Route path='installment-dashboard' element={isAuthenticated ? <InstallmentDashboard /> : <Navigate to='/login' replace />} />
+        <Route path='installment-dashboard' element={<RequireRole role={RoleService.ROLES.INSTALLMENT} requiresProfileCompletion><InstallmentDashboard /></RequireRole>} />
         <Route path='wallet' element={isAuthenticated ? <Wallet /> : <Navigate to='/login' replace />} />
         <Route path='profile' element={isAuthenticated ? <ProfileManagement /> : <Navigate to='/login' replace />} />
         <Route path='help' element={<Help />} />
+        <Route path='faq' element={<FAQ />} />
+        <Route path='FAQ' element={<FAQ />} />
       </Routes>
       {isAuthenticated && <FloatingChatSupport />}
     </>

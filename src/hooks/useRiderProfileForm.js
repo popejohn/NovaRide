@@ -4,7 +4,7 @@ import * as Yup from 'yup';
 import api from '../services/axios';
 import { toast } from 'react-toastify';
 import { useDispatch } from 'react-redux';
-import { setProfileCompleted } from '../Redux/verifiedUserslice';
+import { setUser } from '../Redux/verifiedUserslice';
 import { useNavigate } from 'react-router-dom';
 
 export const useRiderProfileForm = (user) => {
@@ -169,7 +169,7 @@ export const useRiderProfileForm = (user) => {
                 });
 
                 if (response.data) {
-                    dispatch(setProfileCompleted());
+                    dispatch(setUser({ user: response.data.user }));
                     toast.success('Profile setup completed successfully!');
                     navigate('/riderdashboard');
                 }

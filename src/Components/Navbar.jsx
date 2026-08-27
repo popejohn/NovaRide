@@ -1,14 +1,12 @@
 import React, { useState } from 'react'
 import novaLogo from '../assets/nova.png'
 import '../App.css'
-import Nav from './Nav'
-import Button from './Button'
 import { Link, useNavigate } from 'react-router-dom'
 import { FaBars, FaTimes, FaUser, FaWallet, FaCarSide, FaQuestionCircle, FaChevronDown } from 'react-icons/fa'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useDispatch } from 'react-redux'
 import { logout } from '../Redux/verifiedUserslice'
-import { getPredominantRole } from '../utils/roleUtils'
+import RoleService from '../utils/roleService'
 import api from '../services/axios'
 
 
@@ -35,7 +33,7 @@ const Navbar = ({ userrole, nav, userverified, profilePic = '', button }) => {
         }
     };
 
-    const predominantRole = getPredominantRole(userrole);
+    const predominantRole = RoleService.getPredominantRole(userrole);
     
     const getDashboardPath = () => {
         if (predominantRole === 'rider') return '/riderdashboard';
@@ -50,9 +48,13 @@ const Navbar = ({ userrole, nav, userverified, profilePic = '', button }) => {
     const hasInstallmentRole = roles.includes('installment');
 
     const menuItems = [
+        { icon: <FaCarSide />, label: 'Book a Ride', path: '/bookride' },
+        ...(hasRiderRole ? [{ icon: <FaCarSide />, label: 'Rider Dashboard', path: '/riderdashboard' }] : []),
+        ...(hasInstallmentRole ? [{ icon: <FaWallet />, label: 'Installment Dashboard', path: '/installment-dashboard' }] : []),
         { icon: <FaUser />, label: 'My profile', path: '/profile' },
         { icon: <FaWallet />, label: 'Wallet', path: '/wallet' },
-        ...(!hasRiderRole ? [{ icon: <FaCarSide />, label: 'Earn as a rider', path: '/earn' }] : []),
+        ...(!hasRiderRole ? [{ icon: <FaCarSide />, label: 'Earn as a rider', path: '/rider-profile-setup' }] : []),
+        ...(!hasInstallmentRole ? [{ icon: <FaCarSide />, label: 'Own a maruwa', path: '/installment-profile-setup' }] : []),
         { icon: <FaQuestionCircle />, label: 'Support', path: '/help' },
     ];
 
@@ -70,20 +72,11 @@ const Navbar = ({ userrole, nav, userverified, profilePic = '', button }) => {
                         </div>
                     </Link>
 
-                    {/* Desktop Navigation */}
-                    {userverified && (
-                        <div className='hidden lg:flex items-center gap-8'>
-                            <div className='text-sm font-bold tracking-tight'>
-                                {nav}
-                            </div>
-                        </div>
-                    )}
-
                     {/* Actions Section */}
                     <div className='flex items-center gap-4'>
                             {!userverified && (
                             <Link to={'/login'}>
-                                <button className='font-bold text-sm uppercase tracking-widest bg-neutral-100 text-neutral-700 hover:bg-neutral-200 hover:text-orange-500 transition-all px-6 py-2.5 rounded-xl'>
+                                <button className='font-bold text-sm uppercase tracking-widest bg-black text-white hover:bg-neutral-800 hover:text-orange-500 transition-all px-6 py-2.5 rounded-xl'>
                                     Login
                                 </button>
                             </Link>
@@ -116,16 +109,6 @@ const Navbar = ({ userrole, nav, userverified, profilePic = '', button }) => {
                                                 className='absolute right-0 mt-3 w-64 bg-white border border-neutral-200 rounded-2xl shadow-xl overflow-hidden z-[5002]'
                                             >
                                                 <div className='p-2'>
-                                                    {(predominantRole === 'rider' || predominantRole === 'installment') && (
-                                                        <Link
-                                                            to={dashboardPath}
-                                                            className='flex items-center gap-3 px-4 py-3 rounded-2xl text-orange-600 bg-orange-50 hover:bg-orange-100 transition-all group mb-1'
-                                                            onClick={() => setIsDropdownOpen(false)}
-                                                        >
-                                                            <span className='text-sm group-hover:scale-110 transition-transform'><FaCarSide /></span>
-                                                            <span className='text-sm font-black uppercase tracking-tight'>Go to Dashboard</span>
-                                                        </Link>
-                                                    )}
                                                     {menuItems.map((item, idx) => (
                                                         <Link
                                                             key={idx}
@@ -178,16 +161,6 @@ const Navbar = ({ userrole, nav, userverified, profilePic = '', button }) => {
                             {userverified && (
                                 <div>
                                     <div className='grid grid-cols-2 gap-3'>
-                                        {(predominantRole === 'rider' || predominantRole === 'installment') && (
-                                            <Link
-                                                to={dashboardPath}
-                                                className='flex flex-col items-center justify-center p-4 bg-orange-50 rounded-3xl gap-2 hover:bg-orange-100 transition-colors col-span-2'
-                                                onClick={() => setIsMenuOpen(false)}
-                                            >
-                                                <span className='text-orange-500 text-xl'><FaCarSide /></span>
-                                                <span className='text-[10px] font-black uppercase tracking-wider text-orange-700'>Go to Dashboard</span>
-                                            </Link>
-                                        )}
                                         {menuItems.map((item, idx) => (
                                             <Link
                                                 key={idx}

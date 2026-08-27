@@ -29,7 +29,7 @@ export const useRiderDashboard = () => {
         const checkRiderProfile = async () => {
             try {
                 const response = await riderService.getDetails();
-                if (!response.data) {
+                if (!response.data?.profileCompleted) {
                     navigate('/rider-profile-setup');
                 }
             } catch (error) {

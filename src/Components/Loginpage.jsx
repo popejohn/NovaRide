@@ -37,19 +37,13 @@ function Login() {
         const result = await AuthService.login(values);
         toast.success('Welcome back to Nova!');
 
-        const { token, user, role } = result;
+        const { token, user } = result;
 
         setTimeout(() => {
           dispatch(loginSuccess({ token }));
           dispatch(setUser({ user }));
 
-          if (role === RoleService.ROLES.RIDER) {
-            navigate(user.profileCompleted ? '/riderdashboard' : '/rider-profile-setup');
-          } else if (role === RoleService.ROLES.INSTALLMENT) {
-            navigate(user.profileCompleted ? '/installment-dashboard' : '/installment-profile-setup');
-          } else {
-            navigate('/bookride');
-          }
+          navigate(RoleService.getLoginDestination(user));
         }, 1500);
       } catch (error) {
         const errorMessage = error?.message || 'Login failed. Please try again.';

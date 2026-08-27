@@ -7,7 +7,7 @@ import { setUser } from '../Redux/verifiedUserslice';
 import { toast } from 'react-toastify';
 import api from '../services/axios';
 import { getSuggestions } from "../utils/autocomplete";
-import { forwardGeocode, reverseGeocode, calculateDistanceAndETA } from '../utils/reverseGeo';
+import { forwardGeocode, reverseGeocode } from '../utils/reverseGeo';
 import { requestCurrentPosition, GEO_ERROR_CODES } from '../utils/geolocation';
 
 export const useRideBooking = () => {
@@ -21,6 +21,7 @@ export const useRideBooking = () => {
     const [showCostDist, setShowCostDist] = useState(false);
     const [distance, setDistance] = useState('');
     const [eta, setEta] = useState('');
+    const [fare, setFare] = useState(null);
     const [pickupSuggestions, setPickupSuggestions] = useState([]);
     const [destinationSuggestions, setDestinationSuggestions] = useState([]);
     const [activeInput, setActiveInput] = useState("");
@@ -87,19 +88,24 @@ export const useRideBooking = () => {
 
         dispatch(itemLoading());
         setShowCostDist(false);
+        setFare(null);
         try {
-            const distanceData = await calculateDistanceAndETA(pickCoord, destCoord);
-            if (distanceData) {
-                setDistance(distanceData.distanceInKm);
-                setEta(distanceData.durationInMin);
-            }
+            const response = await api.post('/ride/estimate', {
+                pickupLocation,
+                destination,
+                pickupCoordinates: { type: 'Point', coordinates: [pickCoord.lng, pickCoord.lat] },
+                destinationCoordinates: { type: 'Point', coordinates: [destCoord.lng, destCoord.lat] }
+            });
+            setDistance(response.data.distance);
+            setEta(response.data.eta);
+            setFare(response.data.fare);
             setTimeout(() => {
                 setShowCostDist(true);
                 dispatch(itemLoaded());
             }, 1000);
         } catch (error) {
             console.error('Error in handleFare:', error);
-            toast.error("Please pick a valid location");
+            toast.error(error.response?.data?.message || 'Unable to calculate a road fare right now. Please try again.');
             dispatch(itemLoaded());
         }
     };
@@ -144,6 +150,7 @@ export const useRideBooking = () => {
         dispatch(setDestinationCoordinate({ lat: null, lng: null }));
         setEta('');
         setDistance('');
+        setFare(null);
         setShowCostDist(false);
     };
 
@@ -230,6 +237,7 @@ export const useRideBooking = () => {
         showCostDist,
         distance,
         eta,
+        fare,
         pickupSuggestions,
         destinationSuggestions,
         activeInput,

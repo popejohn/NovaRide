@@ -28,7 +28,7 @@ const HeroSection = ({ messages, index }) => {
           {current.text}
         </motion.h1>
         <div className="flex flex-col sm:flex-row justify-center gap-4 md:gap-10 mt-8">
-          <Link to={'/signup'}>
+          <Link to={'/FAQ'}>
             <Button text={'Get Started'} classes={'py-2 px-4 md:py-3 md:px-7 rounded-s-full rounded-e-full bg-yellow-500 border-3 transition-all duration-500 font-bold border-white hover:bg-white hover:text-black'} />
           </Link>
           <Link to={'/FAQ'}>

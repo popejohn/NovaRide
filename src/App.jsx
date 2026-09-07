@@ -16,6 +16,7 @@ import IncomingRideRequest from './Components/IncomingRideRequest'
 import InstallmentProfileSetup from './Components/InstallmentProfileSetup'
 import InstallmentApplication from './Components/InstallmentApplication'
 import InstallmentDashboard from './Components/InstallmentDashboard'
+import InstallmentTerms from './Components/InstallmentTerms'
 import Wallet from './Components/Wallet'
 import ProfileManagement from './Components/ProfileManagement'
 import Help from './Components/Help'
@@ -116,6 +117,7 @@ function App() {
         <Route path='rider-live-tracking' element={<RequireRole role={RoleService.ROLES.RIDER}><LiveTracking /></RequireRole>} />
         <Route path='riderdashboard' element={<RequireRole role={RoleService.ROLES.RIDER} requiresProfileCompletion><Riderdash /></RequireRole>} />
         <Route path='installment-profile-setup' element={isAuthenticated ? <InstallmentProfileSetup /> : <Navigate to='/login' replace />} />
+        <Route path='installment-terms' element={<InstallmentTerms />} />
         <Route path='installment-application' element={isAuthenticated ? <InstallmentApplication /> : <Navigate to='/login' replace />} />
         <Route path='installment-dashboard' element={<RequireRole role={RoleService.ROLES.INSTALLMENT} requiresProfileCompletion><InstallmentDashboard /></RequireRole>} />
         <Route path='wallet' element={isAuthenticated ? <Wallet /> : <Navigate to='/login' replace />} />

@@ -1,257 +1,236 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import Button from './Button';
-import Input from './Input';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { FaUser, FaIdCard, FaBriefcase, FaHome, FaMoneyBillWave, FaCalculator, FaUsers } from 'react-icons/fa';
+import { FaUser, FaIdCard, FaCalculator, FaUsers, FaFileSignature, FaCheckCircle } from 'react-icons/fa';
 import { toast } from 'react-toastify';
+import { motion, AnimatePresence } from 'framer-motion';
 import { setUser } from '../Redux/verifiedUserslice';
 import api from '../services/axios';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
+import Navbar from './Navbar';
+import OtherNav from './VerifiedNav';
 import PersonalInfoStep from './Installment/PersonalInfoStep';
 import GuarantorsStep from './Installment/GuarantorsStep';
 import DocumentsStep from './Installment/DocumentsStep';
 import InstallmentPlanStep from './Installment/InstallmentPlanStep';
 import PaymentStep from './Installment/PaymentStep';
 
-import { FaCalendarAlt } from 'react-icons/fa';
+const steps = [
+  { id: 1, title: 'Personal & Next of Kin', short: 'Personal', icon: FaUser },
+  { id: 2, title: 'Guarantors 1 & 2',       short: 'Guarantors', icon: FaUsers },
+  { id: 3, title: 'Documents & Photos',      short: 'Documents', icon: FaIdCard },
+  { id: 4, title: 'Ownership Plan',          short: 'Plan', icon: FaCalculator },
+  { id: 5, title: 'Settlement & Terms',      short: 'Terms', icon: FaFileSignature },
+];
 
 const InstallmentProfileSetup = () => {
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const { user } = useSelector(state => state.verifiedUser);
+  const navigate   = useNavigate();
+  const dispatch   = useDispatch();
+  const { user }   = useSelector(state => state.verifiedUser);
 
   const [currentStep, setCurrentStep] = useState(1);
-  const [profilePicture, setProfilePicture] = useState(null);
+  const [submitting, setSubmitting]   = useState(false);
 
-  const steps = [
-    { id: 1, title: 'Personal Info', icon: FaUser },
-    { id: 2, title: 'Guarantors', icon: FaUsers },
-    { id: 3, title: 'Documents', icon: FaIdCard },
-    { id: 4, title: 'Installment Plan', icon: FaCalculator },
-    { id: 5, title: 'Payment', icon: FaMoneyBillWave }
-  ];
-
+  /* ─── Step 1 formik ─── */
   const personalFormik = useFormik({
     initialValues: {
-      firstname: user?.firstname || '',
-      lastname: user?.lastname || '',
-      phone: user?.phone || '',
-      email: user?.email || '',
-      dateOfBirth: '',
-      gender: '',
-      maritalStatus: '',
-      address: '',
-      city: '',
-      state: ''
+      firstname:       user?.firstname || '',
+      lastname:        user?.lastname  || '',
+      phone:           user?.phone     || '',
+      email:           user?.email     || '',
+      dateOfBirth:     user?.installmentProfile?.personal?.dateOfBirth     || '',
+      gender:          user?.installmentProfile?.personal?.gender           || '',
+      maritalStatus:   user?.installmentProfile?.personal?.maritalStatus    || '',
+      address:         user?.installmentProfile?.personal?.address          || '',
+      stateOfOrigin:   user?.installmentProfile?.personal?.stateOfOrigin    || '',
+      lga:             user?.installmentProfile?.personal?.lga              || '',
+      nokName:         user?.installmentProfile?.nextOfKin?.name            || '',
+      nokRelationship: user?.installmentProfile?.nextOfKin?.relationship    || '',
+      nokPhone:        user?.installmentProfile?.nextOfKin?.phone           || '',
+      nokAddress:      user?.installmentProfile?.nextOfKin?.address         || '',
     },
     validationSchema: Yup.object({
-      firstname: Yup.string().required('First name is required').min(2, 'Enter a valid first name'),
-      lastname: Yup.string().required('Last name is required').min(2, 'Enter a valid last name'),
-      phone: Yup.string().matches(/^0\d{10}$/, 'Please enter a valid phone number').required('Phone number is required'),
-      email: Yup.string().email('Invalid email address').required('Email is required'),
-      dateOfBirth: Yup.date().required('Date of birth is required'),
-      gender: Yup.string().oneOf(['male', 'female']).required('Gender is required'),
-      maritalStatus: Yup.string().oneOf(['single', 'married', 'divorced', 'widowed']).required('Marital status is required'),
-      address: Yup.string().required('Address is required'),
-      city: Yup.string().required('City is required'),
-      state: Yup.string().required('State is required')
+      firstname:       Yup.string().required('First name is required').min(2),
+      lastname:        Yup.string().required('Last name is required').min(2),
+      phone:           Yup.string().matches(/^0\d{10}$/, 'Valid 11-digit phone required').required(),
+      email:           Yup.string().email('Invalid email').required(),
+      dateOfBirth:     Yup.date().required('Date of birth is required'),
+      gender:          Yup.string().oneOf(['male','female']).required('Gender is required'),
+      maritalStatus:   Yup.string().required('Marital status is required'),
+      address:         Yup.string().required('Residential address is required'),
+      stateOfOrigin:   Yup.string().required('State of origin is required'),
+      lga:             Yup.string().required('LGA is required'),
+      nokName:         Yup.string().required('Next of kin name is required'),
+      nokRelationship: Yup.string().required('Relationship is required'),
+      nokPhone:        Yup.string().matches(/^0\d{10}$/, 'Valid 11-digit phone required').required(),
+      nokAddress:      Yup.string().required('Next of kin address is required'),
     }),
-    onSubmit: () => setCurrentStep(2)
+    onSubmit: () => setCurrentStep(2),
   });
 
+  /* ─── Step 2 formik ─── */
   const guarantorsFormik = useFormik({
     initialValues: {
-      g1Name: '',
-      g1Phone: '',
-      g1Relationship: '',
-      g1Address: '',
-      g1Employer: '',
-      g1Job: '',
-      g1Income: '',
-      g2Name: '',
-      g2Phone: '',
-      g2Relationship: '',
-      g2Address: '',
-      g2Employer: '',
-      g2Job: '',
-      g2Income: ''
+      g1Name: user?.installmentProfile?.guarantors?.[0]?.name || '',
+      g1Phone: user?.installmentProfile?.guarantors?.[0]?.phone || '',
+      g1Relationship: user?.installmentProfile?.guarantors?.[0]?.relationship || '',
+      g1Address: user?.installmentProfile?.guarantors?.[0]?.homeAddress || '',
+      g1Occupation: user?.installmentProfile?.guarantors?.[0]?.occupation || '',
+      g1OfficeAddress: user?.installmentProfile?.guarantors?.[0]?.officeAddress || '',
+      g1MeansOfId: user?.installmentProfile?.guarantors?.[0]?.meansOfId || 'national-id',
+      g1IdNumber: user?.installmentProfile?.guarantors?.[0]?.idNumber || '',
+      g1Photo: user?.installmentProfile?.guarantors?.[0]?.photoUrl || '',
+      g2Name: user?.installmentProfile?.guarantors?.[1]?.name || '',
+      g2Phone: user?.installmentProfile?.guarantors?.[1]?.phone || '',
+      g2Relationship: user?.installmentProfile?.guarantors?.[1]?.relationship || '',
+      g2Address: user?.installmentProfile?.guarantors?.[1]?.homeAddress || '',
+      g2Occupation: user?.installmentProfile?.guarantors?.[1]?.occupation || '',
+      g2OfficeAddress: user?.installmentProfile?.guarantors?.[1]?.officeAddress || '',
+      g2MeansOfId: user?.installmentProfile?.guarantors?.[1]?.meansOfId || 'national-id',
+      g2IdNumber: user?.installmentProfile?.guarantors?.[1]?.idNumber || '',
+      g2Photo: user?.installmentProfile?.guarantors?.[1]?.photoUrl || '',
     },
     validationSchema: Yup.object({
-      g1Name: Yup.string().required('Guarantor 1 name is required'),
-      g1Phone: Yup.string().matches(/^0\d{10}$/, 'Invalid phone number').required('Guarantor 1 phone is required'),
-      g1Relationship: Yup.string().required('Relationship is required'),
-      g1Address: Yup.string().required('Address is required'),
-      g1Employer: Yup.string().required('Employer name is required'),
-      g1Job: Yup.string().required('Job title is required'),
-      g1Income: Yup.number().min(0, 'Income cannot be negative').min(300000, 'Minimum income is ₦300,000').required('Income is required'),
-      g2Name: Yup.string().required('Guarantor 2 name is required'),
-      g2Phone: Yup.string().matches(/^0\d{10}$/, 'Invalid phone number').required('Guarantor 2 phone is required'),
-      g2Relationship: Yup.string().required('Relationship is required'),
-      g2Address: Yup.string().required('Address is required'),
-      g2Employer: Yup.string().required('Employer name is required'),
-      g2Job: Yup.string().required('Job title is required'),
-      g2Income: Yup.number()
-        .min(0, 'Income cannot be negative')
-        .min(300000, 'Minimum income is ₦300,000')
-        .required('Income is required')
-        .test('at-least-one-500k', 'At least one guarantor must earn ₦500,000 or more', function(value) {
-          const { g1Income } = this.parent;
-          return value >= 500000 || g1Income >= 500000;
-        })
+      g1Name:         Yup.string().required('Guarantor 1 full name is required'),
+      g1Phone:        Yup.string().matches(/^0\d{10}$/, 'Valid 11-digit phone required').required(),
+      g1Relationship: Yup.string().required(),
+      g1Address:      Yup.string().required('Home address required'),
+      g1Occupation:   Yup.string().required('Occupation required'),
+      g1OfficeAddress:Yup.string().required('Office address required'),
+      g1IdNumber:     Yup.string().required('ID number required'),
+      g1Photo:        Yup.string().required('Guarantor 1 passport photo required'),
+      g2Name:         Yup.string().required('Guarantor 2 full name is required'),
+      g2Phone:        Yup.string().matches(/^0\d{10}$/, 'Valid 11-digit phone required').required(),
+      g2Relationship: Yup.string().required(),
+      g2Address:      Yup.string().required('Home address required'),
+      g2Occupation:   Yup.string().required('Occupation required'),
+      g2OfficeAddress:Yup.string().required('Office address required'),
+      g2IdNumber:     Yup.string().required('ID number required'),
+      g2Photo:        Yup.string().required('Guarantor 2 passport photo required'),
     }),
-    onSubmit: () => setCurrentStep(3)
+    onSubmit: () => setCurrentStep(3),
   });
 
+  /* ─── Step 3 formik ─── */
   const documentsFormik = useFormik({
     initialValues: {
-      idType: '',
-      idNumber: '',
-      idExpiry: '',
-      bvn: '',
-      nin: ''
+      applicantPhotoUrl:   user?.installmentProfile?.documents?.applicantPhotoUrl || user?.profilePic || '',
+      idType:              user?.installmentProfile?.documents?.idType || '',
+      idNumber:            user?.installmentProfile?.documents?.idNumber || '',
+      idDocumentUrl:       user?.installmentProfile?.documents?.idDocumentUrl || '',
+      driverLicenseNumber: user?.installmentProfile?.documents?.driverLicenseNumber || '',
+      driverLicenseUrl:    user?.installmentProfile?.documents?.driverLicenseUrl || '',
+      bvn:                 user?.installmentProfile?.documents?.bvn || '',
+      nin:                 user?.installmentProfile?.documents?.nin || '',
     },
     validationSchema: Yup.object({
-      idType: Yup.string().oneOf(['national-id', 'drivers-license', 'international-passport']).required('ID type is required'),
-      idNumber: Yup.string().required('ID number is required'),
-      idExpiry: Yup.date().min(new Date(), 'ID must not be expired').required('ID expiry date is required').nullable(),
-      bvn: Yup.string().matches(/^\d{11}$/, 'BVN must be 11 digits').required('BVN is required'),
-      nin: Yup.string().matches(/^\d{11}$/, 'NIN must be 11 digits').required('NIN is required')
+      applicantPhotoUrl: Yup.string().required('Applicant passport photograph required'),
+      idType:            Yup.string().required('Means of ID required'),
+      idNumber:          Yup.string().required('ID number required'),
+      idDocumentUrl:     Yup.string().required('ID document upload required'),
+      bvn:               Yup.string().matches(/^\d{11}$/, 'BVN must be 11 digits').required(),
+      nin:               Yup.string().matches(/^\d{11}$/, 'NIN must be 11 digits').required(),
     }),
-    onSubmit: () => setCurrentStep(4)
+    onSubmit: () => setCurrentStep(4),
   });
 
+  /* ─── Step 4 formik (plan review) ─── */
   const planFormik = useFormik({
-    initialValues: {
-      planName: '',
-      duration: ''
-    },
-    validationSchema: Yup.object({
-      planName: Yup.string().required('Please select an installment plan')
-    }),
-    onSubmit: () => setCurrentStep(5)
+    initialValues: { planName: 'Maruwa Daily Ownership Plan' },
+    onSubmit: () => setCurrentStep(5),
   });
 
-  const plans = [
-    { 
-      id: 'sprint', 
-      name: 'Nova sprint', 
-      duration: 12, 
-      description: 'Quick completion for focused riders.',
-      features: ['Lower total interest', 'Fast ownership', '12 Months duration']
-    },
-    { 
-      id: 'stability', 
-      name: 'Nova stability', 
-      duration: 18, 
-      description: 'Balanced payments for consistent growth.',
-      features: ['Optimal monthly rate', 'Simplified planning', '18 Months duration']
-    },
-    { 
-      id: 'friend', 
-      name: 'Nova friend', 
-      duration: 24, 
-      description: 'Maximum flexibility for your journey.',
-      features: ['Lowest monthly impact', 'Long-term partnership', '24 Months duration']
-    }
-  ];
-
+  /* ─── Step 5 formik (submit) ─── */
   const paymentFormik = useFormik({
     initialValues: {
-      bankName: '',
-      accountNumber: '',
-      accountName: ''
+      bankName:      user?.installmentProfile?.paymentDetails?.bankName || '',
+      accountNumber: user?.installmentProfile?.paymentDetails?.accountNumber || '',
+      accountName:   user?.installmentProfile?.paymentDetails?.accountName || '',
+      termsAccepted: false,
     },
     validationSchema: Yup.object({
-      bankName: Yup.string().required('Bank name is required'),
-      accountNumber: Yup.string().matches(/^\d{10}$/, 'Account number must be 10 digits').required('Account number is required'),
-      accountName: Yup.string().required('Account name is required')
+      bankName:      Yup.string().required('Bank name required'),
+      accountNumber: Yup.string().matches(/^\d{10}$/, '10-digit account number required').required(),
+      accountName:   Yup.string().required('Account name required'),
+      termsAccepted: Yup.boolean().oneOf([true], 'You must agree to the Terms & Conditions'),
     }),
     onSubmit: async (values) => {
       try {
+        setSubmitting(true);
         const token = localStorage.getItem('nvcr_tk');
-        const profileData = {
-          personal: personalFormik.values,
-          guarantors: [
-            { 
-              name: guarantorsFormik.values.g1Name, 
-              phone: guarantorsFormik.values.g1Phone, 
-              relationship: guarantorsFormik.values.g1Relationship,
-              address: guarantorsFormik.values.g1Address,
-              employment: {
-                employerName: guarantorsFormik.values.g1Employer,
-                jobTitle: guarantorsFormik.values.g1Job,
-                monthlyIncome: guarantorsFormik.values.g1Income
-              }
-            },
-            { 
-              name: guarantorsFormik.values.g2Name, 
-              phone: guarantorsFormik.values.g2Phone, 
-              relationship: guarantorsFormik.values.g2Relationship,
-              address: guarantorsFormik.values.g2Address,
-              employment: {
-                employerName: guarantorsFormik.values.g2Employer,
-                jobTitle: guarantorsFormik.values.g2Job,
-                monthlyIncome: guarantorsFormik.values.g2Income
-              }
-            }
-          ],
-          documents: documentsFormik.values,
-          installmentPlan: {
-            planName: planFormik.values.planName,
-            remainingMonths: planFormik.values.duration
+        const payload = {
+          personal: {
+            firstname: personalFormik.values.firstname,
+            lastname:  personalFormik.values.lastname,
+            email:     personalFormik.values.email,
+            phone:     personalFormik.values.phone,
+            dateOfBirth:   personalFormik.values.dateOfBirth,
+            gender:        personalFormik.values.gender,
+            maritalStatus: personalFormik.values.maritalStatus,
+            address:       personalFormik.values.address,
+            stateOfOrigin: personalFormik.values.stateOfOrigin,
+            lga:           personalFormik.values.lga,
           },
-          paymentDetails: values,
+          nextOfKin: {
+            name:         personalFormik.values.nokName,
+            relationship: personalFormik.values.nokRelationship,
+            phone:        personalFormik.values.nokPhone,
+            address:      personalFormik.values.nokAddress,
+          },
+          vehicle: {
+            vehicleType: 'Tricycle',
+            plateNumber: 'PENDING_ASSIGNMENT',
+            modelMake:   'TVS King 200cc Commercial',
+            color:       'Yellow',
+            ownership:   'Company',
+          },
+          guarantors: [
+            {
+              name:         guarantorsFormik.values.g1Name,
+              phone:        guarantorsFormik.values.g1Phone,
+              relationship: guarantorsFormik.values.g1Relationship,
+              homeAddress:  guarantorsFormik.values.g1Address,
+              occupation:   guarantorsFormik.values.g1Occupation,
+              officeAddress:guarantorsFormik.values.g1OfficeAddress,
+              meansOfId:    guarantorsFormik.values.g1MeansOfId,
+              idNumber:     guarantorsFormik.values.g1IdNumber,
+              photoUrl:     guarantorsFormik.values.g1Photo,
+            },
+            {
+              name:         guarantorsFormik.values.g2Name,
+              phone:        guarantorsFormik.values.g2Phone,
+              relationship: guarantorsFormik.values.g2Relationship,
+              homeAddress:  guarantorsFormik.values.g2Address,
+              occupation:   guarantorsFormik.values.g2Occupation,
+              officeAddress:guarantorsFormik.values.g2OfficeAddress,
+              meansOfId:    guarantorsFormik.values.g2MeansOfId,
+              idNumber:     guarantorsFormik.values.g2IdNumber,
+              photoUrl:     guarantorsFormik.values.g2Photo,
+            },
+          ],
+          documents: { ...documentsFormik.values },
+          terms: { accepted: values.termsAccepted, termsVersion: 'v1.0-2026' },
+          paymentDetails: {
+            bankName:      values.bankName,
+            accountNumber: values.accountNumber,
+            accountName:   values.accountName,
+          },
         };
 
-        const response = await api.post('/user/installment-profile', profileData, {
-          headers: { 'Authorization': `Bearer ${token}` }
+        const res = await api.post('/user/installment-profile', payload, {
+          headers: { Authorization: `Bearer ${token}` },
         });
-
-        dispatch(setUser({ user: response.data.user }));
-        toast.success('Profile setup completed successfully!');
+        dispatch(setUser({ user: res.data.user }));
+        toast.success('Maruwa Installment Profile submitted successfully!');
         navigate('/installment-dashboard');
       } catch (error) {
-        console.error('Profile setup error:', error);
-        if (error.response?.status !== 401) {
-          toast.error('Failed to save profile. Please try again.');
-        }
+        toast.error(error.response?.data?.message || 'Failed to submit profile. Check all fields.');
+      } finally {
+        setSubmitting(false);
       }
-    }
+    },
   });
-
-  const handleProfilePictureChange = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      setProfilePicture(file);
-    }
-  };
-
-  const renderStepContent = () => {
-    switch (currentStep) {
-      case 1:
-        return (
-          <PersonalInfoStep 
-            formik={personalFormik} 
-            profilePicture={profilePicture} 
-            onProfilePictureChange={handleProfilePictureChange} 
-          />
-        );
-      case 2:
-        return <GuarantorsStep formik={guarantorsFormik} />;
-      case 3:
-        return <DocumentsStep formik={documentsFormik} />;
-      case 4:
-        return <InstallmentPlanStep formik={planFormik} plans={plans} />;
-      case 5:
-        return <PaymentStep formik={paymentFormik} />;
-      default:
-        return null;
-    }
-  };
 
   const getCurrentFormik = () => {
     switch (currentStep) {
@@ -264,106 +243,181 @@ const InstallmentProfileSetup = () => {
     }
   };
 
+  const renderStep = () => {
+    switch (currentStep) {
+      case 1: return <PersonalInfoStep  formik={personalFormik} />;
+      case 2: return <GuarantorsStep    formik={guarantorsFormik} />;
+      case 3: return <DocumentsStep     formik={documentsFormik} />;
+      case 4: return <InstallmentPlanStep formik={planFormik} />;
+      case 5: return <PaymentStep       formik={paymentFormik} />;
+      default: return null;
+    }
+  };
+
   const currentFormik = getCurrentFormik();
 
   return (
-    <div className="min-h-screen bg-stone-50 py-16 px-8 relative overflow-hidden">
-      {/* Decorative Background Elements */}
-      <div className="absolute top-0 left-0 w-full h-[600px] bg-neutral-900 pointer-events-none skew-y-[-6deg] origin-top-left -mt-32" />
-      <div className="absolute top-[20%] right-[-10%] w-[500px] h-[500px] bg-orange-500/5 blur-[120px] rounded-full pointer-events-none" />
+    <div className="min-h-screen bg-[#0a0a0a] relative overflow-hidden">
+      {/* ── Ambient glow ── */}
+      <div className="absolute top-0 left-0 w-full h-[600px] bg-gradient-to-b from-orange-500/8 via-orange-500/3 to-transparent pointer-events-none" />
+      <div className="absolute top-[10%] right-[-15%] w-[700px] h-[700px] bg-orange-500/5 blur-[140px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-[10%] left-[-10%] w-[500px] h-[500px] bg-orange-600/4 blur-[120px] rounded-full pointer-events-none" />
 
-      <div className="max-w-4xl mx-auto relative z-10">
-          <div className="mb-12 text-center md:text-left flex flex-col md:flex-row md:items-end justify-between gap-6">
-            <div>
-              <h1 className="text-5xl font-black text-white tracking-tighter mb-4 leading-tight">
-                Complete Your <br />
-                <span className="text-orange-500">Installment</span> Profile
-              </h1>
-              <p className="text-neutral-400 font-bold text-sm tracking-wide uppercase">
-                Step {currentStep} of {steps.length}: {steps.find(s => s.id === currentStep)?.title}
-              </p>
-            </div>
-            <div className="hidden md:block">
-              <p className="text-neutral-500 font-bold text-xs max-w-xs leading-relaxed">
-                Unlock your potential with our flexible vehicle financing. Complete your profile to get started with your application.
-              </p>
-            </div>
+      <Navbar userrole={user?.role} userverified={true} profilePic={user?.profilePic} nav={<OtherNav userrole={user?.role} />} />
+
+      <div className="pt-32 pb-24 px-4 md:px-8 lg:px-12 max-w-5xl mx-auto relative z-10">
+
+        {/* ── Page Header ── */}
+        <motion.div
+          initial={{ opacity: 0, y: -16 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-12"
+        >
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-orange-500/10 border border-orange-500/20 mb-5">
+            <span className="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse" />
+            <span className="text-[10px] font-black uppercase tracking-[0.25em] text-orange-500">
+              Novacrest Hire-Purchase Registration
+            </span>
           </div>
+          <h1 className="text-4xl md:text-5xl font-black text-white tracking-tight leading-none mb-3">
+            Maruwa <span className="text-orange-500">Installment</span> <br className="hidden sm:block" />
+            Application
+          </h1>
+          <p className="text-neutral-500 font-medium text-sm max-w-lg">
+            Complete all five sections accurately. Your information is stored securely and used solely for vehicle allocation and repayment tracking.
+          </p>
+        </motion.div>
 
-          {/* Progress Steps */}
-          <div className="mb-12">
-            <div className="flex items-center justify-between bg-neutral-900/50 backdrop-blur-md p-6 rounded-[2.5rem] border border-white/5 shadow-2xl">
-              {steps.map((step, index) => (
-                <div key={step.id} className="flex items-center group/step cursor-pointer" onClick={() => step.id < currentStep && setCurrentStep(step.id)}>
-                  <div className={`relative flex items-center justify-center w-12 h-12 rounded-[1.25rem] transition-all duration-500 ${
-                    step.id === currentStep 
-                      ? 'bg-orange-500 text-white shadow-lg shadow-orange-500/40 scale-110' 
-                      : step.id < currentStep 
-                        ? 'bg-white text-neutral-900' 
-                        : 'bg-neutral-800 text-neutral-500 group-hover/step:bg-neutral-700'
-                  }`}>
-                    <step.icon className="text-base" />
-                    {step.id < currentStep && (
-                       <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-neutral-900 flex items-center justify-center">
-                         <div className="w-1.5 h-1.5 bg-white rounded-full" />
-                       </div>
+        {/* ── Step Progress ── */}
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="mb-10"
+        >
+          <div className="bg-neutral-900/80 backdrop-blur-md border border-white/[0.06] rounded-[1.75rem] p-4 md:p-5">
+            <div className="flex items-center justify-between gap-2">
+              {steps.map((step, idx) => {
+                const isActive    = step.id === currentStep;
+                const isCompleted = step.id < currentStep;
+                return (
+                  <React.Fragment key={step.id}>
+                    <button
+                      type="button"
+                      onClick={() => isCompleted && setCurrentStep(step.id)}
+                      className={`flex-1 flex flex-col sm:flex-row items-center gap-2 sm:gap-3 py-2 px-1 sm:px-3 rounded-xl transition-all duration-300 ${
+                        isCompleted ? 'cursor-pointer opacity-100' : 'cursor-default'
+                      }`}
+                    >
+                      <div className={`w-9 h-9 md:w-10 md:h-10 rounded-xl flex items-center justify-center shrink-0 transition-all duration-300 ${
+                        isActive
+                          ? 'bg-orange-500 text-white shadow-lg shadow-orange-500/40 scale-105'
+                          : isCompleted
+                            ? 'bg-neutral-700 text-orange-400'
+                            : 'bg-neutral-800 text-neutral-600'
+                      }`}>
+                        {isCompleted ? <FaCheckCircle className="text-sm" /> : <step.icon className="text-sm" />}
+                      </div>
+                      <div className="hidden md:block text-left">
+                        <p className={`text-[9px] font-black uppercase tracking-widest ${isActive ? 'text-orange-500' : isCompleted ? 'text-neutral-400' : 'text-neutral-700'}`}>
+                          Step {String(step.id).padStart(2, '0')}
+                        </p>
+                        <p className={`text-[11px] font-bold leading-tight ${isActive ? 'text-white' : isCompleted ? 'text-neutral-400' : 'text-neutral-600'}`}>
+                          {step.short}
+                        </p>
+                      </div>
+                    </button>
+
+                    {idx < steps.length - 1 && (
+                      <div className={`h-px flex-1 max-w-[32px] rounded-full transition-colors duration-500 hidden sm:block ${
+                        step.id < currentStep ? 'bg-orange-500/60' : 'bg-neutral-800'
+                      }`} />
                     )}
-                  </div>
-                  <div className="ml-4 mr-6 hidden lg:block">
-                    <div className={`text-[10px] font-black uppercase tracking-[0.2em] mb-0.5 ${step.id <= currentStep ? 'text-white' : 'text-neutral-600'}`}>
-                      Step 0{step.id}
-                    </div>
-                    <div className={`text-[11px] font-bold ${step.id <= currentStep ? 'text-neutral-400' : 'text-neutral-700'}`}>
-                      {step.title}
-                    </div>
-                  </div>
-                  {index < steps.length - 1 && (
-                    <div className="mx-2 hidden sm:block">
-                      <div className={`w-10 h-[2px] rounded-full transition-all duration-700 ${step.id < currentStep ? 'bg-orange-500' : 'bg-neutral-800'}`} />
-                    </div>
-                  )}
-                </div>
-              ))}
+                  </React.Fragment>
+                );
+              })}
+            </div>
+
+            {/* Mobile step label */}
+            <div className="sm:hidden mt-3 pt-3 border-t border-white/5 text-center">
+              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-orange-500">
+                Step {currentStep} / {steps.length}: {steps[currentStep - 1]?.title}
+              </p>
             </div>
           </div>
+        </motion.div>
 
-          {/* Form Content */}
-          <div className="bg-white border border-neutral-100 rounded-[3rem] shadow-[0_40px_100px_-20px_rgba(0,0,0,0.08)] p-8 md:p-16 relative overflow-hidden">
-            {/* Background Decor */}
-            <div className="absolute top-0 right-0 w-64 h-64 bg-orange-500/5 blur-[100px] rounded-full -mr-32 -mt-32 pointer-events-none" />
-            
-            <form onSubmit={currentFormik.handleSubmit} className="relative z-10">
-              {renderStepContent()}
+        {/* ── Form Card ── */}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={currentStep}
+            initial={{ opacity: 0, x: 18 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -18 }}
+            transition={{ duration: 0.25 }}
+            className="bg-neutral-900 border border-white/[0.07] rounded-[2rem] shadow-2xl overflow-hidden"
+          >
+            {/* Card Header */}
+            <div className="px-8 md:px-12 pt-10 pb-8 border-b border-white/[0.06]">
+              <div className="flex items-center gap-4">
+                <div className="w-11 h-11 rounded-2xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center text-orange-500 shrink-0">
+                  {React.createElement(steps[currentStep - 1].icon)}
+                </div>
+                <div>
+                  <p className="text-[10px] font-black uppercase tracking-[0.25em] text-orange-500/80 mb-0.5">
+                    Step {String(currentStep).padStart(2, '0')} of {steps.length}
+                  </p>
+                  <h2 className="text-xl md:text-2xl font-black text-white tracking-tight">
+                    {steps[currentStep - 1].title}
+                  </h2>
+                </div>
+              </div>
+            </div>
 
-              {/* Navigation Buttons */}
-              <div className="flex flex-col sm:flex-row justify-between items-center gap-6 mt-16 pt-10 border-t border-neutral-50">
-                <Button
+            {/* Step Content */}
+            <form onSubmit={currentFormik.handleSubmit}>
+              <div className="px-8 md:px-12 py-10">
+                {renderStep()}
+              </div>
+
+              {/* Navigation */}
+              <div className="px-8 md:px-12 pb-10 flex flex-col sm:flex-row gap-4 justify-between items-center border-t border-white/[0.06] pt-8">
+                <button
                   type="button"
-                  text="Previous Step"
-                  classes={`w-full sm:w-auto px-10 py-5 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] transition-all duration-300 ${
+                  onClick={() => setCurrentStep(p => p - 1)}
+                  disabled={currentStep === 1 || submitting}
+                  className={`w-full sm:w-auto px-8 py-4 rounded-xl font-black text-xs uppercase tracking-widest transition-all duration-300 ${
                     currentStep === 1
-                      ? 'bg-neutral-50 text-neutral-300 cursor-not-allowed border border-neutral-100'
-                      : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200 active:scale-95'
+                      ? 'bg-neutral-800 text-neutral-600 cursor-not-allowed'
+                      : 'bg-neutral-800 hover:bg-neutral-700 text-white active:scale-95'
                   }`}
-                  onClick={() => setCurrentStep(prev => prev - 1)}
-                  disabled={currentStep === 1}
-                />
+                >
+                  ← Previous
+                </button>
 
-                <Button
+                <button
                   type="submit"
-                  text={currentStep === 5 ? 'Complete Application' : 'Continue to Next Step'}
-                  classes="w-full sm:w-auto bg-neutral-900 text-white px-12 py-5 rounded-2xl font-black text-[10px] uppercase tracking-[0.3em] hover:bg-orange-500 transition-all duration-500 active:scale-95 shadow-2xl shadow-neutral-900/20"
-                  disabled={!currentFormik.isValid}
-                />
+                  disabled={submitting}
+                  className="w-full sm:w-auto bg-orange-500 hover:bg-orange-400 disabled:bg-orange-500/50 text-white px-10 py-4 rounded-xl font-black text-xs uppercase tracking-widest transition-all duration-300 shadow-xl shadow-orange-500/20 active:scale-95 flex items-center justify-center gap-2"
+                >
+                  {submitting ? (
+                    <>
+                      <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      Submitting…
+                    </>
+                  ) : currentStep === 5 ? (
+                    'Submit Application →'
+                  ) : (
+                    'Continue →'
+                  )}
+                </button>
               </div>
             </form>
-          </div>
-        </div>
+          </motion.div>
+        </AnimatePresence>
+      </div>
     </div>
   );
 };
 
 export default InstallmentProfileSetup;
-
-
-

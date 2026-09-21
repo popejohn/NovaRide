@@ -8,7 +8,7 @@ const FooterSection = () => {
         <Footer />
       </section>
 
-      <footer className="bg-gray-600 text-white py-6 px-4 text-sm text-center">
+      <footer className="bg-neutral-900 text-white py-6 px-4 text-sm text-center">
         <div className="space-x-4">
           <div className="mb-2">&copy; {new Date().getFullYear()} NovaRide. All rights reserved.</div>
           <a href="#" className="hover:text-white">Privacy</a>

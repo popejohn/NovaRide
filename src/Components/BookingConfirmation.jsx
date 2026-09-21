@@ -36,7 +36,14 @@ const BookingConfirmation = ({ selectedDriver, bookingStatus, handleConfirmBooki
                 </div>
                 <div>
                   <h4 className="font-bold text-white leading-tight">Book {selectedDriver.name}</h4>
-                  <p className="text-xs text-neutral-400">Total: ₦{selectedDriver.fare.toLocaleString()}</p>
+                  <p className="text-xs text-neutral-400">
+                    Total: <span className="text-white font-bold">₦{Number(selectedDriver.fare).toLocaleString()}</span>
+                    {selectedDriver.addedFare > 0 && (
+                      <span className="text-orange-400 ml-1.5 font-semibold">
+                        (Includes +₦{Number(selectedDriver.addedFare).toLocaleString()} for {selectedDriver.distance} km pickup)
+                      </span>
+                    )}
+                  </p>
                 </div>
               </div>
               

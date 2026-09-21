@@ -43,6 +43,11 @@ const DriverCard = ({ driver, onSelect, selected }) => {
       <div className="text-right">
         <div className="text-2xl font-black text-white">{fareDisplay}</div>
         <div className="text-sm font-medium text-orange-500">{driver.eta} mins away</div>
+        {driver.addedFare > 0 && (
+          <span className="inline-block mt-1 bg-orange-500/20 text-orange-400 border border-orange-500/30 text-[10px] font-black px-2 py-0.5 rounded-md">
+            +₦{Number(driver.addedFare).toLocaleString()} Pickup
+          </span>
+        )}
       </div>
     </div>
 
@@ -57,7 +62,7 @@ const DriverCard = ({ driver, onSelect, selected }) => {
       <div className="flex items-center space-x-3 bg-white/5 p-3 rounded-xl border border-white/5">
         <FaMapMarkerAlt className="text-neutral-400" />
         <div className="flex flex-col">
-          <span className="text-[10px] uppercase tracking-wider text-neutral-500 font-bold">Distance</span>
+          <span className="text-[10px] uppercase tracking-wider text-neutral-500 font-bold">Distance from you</span>
           <span className="text-sm text-neutral-300">{driver.distance} km</span>
         </div>
       </div>
@@ -65,12 +70,35 @@ const DriverCard = ({ driver, onSelect, selected }) => {
 
     {selected && (
       <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className="mt-4 flex items-center justify-center space-x-2 py-2 bg-orange-500 rounded-xl text-white font-bold"
+        initial={{ opacity: 0, height: 0 }}
+        animate={{ opacity: 1, height: 'auto' }}
+        className="mt-4 pt-4 border-t border-white/10"
       >
-        <FaShieldAlt />
-        <span>Selected Driver</span>
+        {driver.addedFare > 0 ? (
+          <div className="bg-orange-500/10 border border-orange-500/20 rounded-xl p-3 mb-3 text-xs space-y-1.5">
+            <div className="flex justify-between text-neutral-300">
+              <span>Base Ride Fare:</span>
+              <span className="font-semibold text-white">₦{Number(driver.baseFare || (driver.fare - driver.addedFare)).toLocaleString()}</span>
+            </div>
+            <div className="flex justify-between text-orange-400">
+              <span>Added Distance Fee ({driver.distance} km @ ₦500/km):</span>
+              <span className="font-bold">+₦{Number(driver.addedFare).toLocaleString()}</span>
+            </div>
+            <div className="border-t border-orange-500/20 pt-1.5 flex justify-between font-bold text-white text-sm">
+              <span>Total Fare:</span>
+              <span className="text-orange-400">₦{Number(driver.fare).toLocaleString()}</span>
+            </div>
+          </div>
+        ) : (
+          <div className="bg-white/5 border border-white/10 rounded-xl p-2.5 mb-3 text-xs flex justify-between text-neutral-300">
+            <span>Standard Vicinity Fare:</span>
+            <span className="font-bold text-white">₦{Number(driver.fare).toLocaleString()}</span>
+          </div>
+        )}
+        <div className="flex items-center justify-center space-x-2 py-2 bg-orange-500 rounded-xl text-white font-bold text-sm">
+          <FaShieldAlt />
+          <span>Selected Driver</span>
+        </div>
       </motion.div>
     )}
   </motion.div>

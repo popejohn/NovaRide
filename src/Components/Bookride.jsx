@@ -85,6 +85,7 @@ const Bookride = () => {
           showCostDist={showCostDist}
           distance={distance}
           eta={eta}
+          isRevealVisible={Boolean(distance && eta && showCostDist)}
           onOpenMap={() => setIsMapModalOpen(true)}
         >
           {distance && eta && showCostDist && (

@@ -12,20 +12,33 @@ export const useDriverSelectionManager = (rideId, bookingStatus, setBookingStatu
   const [rideDetails, setRideDetails] = useState(null);
   const [loading, setLoading] = useState(true);
   const [fetchingRide, setFetchingRide] = useState(true);
+  const [isExpandedSearch, setIsExpandedSearch] = useState(false);
+  const [expandingSearch, setExpandingSearch] = useState(false);
   const isRateLimitedRef = useRef(false);
   const isAssigningRef = useRef(false);
   const currentRideDetailsRef = useRef(null);
 
   // Handle new rider coming online - add them to driver list if within range
   const handleNewRiderOnline = useCallback((newRiderData) => {
+    const normalizedRideFare = Number(rideDetails?.baseFare || rideDetails?.fare) || null;
+    const distanceKm = typeof newRiderData.distance === 'number'
+      ? parseFloat(newRiderData.distance.toFixed(1))
+      : 1.2;
+    const isOutside = distanceKm > 5;
+    const addedFare = isOutside ? Math.round(distanceKm * 500) : 0;
+    const totalFare = normalizedRideFare ? normalizedRideFare + addedFare : null;
+
     const newDriver = {
       id: newRiderData.riderId,
       name: newRiderData.riderName,
       rating: 4.8,
       totalRides: 0,
-      fare: rideDetails?.fare || null,
-      distance: newRiderData.distance,
-      eta: newRiderData.eta,
+      baseFare: normalizedRideFare,
+      addedFare,
+      fare: totalFare,
+      isOutsideVicinity: isOutside,
+      distance: distanceKm,
+      eta: newRiderData.eta || Math.ceil(distanceKm * 4),
       profilePic: newRiderData.profilePic,
       vehicle: {
         model: newRiderData.vehicleType || 'Unknown',
@@ -46,17 +59,23 @@ export const useDriverSelectionManager = (rideId, bookingStatus, setBookingStatu
     });
 
     console.log(`New rider available: ${newRiderData.riderName}`);
-  }, [rideDetails?.fare]);
+  }, [rideDetails?.baseFare, rideDetails?.fare]);
 
   // Fetch nearby drivers without dependency issues. The rider list is time-sensitive,
   // so we explicitly bypass browser cache and retry on 304 cache hits.
-  const performDriverFetch = useCallback(async (rideData) => {
+  const performDriverFetch = useCallback(async (rideData, expanded = false) => {
     if (!rideData?.pickupCoordinates?.coordinates) return;
 
     const [lng, lat] = rideData.pickupCoordinates.coordinates;
     const buildRequestConfig = (requestId) => ({
       // A unique URL bypasses browser cache without adding non-simple CORS headers.
-      params: { lat, lng, maxDistance: 5000, _t: requestId },
+      params: {
+        lat,
+        lng,
+        expandSearch: expanded,
+        maxDistance: expanded ? 50000 : 5000,
+        _t: requestId
+      },
       validateStatus: (status) => (status >= 200 && status < 300) || status === 304
     });
 
@@ -72,24 +91,40 @@ export const useDriverSelectionManager = (rideId, bookingStatus, setBookingStatu
       isRateLimitedRef.current = false;
 
       const responseDrivers = Array.isArray(driverResponse?.data?.drivers) ? driverResponse.data.drivers : [];
-      const normalizedRideFare = Number(rideData?.fare);
-      const transformedDrivers = responseDrivers.map(driver => ({
-        id: driver._id,
-        name: `${driver.riderInfo.firstname} ${driver.riderInfo.lastname}`,
-        rating: 4.8,
-        totalRides: 156,
-        fare: Number.isFinite(normalizedRideFare) ? normalizedRideFare : null,
-        distance: parseFloat(driver.distance?.toFixed(1)) || 1.2,
-        eta: Math.ceil((driver.distance || 1.2) * 4),
-        profilePic: driver.riderInfo.profilePic,
-        vehicle: {
-          model: driver.vehicleType,
-          color: 'Black',
-          plate: driver.plateNumber
-        }
-      }));
+      const normalizedRideFare = Number(rideData?.baseFare || rideData?.fare);
+      const transformedDrivers = responseDrivers.map(driver => {
+        const distanceKm = typeof driver.distance === 'number'
+          ? parseFloat(driver.distance.toFixed(1))
+          : 1.2;
+        const isOutside = driver.isOutsideVicinity ?? (distanceKm > 5);
+        // Added funds: #500 per km
+        const addedFare = isOutside
+          ? (typeof driver.addedFare === 'number' ? driver.addedFare : Math.round(distanceKm * 500))
+          : 0;
+        const totalFare = Number.isFinite(normalizedRideFare) ? normalizedRideFare + addedFare : null;
+
+        return {
+          id: driver._id,
+          name: `${driver.riderInfo.firstname} ${driver.riderInfo.lastname}`,
+          rating: 4.8,
+          totalRides: 156,
+          baseFare: normalizedRideFare,
+          addedFare,
+          fare: totalFare,
+          isOutsideVicinity: isOutside,
+          distance: distanceKm,
+          eta: Math.ceil(distanceKm * 4),
+          profilePic: driver.riderInfo.profilePic,
+          vehicle: {
+            model: driver.vehicleType,
+            color: 'Black',
+            plate: driver.plateNumber
+          }
+        };
+      });
 
       setDrivers(transformedDrivers);
+      setIsExpandedSearch(Boolean(driverResponse?.data?.isExpanded || expanded));
     } catch (err) {
       // Handle rate limiting gracefully - stop polling temporarily
       if (err.response?.status === 429) {
@@ -100,6 +135,20 @@ export const useDriverSelectionManager = (rideId, bookingStatus, setBookingStatu
       console.error('Error fetching drivers:', err);
     }
   }, []);
+
+  const fetchClosestRiders = useCallback(async () => {
+    if (!currentRideDetailsRef.current) return;
+    setExpandingSearch(true);
+    await performDriverFetch(currentRideDetailsRef.current, true);
+    setExpandingSearch(false);
+  }, [performDriverFetch]);
+
+  const resetToVicinitySearch = useCallback(async () => {
+    if (!currentRideDetailsRef.current) return;
+    setLoading(true);
+    await performDriverFetch(currentRideDetailsRef.current, false);
+    setLoading(false);
+  }, [performDriverFetch]);
 
   const refreshAvailableDrivers = useCallback(() => {
     if (currentRideDetailsRef.current) {
@@ -183,7 +232,8 @@ export const useDriverSelectionManager = (rideId, bookingStatus, setBookingStatu
       setBookingStatus('confirming');
       const token = localStorage.getItem('nvcr_tk');
       await api.post(`/ride/${rideId}/assign-driver`, {
-        driverId: selectedDriver.id
+        driverId: selectedDriver.id,
+        addedFare: selectedDriver.addedFare || 0
       }, {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -203,6 +253,10 @@ export const useDriverSelectionManager = (rideId, bookingStatus, setBookingStatu
     loading,
     fetchingRide,
     selectedDriver,
+    isExpandedSearch,
+    expandingSearch,
+    fetchClosestRiders,
+    resetToVicinitySearch,
     handleDriverSelect,
     handleConfirmBooking,
     setSelectedDriver

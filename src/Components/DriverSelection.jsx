@@ -24,6 +24,10 @@ const DriverSelection = () => {
     loading,
     fetchingRide,
     selectedDriver,
+    isExpandedSearch,
+    expandingSearch,
+    fetchClosestRiders,
+    resetToVicinitySearch,
     handleDriverSelect,
     handleConfirmBooking
   } = useDriverSelectionManager(rideId, bookingStatus, setBookingStatus, () => {});
@@ -55,7 +59,9 @@ const DriverSelection = () => {
         {/* Drivers Section */}
         <div className="mb-6 flex items-center justify-between">
           <h2 className="text-xl font-black uppercase tracking-tight">Available Riders</h2>
-          <span className="bg-orange-500 text-white text-[10px] font-black px-2 py-1 rounded-full">{drivers.length} NEARBY</span>
+          <span className="bg-orange-500 text-white text-[10px] font-black px-2 py-1 rounded-full">
+            {drivers.length} {isExpandedSearch ? 'CLOSEST (EXTENDED)' : 'NEARBY'}
+          </span>
         </div>
 
         <DriversList
@@ -63,6 +69,10 @@ const DriverSelection = () => {
           loading={loading}
           selectedDriver={selectedDriver}
           handleDriverSelect={handleDriverSelect}
+          isExpandedSearch={isExpandedSearch}
+          expandingSearch={expandingSearch}
+          fetchClosestRiders={fetchClosestRiders}
+          resetToVicinitySearch={resetToVicinitySearch}
         />
 
         <BookingConfirmation

@@ -17,7 +17,7 @@ const InstallmentSection = () => {
         <p className="-mt-10 text-sm md:text-md text-stone-500 font-semibold">
           Be a proud owner of your own Maruwa in good condition with as low as #60,000 downpayment. We offer the best price and easy repayment plans
         </p>
-        <h3 className="bg-yellow-400 ps-4 md:ps-8 pe-4 md:pe-18 text-stone-800 py-5 font-bold rounded-tl-2xl rounded-br-2xl mt-5 text-xl md:text-2xl w-fit">
+        <h3 className="bg-orange-500 ps-4 md:ps-8 pe-4 md:pe-18 text-white py-5 font-bold rounded-tl-2xl rounded-br-2xl mt-5 text-xl md:text-2xl w-fit">
           We have you in mind!
         </h3>
         <Link to={destination}>

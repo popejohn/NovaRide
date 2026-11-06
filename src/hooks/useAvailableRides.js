@@ -3,11 +3,16 @@ import { useSelector } from 'react-redux';
 import { io } from 'socket.io-client';
 import riderService from '../api/riderService';
 
-export const useAvailableRides = (isOnline) => {
+export const useAvailableRides = (isOnline, onRideLifecycleUpdate) => {
     const [availableRides, setAvailableRides] = useState([]);
     const [incomingRide, setIncomingRide] = useState(null);
     const socketRef = useRef(null);
     const { user } = useSelector((state) => state.verifiedUser);
+    const onRideLifecycleUpdateRef = useRef(onRideLifecycleUpdate);
+
+    useEffect(() => {
+        onRideLifecycleUpdateRef.current = onRideLifecycleUpdate;
+    }, [onRideLifecycleUpdate]);
 
     const fetchRides = async () => {
         try {
@@ -79,6 +84,9 @@ export const useAvailableRides = (isOnline) => {
             socket.on('rideLifecycleUpdated', (data) => {
                 if (!data?.rideId) return;
                 setAvailableRides(prev => prev.filter(r => r._id !== data.rideId));
+                // Dismiss the incoming request modal if it's the ride that just expired/was cancelled
+                setIncomingRide(prev => (prev && prev._id === data.rideId ? null : prev));
+                onRideLifecycleUpdateRef.current?.(data);
             });
 
             socketRef.current = socket;

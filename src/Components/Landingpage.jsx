@@ -15,13 +15,7 @@ import InstallmentSection from "./InstallmentSection";
 import FooterSection from "./FooterSection";
 import Nav from "./Nav";
 
-export default function LandingPage() {
-  const { user, role, isAuthenticated } = useSelector(state => state.verifiedUser);
-
-  const [bookLater, setBookLater] = useState(false);
-  const [startDate, setStartDate] = useState(new Date());
-
-  const messages = [
+const messages = [
     {
       text: "ORDER A RIDE WITH EASE",
       bg: image1,
@@ -35,6 +29,12 @@ export default function LandingPage() {
       bg: image3,
     },
   ];
+
+export default function LandingPage() {
+  const { user, role, isAuthenticated } = useSelector(state => state.verifiedUser);
+
+  const [bookLater, setBookLater] = useState(false);
+  const [startDate, setStartDate] = useState(new Date());
 
   const [index, setIndex] = useState(0);
 

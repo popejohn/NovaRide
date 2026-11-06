@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { FaArrowLeft } from 'react-icons/fa';
@@ -17,6 +17,14 @@ const DriverSelection = () => {
 
   const { user } = useSelector(state => state.verifiedUser);
   const { bookingStatus, setBookingStatus, acceptedDriver } = useDriverSocket(user?._id, rideId);
+
+  // Send the passenger back to book a new ride once their expired request notification has shown
+  useEffect(() => {
+    if (bookingStatus === 'expired') {
+      const redirectTimer = setTimeout(() => navigate('/bookride'), 2500);
+      return () => clearTimeout(redirectTimer);
+    }
+  }, [bookingStatus, navigate]);
 
   const { 
     drivers,

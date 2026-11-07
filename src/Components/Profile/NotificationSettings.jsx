@@ -3,14 +3,14 @@ import { motion } from 'framer-motion';
 import Button from '../Button';
 
 const SettingToggle = ({ label, description, value, onChange }) => (
-    <div className="flex items-center justify-between py-6 border-b border-neutral-100 last:border-0 hover:bg-neutral-50/50 px-4 transition-colors rounded-2xl group">
-        <div className="space-y-1">
+    <div className="flex items-center justify-between gap-3 py-3 sm:py-6 border-b border-neutral-100 last:border-0 hover:bg-neutral-50/50 px-3 sm:px-4 transition-colors rounded-2xl group">
+        <div className="min-w-0 space-y-1">
             <span className="font-bold text-sm text-neutral-800 transition-colors group-hover:text-orange-500">{label}</span>
             <p className="text-xs text-neutral-400">{description}</p>
         </div>
         <button
             onClick={onChange}
-            className={`w-14 h-7 rounded-full transition-all duration-300 relative ${value ? 'bg-orange-500 shadow-inner' : 'bg-neutral-200'}`}
+            className={`shrink-0 w-14 h-7 rounded-full transition-all duration-300 relative ${value ? 'bg-orange-500 shadow-inner' : 'bg-neutral-200'}`}
         >
             <motion.div
                 animate={{ x: value ? 28 : 4 }}
@@ -83,7 +83,7 @@ const NotificationSettings = ({ initialSettings, onSave }) => {
                     onClick={handleSave}
                     disabled={isSaving}
                     text={isSaving ? "Saving..." : "Save Preferences"}
-                    classes="bg-orange-500 text-white py-4 px-10 rounded-2xl font-bold uppercase tracking-widest text-xs shadow-lg shadow-orange-500/20 hover:bg-orange-600 transition-all disabled:opacity-50"
+                    classes="bg-orange-500 text-white py-3 sm:py-4 px-4 sm:px-10 rounded-2xl font-bold uppercase tracking-widest text-xs shadow-lg shadow-orange-500/20 hover:bg-orange-600 transition-all disabled:opacity-50"
                 />
             </motion.div>
         </div>

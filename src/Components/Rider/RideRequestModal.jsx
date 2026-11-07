@@ -32,11 +32,11 @@ const RideRequestModal = ({ ride, onAccept, onDecline, onClose }) => {
                     initial={{ scale: 0.9, opacity: 0, y: 20 }}
                     animate={{ scale: 1, opacity: 1, y: 0 }}
                     exit={{ scale: 0.9, opacity: 0, y: 20 }}
-                    className="w-full max-w-lg bg-[#121212] rounded-[2.5rem] border border-white/10 overflow-hidden shadow-2xl"
+                    className="app-dialog w-full max-w-lg bg-[#121212] rounded-2xl sm:rounded-[2.5rem] border border-white/10 overflow-hidden shadow-2xl"
                     onClick={(e) => e.stopPropagation()}
                 >
                     {/* Header */}
-                    <div className="relative h-32 bg-gradient-to-br from-orange-500 to-orange-600 p-8">
+                    <div className="relative h-24 sm:h-32 bg-gradient-to-br from-orange-500 to-orange-600 card-padding sm:p-8">
                         <button
                             onClick={onClose}
                             aria-label="Close ride request"
@@ -48,13 +48,13 @@ const RideRequestModal = ({ ride, onAccept, onDecline, onClose }) => {
                         <p className="text-white/80 text-xs font-bold uppercase tracking-widest mt-1">Incoming specific request</p>
                     </div>
 
-                    <div className="p-8 space-y-8">
+                    <div className="card-padding sm:p-8 space-y-6 sm:space-y-8">
                         {/* Passenger Info */}
-                        <div className="flex items-center gap-4">
+                        <div className="flex flex-wrap sm:flex-nowrap items-center gap-3 sm:gap-4">
                             <img
                                 src={ride.user?.profilePic || '/placeholderProfile.jpg'}
                                 alt=""
-                                className="w-16 h-16 rounded-2xl object-cover border-2 border-orange-500/20"
+                                className="w-12 h-12 sm:w-16 sm:h-16 shrink-0 rounded-2xl object-cover border-2 border-orange-500/20"
                             />
                             <div>
                                 <h3 className="text-xl font-bold text-white">{ride.user?.firstname} {ride.user?.lastname}</h3>
@@ -63,20 +63,20 @@ const RideRequestModal = ({ ride, onAccept, onDecline, onClose }) => {
                                 </div>
                             </div>
                             <div className="ml-auto text-right">
-                                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-neutral-500 mb-1">Fare</p>
+                                <p className="text-caption sm:text-[10px] font-black uppercase tracking-label sm:tracking-[0.2em] text-neutral-500 mb-1">Fare</p>
                                 <p className="text-2xl font-black text-white tracking-tighter">₦{ride.fare.toLocaleString()}</p>
                             </div>
                         </div>
 
                         {/* Route Info */}
-                        <div className="bg-white/5 rounded-3xl p-6 border border-white/5 space-y-6 relative">
+                        <div className="bg-white/5 rounded-3xl card-padding sm:p-6 border border-white/5 space-y-6 relative">
                             {/* Visual Line */}
                             <div className="absolute left-8 top-12 bottom-12 w-0.5 bg-gradient-to-b from-orange-500 to-blue-500 rounded-full opacity-30" />
 
                             <div className="flex items-start gap-4 relative">
                                 <div className="w-4 h-4 rounded-full bg-orange-500 mt-1 border-4 border-[#121212] z-10" />
                                 <div>
-                                    <p className="text-[10px] font-black uppercase tracking-widest text-neutral-500 mb-1">Pickup</p>
+                                    <p className="text-caption sm:text-[10px] font-black uppercase tracking-widest text-neutral-500 mb-1">Pickup</p>
                                     <p className="text-sm font-bold text-white line-clamp-2 leading-tight">{ride.pickupLocation}</p>
                                 </div>
                             </div>
@@ -84,20 +84,20 @@ const RideRequestModal = ({ ride, onAccept, onDecline, onClose }) => {
                             <div className="flex items-start gap-4 relative">
                                 <div className="w-4 h-4 rounded-full bg-blue-500 mt-1 border-4 border-[#121212] z-10" />
                                 <div>
-                                    <p className="text-[10px] font-black uppercase tracking-widest text-neutral-500 mb-1">Destination</p>
+                                    <p className="text-caption sm:text-[10px] font-black uppercase tracking-widest text-neutral-500 mb-1">Destination</p>
                                     <p className="text-sm font-bold text-white line-clamp-2 leading-tight">{ride.destination}</p>
                                 </div>
                             </div>
                         </div>
 
                         {/* Stats */}
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div className="bg-white/5 p-4 rounded-2xl border border-white/5 flex items-center gap-3">
                                 <div className="p-2 bg-orange-500/10 rounded-xl text-orange-500">
                                     <FaRoute />
                                 </div>
                                 <div>
-                                    <p className="text-[10px] font-black uppercase tracking-widest text-neutral-500">Distance</p>
+                                    <p className="text-caption sm:text-[10px] font-black uppercase tracking-widest text-neutral-500">Distance</p>
                                     <p className="text-sm font-bold text-white">{ride.distance} km</p>
                                 </div>
                             </div>
@@ -106,7 +106,7 @@ const RideRequestModal = ({ ride, onAccept, onDecline, onClose }) => {
                                     <FaClock />
                                 </div>
                                 <div>
-                                    <p className="text-[10px] font-black uppercase tracking-widest text-neutral-500">Duration</p>
+                                    <p className="text-caption sm:text-[10px] font-black uppercase tracking-widest text-neutral-500">Duration</p>
                                     <p className="text-sm font-bold text-white">{ride.eta} mins</p>
                                 </div>
                             </div>
@@ -118,13 +118,13 @@ const RideRequestModal = ({ ride, onAccept, onDecline, onClose }) => {
                                 text={isProcessing ? "Processing..." : "Accept Ride"}
                                 onClick={() => handleAction(onAccept)}
                                 disabled={isProcessing}
-                                classes="flex-1 py-4 bg-orange-500 hover:bg-orange-600 text-white font-black uppercase tracking-widest text-xs rounded-2xl transition-all shadow-lg shadow-orange-500/20"
+                                classes="flex-1 py-3 sm:py-4 bg-orange-500 hover:bg-orange-600 text-white font-black uppercase tracking-widest text-xs rounded-2xl transition-all shadow-lg shadow-orange-500/20"
                             />
                             <Button
                                 text="Decline"
                                 onClick={() => handleAction(onDecline)}
                                 disabled={isProcessing}
-                                classes="flex-1 py-4 bg-white/5 hover:bg-white/10 text-white font-black uppercase tracking-widest text-xs rounded-2xl border border-white/10 transition-all"
+                                classes="flex-1 py-3 sm:py-4 bg-white/5 hover:bg-white/10 text-white font-black uppercase tracking-widest text-xs rounded-2xl border border-white/10 transition-all"
                             />
                         </div>
                     </div>

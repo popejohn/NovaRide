@@ -38,21 +38,21 @@ const GuarantorsStep = ({ formik }) => {
   };
 
   return (
-    <div className="space-y-12">
+    <div className="space-y-6 sm:space-y-12">
       {/* Guarantor 1 */}
-      <div className="space-y-6 bg-neutral-50/70 p-8 rounded-[2rem] border-2 border-neutral-100 relative overflow-hidden">
+      <div className="space-y-6 bg-neutral-50/70 card-padding sm:p-8 rounded-2xl sm:rounded-[2rem] border-2 border-neutral-100 relative overflow-hidden">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-neutral-200/60 pb-6">
           <div className="flex items-center gap-4">
             <div className="w-10 h-10 rounded-xl bg-orange-500 text-white flex items-center justify-center font-black">1</div>
             <div>
-              <h3 className="text-sm font-black uppercase tracking-[0.2em] text-neutral-900">Section G — Guarantor 1</h3>
+              <h3 className="text-sm font-black uppercase tracking-label sm:tracking-[0.2em] text-neutral-900">Section G — Guarantor 1</h3>
               <p className="text-xs font-bold text-neutral-500">First legal surety details & photograph</p>
             </div>
           </div>
 
           {/* Photo upload */}
           <div className="flex items-center gap-4">
-            <div className="w-14 h-14 rounded-2xl bg-neutral-200 overflow-hidden border-2 border-white shadow-md flex items-center justify-center relative">
+            <div className="w-14 h-14 shrink-0 rounded-2xl bg-neutral-200 overflow-hidden border-2 border-white shadow-md flex items-center justify-center relative">
               {formik.values.g1Photo ? (
                 <img src={formik.values.g1Photo} alt="Guarantor 1" className="w-full h-full object-cover" />
               ) : (
@@ -69,19 +69,19 @@ const GuarantorsStep = ({ formik }) => {
               />
               <label
                 htmlFor="g1-photo"
-                className="cursor-pointer inline-flex items-center gap-2 bg-neutral-900 hover:bg-orange-500 text-white px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all"
+                className="cursor-pointer inline-flex items-center gap-2 bg-neutral-900 hover:bg-orange-500 text-white px-4 py-2 rounded-xl text-caption sm:text-[10px] font-black uppercase tracking-wider transition-all"
               >
                 {uploadingG1 ? <FaSpinner className="animate-spin" /> : <FaCamera />}
                 {formik.values.g1Photo ? 'Change Photo' : 'Upload Passport Photo *'}
               </label>
               {formik.touched.g1Photo && formik.errors.g1Photo && (
-                <p className="text-[10px] font-bold text-red-500 mt-1">{formik.errors.g1Photo}</p>
+                <p className="text-caption sm:text-[10px] font-bold text-red-500 mt-1">{formik.errors.g1Photo}</p>
               )}
             </div>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 content-gap sm:gap-6">
           <Input
             label="Full Name"
             variant="light"
@@ -104,7 +104,7 @@ const GuarantorsStep = ({ formik }) => {
           />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 content-gap sm:gap-6">
           <Input
             label="Relationship to Rider"
             variant="light"
@@ -127,7 +127,7 @@ const GuarantorsStep = ({ formik }) => {
           />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 content-gap sm:gap-6">
           <Input
             label="Residential Home Address"
             variant="light"
@@ -148,15 +148,15 @@ const GuarantorsStep = ({ formik }) => {
           />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-neutral-200/60">
+        <div className="grid grid-cols-1 md:grid-cols-2 content-gap sm:gap-6 pt-4 border-t border-neutral-200/60">
           <div>
-            <label className="block mb-2 text-[10px] font-black uppercase tracking-[0.2em] text-neutral-400">Means of ID</label>
+            <label className="block mb-2 text-caption sm:text-[10px] font-black uppercase tracking-label sm:tracking-[0.2em] text-neutral-400">Means of ID</label>
             <select
               name="g1MeansOfId"
               value={formik.values.g1MeansOfId}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              className="w-full px-6 py-4 rounded-[1.25rem] border-2 border-neutral-100 bg-white font-bold text-sm outline-none focus:border-orange-500/30"
+              className="w-full px-4 sm:px-6 py-3 sm:py-4 rounded-[1.25rem] border-2 border-neutral-100 bg-white font-bold text-sm outline-none focus:border-orange-500/30"
             >
               <option value="national-id">National ID / NIN Slip</option>
               <option value="drivers-license">Driver's License</option>
@@ -177,19 +177,19 @@ const GuarantorsStep = ({ formik }) => {
       </div>
 
       {/* Guarantor 2 */}
-      <div className="space-y-6 bg-neutral-50/70 p-8 rounded-[2rem] border-2 border-neutral-100 relative overflow-hidden">
+      <div className="space-y-6 bg-neutral-50/70 card-padding sm:p-8 rounded-2xl sm:rounded-[2rem] border-2 border-neutral-100 relative overflow-hidden">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-neutral-200/60 pb-6">
           <div className="flex items-center gap-4">
             <div className="w-10 h-10 rounded-xl bg-neutral-900 text-white flex items-center justify-center font-black">2</div>
             <div>
-              <h3 className="text-sm font-black uppercase tracking-[0.2em] text-neutral-900">Section H — Guarantor 2</h3>
+              <h3 className="text-sm font-black uppercase tracking-label sm:tracking-[0.2em] text-neutral-900">Section H — Guarantor 2</h3>
               <p className="text-xs font-bold text-neutral-500">Second legal surety details & photograph</p>
             </div>
           </div>
 
           {/* Photo upload */}
           <div className="flex items-center gap-4">
-            <div className="w-14 h-14 rounded-2xl bg-neutral-200 overflow-hidden border-2 border-white shadow-md flex items-center justify-center relative">
+            <div className="w-14 h-14 shrink-0 rounded-2xl bg-neutral-200 overflow-hidden border-2 border-white shadow-md flex items-center justify-center relative">
               {formik.values.g2Photo ? (
                 <img src={formik.values.g2Photo} alt="Guarantor 2" className="w-full h-full object-cover" />
               ) : (
@@ -206,19 +206,19 @@ const GuarantorsStep = ({ formik }) => {
               />
               <label
                 htmlFor="g2-photo"
-                className="cursor-pointer inline-flex items-center gap-2 bg-neutral-900 hover:bg-orange-500 text-white px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all"
+                className="cursor-pointer inline-flex items-center gap-2 bg-neutral-900 hover:bg-orange-500 text-white px-4 py-2 rounded-xl text-caption sm:text-[10px] font-black uppercase tracking-wider transition-all"
               >
                 {uploadingG2 ? <FaSpinner className="animate-spin" /> : <FaCamera />}
                 {formik.values.g2Photo ? 'Change Photo' : 'Upload Passport Photo *'}
               </label>
               {formik.touched.g2Photo && formik.errors.g2Photo && (
-                <p className="text-[10px] font-bold text-red-500 mt-1">{formik.errors.g2Photo}</p>
+                <p className="text-caption sm:text-[10px] font-bold text-red-500 mt-1">{formik.errors.g2Photo}</p>
               )}
             </div>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 content-gap sm:gap-6">
           <Input
             label="Full Name"
             variant="light"
@@ -241,7 +241,7 @@ const GuarantorsStep = ({ formik }) => {
           />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 content-gap sm:gap-6">
           <Input
             label="Relationship to Rider"
             variant="light"
@@ -264,7 +264,7 @@ const GuarantorsStep = ({ formik }) => {
           />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 content-gap sm:gap-6">
           <Input
             label="Residential Home Address"
             variant="light"
@@ -285,15 +285,15 @@ const GuarantorsStep = ({ formik }) => {
           />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-neutral-200/60">
+        <div className="grid grid-cols-1 md:grid-cols-2 content-gap sm:gap-6 pt-4 border-t border-neutral-200/60">
           <div>
-            <label className="block mb-2 text-[10px] font-black uppercase tracking-[0.2em] text-neutral-400">Means of ID</label>
+            <label className="block mb-2 text-caption sm:text-[10px] font-black uppercase tracking-label sm:tracking-[0.2em] text-neutral-400">Means of ID</label>
             <select
               name="g2MeansOfId"
               value={formik.values.g2MeansOfId}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              className="w-full px-6 py-4 rounded-[1.25rem] border-2 border-neutral-100 bg-white font-bold text-sm outline-none focus:border-orange-500/30"
+              className="w-full px-4 sm:px-6 py-3 sm:py-4 rounded-[1.25rem] border-2 border-neutral-100 bg-white font-bold text-sm outline-none focus:border-orange-500/30"
             >
               <option value="national-id">National ID / NIN Slip</option>
               <option value="drivers-license">Driver's License</option>

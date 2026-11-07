@@ -74,8 +74,8 @@ function Login() {
       </div>
 
       {/* Form Section */}
-      <div className="flex-1 flex flex-col justify-center items-center p-6 md:p-12 bg-neutral-900 lg:bg-neutral-950">
-        <div className="w-full max-w-sm space-y-12">
+      <div className="min-w-0 flex-1 flex flex-col justify-center items-center card-padding sm:p-6 md:p-12 bg-neutral-900 lg:bg-neutral-950">
+        <div className="w-full max-w-sm space-y-6 sm:space-y-12">
           {/* Mobile Text-only Header (No Logo) */}
           <div className="lg:hidden text-center">
             <h1 className="text-4xl font-black tracking-tighter text-white">NOVA<span className="text-orange-500">RIDE</span></h1>
@@ -86,7 +86,12 @@ function Login() {
             <p className="text-neutral-500 font-bold text-sm tracking-wide">Welcome back! Enter your details.</p>
           </div>
 
+<<<<<<< Updated upstream
           <form onSubmit={formik.handleSubmit} className="space-y-8">
+=======
+          <form onSubmit={formik.handleSubmit} className="space-y-6 sm:space-y-8">
+            <fieldset disabled={isLoading || formik.isSubmitting} className="border-0 p-0 m-0 min-w-0">
+>>>>>>> Stashed changes
             <div className="space-y-4">
               <Input
                 label="Phone number"
@@ -111,7 +116,7 @@ function Login() {
                 />
                 <button
                   type="button"
-                  className="absolute right-5 top-[48px] text-neutral-600 hover:text-orange-500 transition-all duration-300"
+                  className="password-toggle absolute right-5 top-[48px] text-neutral-600 hover:text-orange-500 transition-all duration-300"
                   onClick={() => setShow(!show)}
                 >
                   {show ? <BiHide size={22} /> : <BiShow size={22} />}
@@ -121,7 +126,7 @@ function Login() {
 
             <div className="flex justify-between items-center px-1">
               <div className="h-[1px] flex-1 bg-neutral-800 mr-4" />
-              <Link to="/forgot-password" title="Recover Access" className="text-[10px] font-black uppercase tracking-[0.2em] text-neutral-500 hover:text-orange-500 transition-colors">
+              <Link to="/forgot-password" title="Recover Access" className="text-caption sm:text-[10px] font-black uppercase tracking-label sm:tracking-[0.2em] text-neutral-500 hover:text-orange-500 transition-colors">
                 forgot Password?
               </Link>
             </div>
@@ -129,13 +134,13 @@ function Login() {
             <Button
               type="submit"
               text={isLoading ? <Loader color={"#ffffff"} /> : "Login"}
-              classes={'w-full py-5 bg-orange-500 hover:bg-white hover:text-neutral-950 text-white rounded-2xl font-black text-[11px] uppercase tracking-[0.3em] shadow-2xl shadow-orange-500/20 transition-all duration-500 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-orange-500 disabled:hover:text-white disabled:hover:border-transparent border-2 border-transparent hover:border-white'}
+              classes={'w-full py-3 sm:py-5 bg-orange-500 hover:bg-white hover:text-neutral-950 text-white rounded-2xl font-black text-caption sm:text-[11px] uppercase tracking-label sm:tracking-[0.3em] shadow-2xl shadow-orange-500/20 transition-all duration-500 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-orange-500 disabled:hover:text-white disabled:hover:border-transparent border-2 border-transparent hover:border-white'}
               disabled={isLoading || !formik.isValid || !formik.dirty}
             />
           </form>
 
           <footer className="pt-12 border-t border-neutral-800 text-center">
-            <p className="text-[10px] font-black text-neutral-600 uppercase tracking-[0.2em]">
+            <p className="text-caption sm:text-[10px] font-black text-neutral-600 uppercase tracking-label sm:tracking-[0.2em]">
               Have an account?
               <Link to="/signup" className="text-orange-500 hover:text-white transition-all ml-2 underline decoration-orange-500/30 underline-offset-4">
                 Create Account

@@ -9,7 +9,7 @@ const ComplaintForm = ({ showComplaintForm, setShowComplaintForm, complaintText,
         onClick={() => setShowComplaintForm(!showComplaintForm)}
         className="w-full flex items-center justify-between group py-2"
       >
-        <span className="text-xs font-black uppercase tracking-[0.2em] text-neutral-600 group-hover:text-red-500 transition-colors">Report Discrepancy</span>
+        <span className="text-xs font-black uppercase tracking-label sm:tracking-[0.2em] text-neutral-600 group-hover:text-red-500 transition-colors">Report Discrepancy</span>
         <FaExclamationTriangle className="text-neutral-800 group-hover:text-red-500 transition-colors" />
       </button>
 
@@ -31,7 +31,12 @@ const ComplaintForm = ({ showComplaintForm, setShowComplaintForm, complaintText,
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               onClick={handleSubmitComplaint}
+<<<<<<< Updated upstream
               className="w-full mt-4 py-4 bg-red-600/90 text-white rounded-2xl font-black text-xs uppercase tracking-[0.2em] hover:bg-red-600 transition-all shadow-2xl shadow-red-600/20"
+=======
+              disabled={isSubmitting}
+              className="w-full mt-4 py-3 sm:py-4 bg-red-600/90 text-white rounded-2xl font-black text-xs uppercase tracking-label sm:tracking-[0.2em] hover:bg-red-600 transition-all shadow-2xl shadow-red-600/20"
+>>>>>>> Stashed changes
             >
               Send Report
             </motion.button>

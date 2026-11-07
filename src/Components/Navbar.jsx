@@ -61,11 +61,11 @@ const Navbar = ({ userrole, nav, userverified, profilePic = '', button }) => {
     return (
         <div className='z-[5000] relative'>
             <header className='fixed top-0 left-0 right-0 z-[5000]'>
-                <nav className='flex items-center justify-between h-16 md:h-20 px-6 md:px-12 bg-white border-b border-neutral-200 shadow-sm transition-all duration-300'>
+                <nav className='flex items-center justify-between h-14 sm:h-16 md:h-20 page-gutter sm:px-6 md:px-12 bg-white border-b border-neutral-200 shadow-sm transition-all duration-300'>
                     {/* Logo Section */}
-                    <Link to={userverified ? dashboardPath : '/'} className='flex items-center gap-3 group'>
-                        <div className='p-1 bg-white rounded-xl transition-transform group-hover:scale-105'>
-                            <img src={novaLogo} alt="Nova Logo" className='h-10 md:h-12 w-auto' />
+                    <Link to={userverified ? dashboardPath : '/'} className='flex min-w-0 items-center gap-2 sm:gap-3 group'>
+                        <div className='p-0 sm:p-1 bg-white rounded-xl transition-transform group-hover:scale-105'>
+                            <img src={novaLogo} alt="Nova Logo" className='h-8 sm:h-10 md:h-12 w-auto' />
                         </div>
                         <div className='hidden md:block font-black text-2xl tracking-tighter text-neutral-900'>
                             NOVA <span className='text-orange-500'>RIDE</span>
@@ -73,10 +73,10 @@ const Navbar = ({ userrole, nav, userverified, profilePic = '', button }) => {
                     </Link>
 
                     {/* Actions Section */}
-                    <div className='flex items-center gap-4'>
+                    <div className='flex shrink-0 items-center gap-2 sm:gap-4'>
                             {!userverified && (
                             <Link to={'/login'}>
-                                <button className='font-bold text-sm uppercase tracking-widest bg-black text-white hover:bg-neutral-800 hover:text-orange-500 transition-all px-6 py-2.5 rounded-xl'>
+                                <button className='min-h-10 font-bold text-sm uppercase tracking-wide sm:tracking-widest bg-black text-white hover:bg-neutral-800 hover:text-orange-500 transition-all px-4 sm:px-6 py-2.5 rounded-xl'>
                                     Login
                                 </button>
                             </Link>
@@ -91,7 +91,7 @@ const Navbar = ({ userrole, nav, userverified, profilePic = '', button }) => {
                                     onMouseLeave={() => setIsDropdownOpen(false)}
                                 >
                                     <button className='flex items-center gap-2 p-1 pl-3 bg-neutral-100 hover:bg-neutral-200 rounded-full border border-neutral-200 transition-all'>
-                                        <FaChevronDown className={`text-[10px] text-neutral-400 transition-transform duration-300 ${isDropdownOpen ? 'rotate-180' : ''}`} />
+                                        <FaChevronDown className={`text-caption sm:text-[10px] text-neutral-400 transition-transform duration-300 ${isDropdownOpen ? 'rotate-180' : ''}`} />
                                         <img
                                             src={profilePic || '/placeholderProfile.jpg'}
                                             alt="Profile"
@@ -138,7 +138,9 @@ const Navbar = ({ userrole, nav, userverified, profilePic = '', button }) => {
                             {userverified && (
                                 <button
                                     onClick={() => setIsMenuOpen(!isMenuOpen)}
-                                    className='lg:hidden p-3 bg-neutral-100/50 hover:bg-neutral-200/50 rounded-2xl text-neutral-700 transition-colors'
+                                    aria-label={isMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
+                                    aria-expanded={isMenuOpen}
+                                    className='lg:hidden flex h-11 w-11 items-center justify-center p-3 bg-neutral-100/50 hover:bg-neutral-200/50 rounded-xl sm:rounded-2xl text-neutral-700 transition-colors'
                                 >
                                     {isMenuOpen ? <FaTimes /> : <FaBars />}
                                 </button>
@@ -155,9 +157,9 @@ const Navbar = ({ userrole, nav, userverified, profilePic = '', button }) => {
                         initial={{ opacity: 0, y: -20 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -20 }}
-                        className='lg:hidden fixed inset-x-0 top-16 md:top-20 z-[4999] bg-white border-b border-neutral-200 shadow-xl p-8 max-h-[calc(100vh-80px)] overflow-y-auto'
+                        className='lg:hidden fixed inset-x-0 top-14 sm:top-16 md:top-20 z-[4999] bg-white border-b border-neutral-200 shadow-xl p-3 sm:p-8 max-h-[calc(100dvh-56px)] sm:max-h-[calc(100dvh-64px)] md:max-h-[calc(100dvh-80px)] overflow-y-auto'
                     >
-                        <div className='space-y-8'>
+                        <div className='space-y-6 sm:space-y-8'>
                             {userverified && (
                                 <div>
                                     <div className='grid grid-cols-2 gap-3'>
@@ -165,11 +167,11 @@ const Navbar = ({ userrole, nav, userverified, profilePic = '', button }) => {
                                             <Link
                                                 key={idx}
                                                 to={item.path}
-                                                className='flex flex-col items-center justify-center p-4 bg-neutral-50 rounded-3xl gap-2 hover:bg-orange-50 transition-colors'
+                                                className='flex min-w-0 flex-col items-center justify-center p-3 sm:p-4 bg-neutral-50 rounded-xl sm:rounded-3xl gap-2 hover:bg-orange-50 transition-colors'
                                                 onClick={() => setIsMenuOpen(false)}
                                             >
                                                 <span className='text-orange-500 text-xl'>{item.icon}</span>
-                                                <span className='text-[10px] font-black uppercase tracking-wider text-neutral-600'>{item.label}</span>
+                                                <span className='text-caption sm:text-[10px] text-center font-bold sm:font-black uppercase tracking-wider text-neutral-600'>{item.label}</span>
                                             </Link>
                                         ))}
 
@@ -179,7 +181,7 @@ const Navbar = ({ userrole, nav, userverified, profilePic = '', button }) => {
 
                             {!userverified && (
                                 <Link to={'/login'} onClick={() => setIsMenuOpen(false)}>
-                                    <button className='w-full py-5 bg-orange-500 text-white rounded-[1.8rem] font-black text-sm uppercase tracking-widest shadow-lg shadow-orange-500/20'>
+                                    <button className='w-full py-3 sm:py-5 bg-orange-500 text-white rounded-[1.8rem] font-black text-sm uppercase tracking-widest shadow-lg shadow-orange-500/20'>
                                         Sign In to Nova
                                     </button>
                                 </Link>
@@ -188,7 +190,7 @@ const Navbar = ({ userrole, nav, userverified, profilePic = '', button }) => {
                             {userverified && (
                                 <button
                                     onClick={handleSignOut}
-                                    className='w-full py-4 mt-4 border-2 border-red-500/20 text-red-500 rounded-[1.8rem] font-black text-sm uppercase tracking-widest hover:bg-red-50 transition-colors'
+                                    className='w-full py-3 sm:py-4 mt-4 border-2 border-red-500/20 text-red-500 rounded-[1.8rem] font-black text-sm uppercase tracking-widest hover:bg-red-50 transition-colors'
                                 >
                                     Sign Out
                                 </button>

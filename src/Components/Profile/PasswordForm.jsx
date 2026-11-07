@@ -68,7 +68,7 @@ const PasswordForm = ({ onSubmit }) => (
                     <Button
                         type="submit"
                         text={isSubmitting ? "Changing..." : "Update Password"}
-                        classes="w-full md:w-auto bg-neutral-900 text-white py-5 px-16 rounded-[2.5rem] font-bold uppercase tracking-[0.2em] text-xs shadow-2xl hover:bg-black transition-all"
+                        classes="w-full md:w-auto bg-neutral-900 text-white py-3 sm:py-5 px-4 sm:px-16 rounded-2xl sm:rounded-[2.5rem] font-bold uppercase tracking-label sm:tracking-[0.2em] text-xs shadow-2xl hover:bg-black transition-all"
                         disabled={isSubmitting}
                     />
                 </motion.div>

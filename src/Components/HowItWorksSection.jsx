@@ -6,8 +6,8 @@ import Gestures from "./ScaledButt";
 
 const HowItWorksSection = () => {
   return (
-    <section className="px-4 sm:px-8 md:px-16 lg:px-36 bg-white w-full mt-20 md:mt-40">
-      <h2 className="text-3xl md:text-5xl font-bold text-start mb-12">How it Works</h2>
+    <section className="page-gutter sm:px-8 md:px-16 lg:px-36 bg-white w-full mt-10 sm:mt-20 md:mt-40">
+      <h2 className="text-3xl md:text-5xl font-bold text-start mb-6 sm:mb-12">How it Works</h2>
       <div className="flex flex-wrap justify-between gap-4 md:gap-8">
         <Gestures
           text={'Select preferred ride out of the available rides at your current location'}

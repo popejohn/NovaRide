@@ -51,11 +51,11 @@ const ProfileForm = ({ initialValues, onSubmit, validationSchema }) => (
                 </div>
 
                 <div className="space-y-2 group/input">
-                    <label className={`block mb-2 text-[10px] font-black uppercase tracking-[0.2em] transition-colors duration-300 ${touched.dateOfBirth && errors.dateOfBirth ? 'text-red-500' : 'text-neutral-400 group-focus-within/input:text-orange-600'}`}>
+                    <label className={`block mb-2 text-caption sm:text-[10px] font-black uppercase tracking-label sm:tracking-[0.2em] transition-colors duration-300 ${touched.dateOfBirth && errors.dateOfBirth ? 'text-red-500' : 'text-neutral-400 group-focus-within/input:text-orange-600'}`}>
                         Date of Birth
                     </label>
                     <div className="relative">
-                        <div className={`absolute left-6 top-1/2 -translate-y-1/2 z-10 transition-colors duration-300 pointer-events-none ${touched.dateOfBirth && errors.dateOfBirth ? 'text-red-500' : 'text-neutral-400 group-focus-within/input:text-orange-500'}`}>
+                        <div className={`absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 z-10 transition-colors duration-300 pointer-events-none ${touched.dateOfBirth && errors.dateOfBirth ? 'text-red-500' : 'text-neutral-400 group-focus-within/input:text-orange-500'}`}>
                             <FaCalendarAlt className="text-xl" />
                         </div>
                         <DatePicker
@@ -70,7 +70,7 @@ const ProfileForm = ({ initialValues, onSubmit, validationSchema }) => (
                             dropdownMode="select"
                             placeholderText="Select your birth date"
                             autoComplete="off"
-                            className={`w-full pl-16 pr-8 py-5 rounded-[1.25rem] border-2 transition-all duration-300 outline-none font-bold text-sm bg-white/40 backdrop-blur-xl border-neutral-200 text-neutral-900 placeholder:text-neutral-400 focus:bg-white focus:border-orange-500/30
+                            className={`w-full pl-10 sm:pl-16 pr-3 sm:pr-8 py-2.5 sm:py-5 rounded-[1.25rem] border-2 transition-all duration-300 outline-none font-bold text-sm bg-white/40 backdrop-blur-xl border-neutral-200 text-neutral-900 placeholder:text-neutral-400 focus:bg-white focus:border-orange-500/30
                 ${touched.dateOfBirth && errors.dateOfBirth ? 'border-red-500/50 bg-red-500/5 text-red-500' : 'hover:border-neutral-300'}
                 shadow-sm group-focus-within/input:shadow-2xl group-focus-within/input:shadow-orange-500/5`}
                         />
@@ -80,7 +80,7 @@ const ProfileForm = ({ initialValues, onSubmit, validationSchema }) => (
                         <motion.p
                             initial={{ opacity: 0, y: -10 }}
                             animate={{ opacity: 1, y: 0 }}
-                            className="mt-2 text-[10px] font-bold text-red-500 italic flex items-center gap-2 px-1 uppercase tracking-wider"
+                            className="mt-2 text-caption sm:text-[10px] font-bold text-red-500 italic flex items-center gap-2 px-1 uppercase tracking-wider"
                         >
                             <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span> {errors.dateOfBirth}
                         </motion.p>
@@ -88,17 +88,17 @@ const ProfileForm = ({ initialValues, onSubmit, validationSchema }) => (
                 </div>
 
                 <div className="space-y-2 group/input">
-                    <label className={`block mb-2 text-[10px] font-black uppercase tracking-[0.2em] transition-colors duration-300 ${touched.address && errors.address ? 'text-red-500' : 'text-neutral-400 group-focus-within/input:text-orange-600'}`}>
+                    <label className={`block mb-2 text-caption sm:text-[10px] font-black uppercase tracking-label sm:tracking-[0.2em] transition-colors duration-300 ${touched.address && errors.address ? 'text-red-500' : 'text-neutral-400 group-focus-within/input:text-orange-600'}`}>
                         Residential Address
                     </label>
                     <div className="relative">
-                        <div className={`absolute left-6 top-8 z-10 transition-colors duration-300 pointer-events-none ${touched.address && errors.address ? 'text-red-500' : 'text-neutral-400 group-focus-within/input:text-orange-500'}`}>
+                        <div className={`absolute left-3 sm:left-6 top-4 sm:top-8 z-10 transition-colors duration-300 pointer-events-none ${touched.address && errors.address ? 'text-red-500' : 'text-neutral-400 group-focus-within/input:text-orange-500'}`}>
                             <FaMapMarkerAlt className="text-xl" />
                         </div>
                         <Field
                             name="address"
                             as="textarea"
-                            className={`w-full pl-16 pr-8 py-6 rounded-[1.25rem] border-2 transition-all duration-300 outline-none font-bold text-sm min-h-[160px] bg-white/40 backdrop-blur-xl border-neutral-200 text-neutral-900 placeholder:text-neutral-400 focus:bg-white focus:border-orange-500/30
+                            className={`w-full pl-10 sm:pl-16 pr-3 sm:pr-8 py-3 sm:py-6 rounded-[1.25rem] border-2 transition-all duration-300 outline-none font-bold text-sm min-h-[160px] bg-white/40 backdrop-blur-xl border-neutral-200 text-neutral-900 placeholder:text-neutral-400 focus:bg-white focus:border-orange-500/30
                 ${touched.address && errors.address ? 'border-red-500/50 bg-red-500/5 text-red-500' : 'hover:border-neutral-300'}
                 shadow-sm group-focus-within/input:shadow-2xl group-focus-within/input:shadow-orange-500/5`}
                             placeholder="Enter your full residential address"
@@ -109,7 +109,7 @@ const ProfileForm = ({ initialValues, onSubmit, validationSchema }) => (
                         <motion.p
                             initial={{ opacity: 0, y: -10 }}
                             animate={{ opacity: 1, y: 0 }}
-                            className="mt-2 text-[10px] font-bold text-red-500 italic flex items-center gap-2 px-1 uppercase tracking-wider"
+                            className="mt-2 text-caption sm:text-[10px] font-bold text-red-500 italic flex items-center gap-2 px-1 uppercase tracking-wider"
                         >
                             <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span> {errors.address}
                         </motion.p>
@@ -120,7 +120,7 @@ const ProfileForm = ({ initialValues, onSubmit, validationSchema }) => (
                     <Button
                         type="submit"
                         text={isSubmitting ? "Updating..." : "Save Changes"}
-                        classes="w-full md:w-auto bg-neutral-900 text-white py-5 px-16 rounded-[2.5rem] font-bold uppercase tracking-[0.2em] text-xs shadow-2xl hover:bg-black transition-all"
+                        classes="w-full md:w-auto bg-neutral-900 text-white py-2.5 sm:py-5 px-4 sm:px-16 rounded-2xl sm:rounded-[2.5rem] font-bold uppercase tracking-label sm:tracking-[0.2em] text-xs shadow-2xl hover:bg-black transition-all"
                         disabled={isSubmitting}
                     />
                 </motion.div>

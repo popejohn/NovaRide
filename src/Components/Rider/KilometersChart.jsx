@@ -7,11 +7,11 @@ const KilometersChart = ({ monthly = [120, 180, 210, 150, 200, 260] }) => {
         <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="p-8 bg-white/40 backdrop-blur-2xl rounded-[2.5rem] border border-white/20 shadow-2xl relative overflow-hidden group"
+            className="card-padding sm:p-8 bg-white/40 backdrop-blur-2xl rounded-2xl sm:rounded-[2.5rem] border border-white/20 shadow-2xl relative overflow-hidden group"
         >
-            <div className="flex justify-between items-center mb-8">
+            <div className="flex justify-between items-center mb-6 sm:mb-8">
                 <div>
-                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-neutral-400 mb-1">Performance</p>
+                    <p className="text-caption sm:text-[10px] font-black uppercase tracking-label sm:tracking-[0.2em] text-neutral-400 mb-1">Performance</p>
                     <h3 className="text-2xl font-black text-neutral-900">Ride Coverage</h3>
                 </div>
                 <div className="p-3 bg-orange-500/10 rounded-2xl text-orange-600">
@@ -29,7 +29,7 @@ const KilometersChart = ({ monthly = [120, 180, 210, 150, 200, 260] }) => {
                         >
                             <div className="absolute inset-0 bg-white/20 opacity-0 group-hover/bar:opacity-100 transition-opacity" />
                         </motion.div>
-                        <div className="text-[10px] font-black mt-4 text-neutral-400 uppercase tracking-widest leading-none">M{i + 1}</div>
+                        <div className="text-caption sm:text-[10px] font-black mt-4 text-neutral-400 uppercase tracking-widest leading-none">M{i + 1}</div>
                     </div>
                 ))}
             </div>

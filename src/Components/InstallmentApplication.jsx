@@ -133,14 +133,14 @@ const InstallmentApplication = () => {
     <div className="min-h-screen bg-gray-50">
       <Navbar userrole="installment" userverified={true} profilePic="/placeholderProfile.jpg" nav={<OtherNav userrole="installment" />} />
 
-      <div className="mt-24 px-8">
+      <div className="mt-20 sm:mt-24 page-gutter sm:px-8">
         <div className="max-w-6xl mx-auto">
-          <div className="mb-8">
+          <div className="mb-6 sm:mb-8">
             <h1 className="text-3xl font-bold text-gray-900 mb-2">Vehicle Installment Application</h1>
             <p className="text-gray-600">Choose your dream car and apply for installment purchase</p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 content-gap sm:gap-8">
             {/* Vehicle Selection */}
             <div className="space-y-6">
               <div>
@@ -203,7 +203,7 @@ const InstallmentApplication = () => {
             </div>
 
             {/* Application Form */}
-            <div className="bg-white rounded-lg shadow-lg p-6">
+            <div className="bg-white rounded-lg shadow-lg card-padding sm:p-6">
               <h2 className="text-xl font-semibold mb-6">Application Details</h2>
 
               {selectedVehicle && installmentPlan && (

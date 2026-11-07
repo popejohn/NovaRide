@@ -142,12 +142,12 @@ const FloatingChatSupport = () => {
   };
   if (!token) return null;
   return (
-    <div className="fixed bottom-6 right-6 z-[8000] font-sans">
+    <div className="fixed bottom-3 right-3 sm:bottom-6 sm:right-6 z-[8000] font-sans">
       {/* Floating Action Button (FAB) */}
       <button
         id="floating-chat-trigger"
         onClick={() => setIsOpen(!isOpen)}
-        className="w-16 h-16 bg-orange-500 hover:bg-orange-600 rounded-full flex items-center justify-center text-white shadow-[0_4px_20px_rgba(249,115,22,0.4)] cursor-pointer transition-transform duration-300 hover:scale-105 relative focus:outline-none"
+        className="w-12 h-12 sm:w-16 sm:h-16 bg-orange-500 hover:bg-orange-600 rounded-full flex items-center justify-center text-white shadow-[0_4px_20px_rgba(249,115,22,0.4)] cursor-pointer transition-transform duration-300 hover:scale-105 relative focus:outline-none"
       >
         {isOpen ? <FaTimes className="text-xl" /> : <FaComments className="text-2xl" />}
         {unreadCount > 0 && (
@@ -164,10 +164,10 @@ const FloatingChatSupport = () => {
             animate={{ opacity: 1, y: -10, scale: 1 }}
             exit={{ opacity: 0, y: 50, scale: 0.9 }}
             transition={{ duration: 0.3 }}
-            className="absolute bottom-20 right-0 w-[350px] md:w-[400px] h-[550px] bg-neutral-900 border border-white/10 rounded-[2.5rem] shadow-2xl flex flex-col overflow-hidden backdrop-blur-3xl"
+            className="fixed bottom-[68px] inset-x-3 sm:absolute sm:inset-x-auto sm:bottom-20 sm:right-0 sm:w-[350px] md:w-[400px] h-[min(550px,calc(100dvh-100px))] sm:h-[min(550px,calc(100dvh-130px))] bg-neutral-900 border border-white/10 rounded-2xl sm:rounded-[2.5rem] shadow-2xl flex flex-col overflow-hidden backdrop-blur-3xl"
           >
             {/* Header */}
-            <div className="bg-white/5 px-6 py-5 border-b border-white/10 flex items-center justify-between">
+            <div className="bg-white/5 px-4 sm:px-6 py-3 sm:py-5 border-b border-white/10 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-orange-500/10 rounded-xl flex items-center justify-center text-orange-500 border border-orange-500/20">
                   <FaUserShield className="text-lg" />
@@ -176,7 +176,7 @@ const FloatingChatSupport = () => {
                   <h4 className="font-black text-sm uppercase tracking-wider text-white">Nova Support</h4>
                   <div className="flex items-center gap-1.5 mt-0.5">
                     <span className={`w-2 h-2 rounded-full ${connecting ? 'bg-yellow-500 animate-pulse' : chat ? 'bg-green-500' : 'bg-neutral-500'}`} />
-                    <span className="text-[10px] text-neutral-400 font-bold uppercase tracking-widest">
+                    <span className="text-caption sm:text-[10px] text-neutral-400 font-bold uppercase tracking-widest">
                       {connecting
                         ? 'Connecting...'
                         : chat
@@ -196,7 +196,7 @@ const FloatingChatSupport = () => {
               </button>
             </div>
             {/* Messages Area */}
-            <div className="flex-grow overflow-y-auto p-6 space-y-4">
+            <div className="flex-grow overflow-y-auto card-padding sm:p-6 space-y-4">
               {!chat ? (
                 /* No Active Chat Session */
                 <div className="h-full flex flex-col items-center justify-center text-center p-4">
@@ -206,7 +206,7 @@ const FloatingChatSupport = () => {
                   <button
                     onClick={startChat}
                     disabled={connecting}
-                    className="w-full bg-orange-500 hover:bg-orange-600 disabled:bg-orange-800 text-white font-black uppercase tracking-widest text-xs py-4 px-6 rounded-2xl transition-colors cursor-pointer"
+                    className="w-full bg-orange-500 hover:bg-orange-600 disabled:bg-orange-800 text-white font-black uppercase tracking-widest text-xs py-3 sm:py-4 px-4 sm:px-6 rounded-2xl transition-colors cursor-pointer"
                   >
                     {connecting ? 'Initializing...' : 'Start Live Support Chat'}
                   </button>
@@ -219,7 +219,7 @@ const FloatingChatSupport = () => {
                       <p className="text-xs text-orange-400 font-bold uppercase tracking-wider">
                         Conversation Started
                       </p>
-                      <p className="text-[11px] text-neutral-400 mt-1 leading-normal">
+                      <p className="text-caption sm:text-[11px] text-neutral-400 mt-1 leading-normal">
                         An administrator will join shortly. Feel free to type details of your request.
                       </p>
                     </div>
@@ -231,7 +231,7 @@ const FloatingChatSupport = () => {
                         key={msg._id || index}
                         className={`flex flex-col ${isMe ? 'items-end' : 'items-start'}`}
                       >
-                        <span className="text-[10px] text-neutral-500 font-bold uppercase tracking-wider mb-1 px-1">
+                        <span className="text-caption sm:text-[10px] text-neutral-500 font-bold uppercase tracking-wider mb-1 px-1">
                           {isMe ? 'You' : msg.senderName}
                         </span>
                         <div
@@ -243,7 +243,7 @@ const FloatingChatSupport = () => {
                         >
                           {msg.text}
                         </div>
-                        <span className="text-[9px] text-neutral-600 mt-1 px-1">
+                        <span className="text-caption sm:text-[9px] text-neutral-600 mt-1 px-1">
                           {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                         </span>
                       </div>
@@ -254,12 +254,12 @@ const FloatingChatSupport = () => {
                       <p className="text-xs text-red-400 font-bold uppercase tracking-wider">
                         Conversation Closed
                       </p>
-                      <p className="text-[11px] text-neutral-400 mt-1 leading-normal">
+                      <p className="text-caption sm:text-[11px] text-neutral-400 mt-1 leading-normal">
                         This session has been marked resolved. You can start a new support conversation if needed.
                       </p>
                       <button
                         onClick={startChat}
-                        className="mt-3 bg-white/5 border border-white/10 hover:bg-white/10 text-white font-bold uppercase tracking-widest text-[10px] py-2 px-4 rounded-xl transition-all cursor-pointer"
+                        className="mt-3 bg-white/5 border border-white/10 hover:bg-white/10 text-white font-bold uppercase tracking-widest text-caption sm:text-[10px] py-2 px-4 rounded-xl transition-all cursor-pointer"
                       >
                         Start New Chat
                       </button>

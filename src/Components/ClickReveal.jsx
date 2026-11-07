@@ -19,7 +19,7 @@ const ClickToReveal = ({ distance, duration, fare, cancelRide }) => {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 20 }}
           transition={{ duration: 0.4, ease: 'easeOut' }}
-          className="mt-6 bg-black/85 backdrop-blur-xl p-6 rounded-2xl border border-white/10 shadow-2xl w-full text-white"
+          className="mt-6 bg-black/85 backdrop-blur-xl card-padding sm:p-6 rounded-2xl border border-white/10 shadow-2xl w-full text-white"
         >
           <div className='flex flex-col gap-4'>
             <div className='flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/5'>
@@ -62,7 +62,7 @@ const ClickToReveal = ({ distance, duration, fare, cancelRide }) => {
               />
               <Button
                 text={'Cancel'}
-                classes={'px-6 h-12 rounded-xl bg-white/10 text-white font-semibold hover:bg-white/20 transition-all border border-white/10'}
+                classes={'px-4 sm:px-6 h-12 rounded-xl bg-white/10 text-white font-semibold hover:bg-white/20 transition-all border border-white/10'}
                 onClick={cancelRide}
               />
             </div>

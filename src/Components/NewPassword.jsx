@@ -77,8 +77,8 @@ function NewPassword() {
       </div>
 
       {/* Form Section */}
-      <div className="flex-1 flex flex-col justify-center items-center p-6 md:p-12 bg-neutral-900 lg:bg-neutral-950">
-        <div className="w-full max-w-sm space-y-10">
+      <div className="min-w-0 flex-1 flex flex-col justify-center items-center card-padding sm:p-6 md:p-12 bg-neutral-900 lg:bg-neutral-950">
+        <div className="w-full max-w-sm space-y-6 sm:space-y-10">
 
           {/* Mobile Header */}
           <div className="lg:hidden text-center">
@@ -93,7 +93,12 @@ function NewPassword() {
             </p>
           </div>
 
+<<<<<<< Updated upstream
           <form onSubmit={formik.handleSubmit} className="space-y-8">
+=======
+          <form onSubmit={formik.handleSubmit} className="space-y-6 sm:space-y-8">
+            <fieldset disabled={isLoading || formik.isSubmitting} className="border-0 p-0 m-0 min-w-0">
+>>>>>>> Stashed changes
             <div className="space-y-5">
 
               {/* New Password */}
@@ -111,7 +116,7 @@ function NewPassword() {
                 />
                 <button
                   type="button"
-                  className="absolute right-5 top-[44px] text-neutral-600 hover:text-orange-500 transition-colors"
+                  className="password-toggle absolute right-5 top-[44px] text-neutral-600 hover:text-orange-500 transition-colors"
                   onClick={() => setShowNew(!showNew)}
                 >
                   {showNew ? <BiHide size={20} /> : <BiShow size={20} />}
@@ -133,7 +138,7 @@ function NewPassword() {
                 />
                 <button
                   type="button"
-                  className="absolute right-5 top-[44px] text-neutral-600 hover:text-orange-500 transition-colors"
+                  className="password-toggle absolute right-5 top-[44px] text-neutral-600 hover:text-orange-500 transition-colors"
                   onClick={() => setShowConfirm(!showConfirm)}
                 >
                   {showConfirm ? <BiHide size={20} /> : <BiShow size={20} />}
@@ -144,13 +149,13 @@ function NewPassword() {
             <Button
               type="submit"
               text={isLoading ? <Loader color="#ffffff" /> : "Reset Password"}
-              classes="w-full py-5 bg-orange-500 hover:bg-white hover:text-neutral-950 text-white rounded-2xl font-black text-[11px] uppercase tracking-[0.3em] shadow-2xl shadow-orange-500/20 transition-all duration-500 active:scale-95 border-2 border-transparent hover:border-white disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-orange-500 disabled:hover:text-white disabled:hover:border-transparent"
+              classes="w-full py-3 sm:py-5 bg-orange-500 hover:bg-white hover:text-neutral-950 text-white rounded-2xl font-black text-caption sm:text-[11px] uppercase tracking-label sm:tracking-[0.3em] shadow-2xl shadow-orange-500/20 transition-all duration-500 active:scale-95 border-2 border-transparent hover:border-white disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-orange-500 disabled:hover:text-white disabled:hover:border-transparent"
               disabled={isLoading || !formik.isValid || !formik.dirty}
             />
           </form>
 
           <footer className="pt-10 border-t border-neutral-800 text-center">
-            <p className="text-[10px] font-black text-neutral-600 uppercase tracking-[0.2em]">
+            <p className="text-caption sm:text-[10px] font-black text-neutral-600 uppercase tracking-label sm:tracking-[0.2em]">
               Remember your password?
               <Link
                 to="/login"

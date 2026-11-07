@@ -14,18 +14,18 @@ const DriverCard = ({ driver, onSelect, selected }) => {
     animate={{ opacity: 1, y: 0 }}
     whileHover={{ y: -4, transition: { duration: 0.2 } }}
     onClick={() => onSelect(driver)}
-    className={`group relative p-5 rounded-2xl cursor-pointer transition-all duration-300 border backdrop-blur-md ${selected
+    className={`group relative card-padding sm:p-5 rounded-2xl cursor-pointer transition-all duration-300 border backdrop-blur-md ${selected
       ? 'bg-orange-500/10 border-orange-500 shadow-[0_0_20px_rgba(249,115,22,0.15)]'
       : 'bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20'
       }`}
   >
-    <div className="flex items-start justify-between">
-      <div className="flex items-center space-x-4">
+    <div className="flex flex-col sm:flex-row items-start justify-between gap-3">
+      <div className="flex min-w-0 items-center space-x-3 sm:space-x-4">
         <div className="relative">
           <img
             src={driver.profilePic || profilePicPlaceholder}
             alt={driver.name}
-            className="w-16 h-16 rounded-full object-cover border-2 border-orange-500/30"
+            className="w-12 h-12 sm:w-16 sm:h-16 shrink-0 rounded-full object-cover border-2 border-orange-500/30"
           />
           <div className="absolute -bottom-1 -right-1 bg-green-500 w-4 h-4 rounded-full border-2 border-[#121212]"></div>
         </div>
@@ -40,29 +40,29 @@ const DriverCard = ({ driver, onSelect, selected }) => {
           </div>
         </div>
       </div>
-      <div className="text-right">
+      <div className="text-left sm:text-right">
         <div className="text-2xl font-black text-white">{fareDisplay}</div>
         <div className="text-sm font-medium text-orange-500">{driver.eta} mins away</div>
         {driver.addedFare > 0 && (
-          <span className="inline-block mt-1 bg-orange-500/20 text-orange-400 border border-orange-500/30 text-[10px] font-black px-2 py-0.5 rounded-md">
+          <span className="inline-block mt-1 bg-orange-500/20 text-orange-400 border border-orange-500/30 text-caption sm:text-[10px] font-black px-2 py-0.5 rounded-md">
             +₦{Number(driver.addedFare).toLocaleString()} Pickup
           </span>
         )}
       </div>
     </div>
 
-    <div className="mt-6 grid grid-cols-2 gap-3">
+    <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-3">
       <div className="flex items-center space-x-3 bg-white/5 p-3 rounded-xl border border-white/5">
         <FaCar className="text-neutral-400" />
-        <div className="flex flex-col">
-          <span className="text-[10px] uppercase tracking-wider text-neutral-500 font-bold">Vehicle</span>
+        <div className="flex min-w-0 flex-col">
+          <span className="text-caption sm:text-[10px] uppercase tracking-wider text-neutral-500 font-bold">Vehicle</span>
           <span className="text-sm text-neutral-300 truncate">{driver.vehicle.model} • {driver.vehicle.plate}</span>
         </div>
       </div>
       <div className="flex items-center space-x-3 bg-white/5 p-3 rounded-xl border border-white/5">
         <FaMapMarkerAlt className="text-neutral-400" />
-        <div className="flex flex-col">
-          <span className="text-[10px] uppercase tracking-wider text-neutral-500 font-bold">Distance from you</span>
+        <div className="flex min-w-0 flex-col">
+          <span className="text-caption sm:text-[10px] uppercase tracking-wider text-neutral-500 font-bold">Distance from you</span>
           <span className="text-sm text-neutral-300">{driver.distance} km</span>
         </div>
       </div>
@@ -76,13 +76,13 @@ const DriverCard = ({ driver, onSelect, selected }) => {
       >
         {driver.addedFare > 0 ? (
           <div className="bg-orange-500/10 border border-orange-500/20 rounded-xl p-3 mb-3 text-xs space-y-1.5">
-            <div className="flex justify-between text-neutral-300">
+            <div className="flex justify-between gap-2 text-neutral-300">
               <span>Base Ride Fare:</span>
               <span className="font-semibold text-white">₦{Number(driver.baseFare || (driver.fare - driver.addedFare)).toLocaleString()}</span>
             </div>
-            <div className="flex justify-between text-orange-400">
+            <div className="flex justify-between gap-2 text-orange-400">
               <span>Added Distance Fee ({driver.distance} km @ ₦500/km):</span>
-              <span className="font-bold">+₦{Number(driver.addedFare).toLocaleString()}</span>
+              <span className="shrink-0 whitespace-nowrap font-bold">+₦{Number(driver.addedFare).toLocaleString()}</span>
             </div>
             <div className="border-t border-orange-500/20 pt-1.5 flex justify-between font-bold text-white text-sm">
               <span>Total Fare:</span>

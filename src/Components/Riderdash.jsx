@@ -66,13 +66,13 @@ const Riderdash = () => {
         profilePic={user?.profilePic}
       />
 
-      <main className="mt-32 px-4 md:px-8 lg:px-12 max-w-[1600px] mx-auto pb-20">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      <main className="mt-20 sm:mt-32 page-gutter sm:px-4 md:px-8 lg:px-12 max-w-[1600px] mx-auto pb-20">
+        <div className="grid grid-cols-1 lg:grid-cols-12 content-gap sm:gap-8 items-start">
           <aside className="lg:col-span-3 space-y-6">
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
-              className="p-6 bg-white border border-neutral-100 rounded-[2rem] shadow-xl relative overflow-hidden group"
+              className="card-padding sm:p-6 bg-white border border-neutral-100 rounded-2xl sm:rounded-[2rem] shadow-xl relative overflow-hidden group"
             >
               <div className="absolute top-0 right-0 p-4">
                 <div
@@ -88,13 +88,13 @@ const Riderdash = () => {
               </div>
 
               <div className="mb-6">
-                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-neutral-400 mb-2">Rider Profile</p>
+                <p className="text-caption sm:text-[10px] font-black uppercase tracking-label sm:tracking-[0.2em] text-neutral-400 mb-2">Rider Profile</p>
                 <h2 className="text-2xl font-black text-neutral-900 tracking-tighter">
                   {user?.firstname || 'Driver'} <span className="text-orange-500 text-sm align-top font-bold">★ 4.9</span>
                 </h2>
                 <div className="flex items-center gap-2 mt-2">
                   <span className={`w-2 h-2 rounded-full ${isOnline ? 'bg-green-500 animate-pulse' : 'bg-neutral-300'}`} />
-                  <span className="text-[10px] font-black uppercase tracking-widest text-neutral-500">
+                  <span className="text-caption sm:text-[10px] font-black uppercase tracking-widest text-neutral-500">
                     {isOnline ? 'Currently Online' : 'Offline'}
                   </span>
                 </div>
@@ -112,15 +112,15 @@ const Riderdash = () => {
                 <Link to="/bookride">
                   <Button
                     text="Book a Ride"
-                    classes="w-full py-4 rounded-[1.5rem] bg-orange-500 text-white font-black uppercase tracking-[0.15em] text-[10px] shadow-lg shadow-orange-500/20 hover:bg-orange-600 hover:scale-[1.02] transition-all flex items-center justify-center gap-2"
+                    classes="w-full py-3 sm:py-4 rounded-[1.5rem] bg-orange-500 text-white font-black uppercase tracking-label sm:tracking-[0.15em] text-caption sm:text-[10px] shadow-lg shadow-orange-500/20 hover:bg-orange-600 hover:scale-[1.02] transition-all flex items-center justify-center gap-2"
                   />
                 </Link>
               </div>
 
               <div className="mt-8 pt-8 border-t border-neutral-50">
-                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-neutral-400 mb-1">Lifetime Stats</p>
+                <p className="text-caption sm:text-[10px] font-black uppercase tracking-label sm:tracking-[0.2em] text-neutral-400 mb-1">Lifetime Stats</p>
                 <div className="text-3xl font-black text-neutral-900 tracking-tighter">
-                  {totalKm.toLocaleString()} <span className="text-sm font-bold text-neutral-400 uppercase tracking-widest ml-1 text-[10px]">KM</span>
+                  {totalKm.toLocaleString()} <span className="text-sm font-bold text-neutral-400 uppercase tracking-widest ml-1 text-caption sm:text-[10px]">KM</span>
                 </div>
               </div>
             </motion.div>
@@ -129,14 +129,14 @@ const Riderdash = () => {
               <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="p-4 bg-red-50 border border-red-100 rounded-2xl text-red-600 text-[10px] font-bold uppercase tracking-widest flex items-center gap-3 shadow-lg shadow-red-500/5 transition-all"
+                className="p-4 bg-red-50 border border-red-100 rounded-2xl text-red-600 text-caption sm:text-[10px] font-bold uppercase tracking-widest flex items-center gap-3 shadow-lg shadow-red-500/5 transition-all"
               >
                 <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" /> {locationError}
               </motion.div>
             )}
           </aside>
 
-          <div className="lg:col-span-9">
+          <div className="min-w-0 lg:col-span-9">
             <AnimatePresence mode="wait">
               <motion.div
                 key={view}
@@ -146,7 +146,7 @@ const Riderdash = () => {
                 transition={{ duration: 0.3 }}
               >
                 {view === 'overview' && (
-                  <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
+                  <div className="grid grid-cols-1 xl:grid-cols-2 content-gap sm:gap-8">
                     <KilometersChart monthly={monthlyKm} />
                     <WalletPanel balance={walletBalance} />
                     <div className="xl:col-span-2">

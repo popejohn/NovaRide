@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { toast } from 'react-toastify';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
@@ -20,7 +21,7 @@ const AddMoneyButtonWrapper = ({ userEmail, setWalletBalance, setTransactions })
 
     return (
         <PaystackButton
-            className="bg-orange-500 text-white font-black uppercase tracking-widest text-[10px] py-4 px-8 rounded-2xl shadow-lg shadow-orange-500/20 hover:bg-orange-600 transition-all flex items-center justify-center gap-2"
+            className="bg-orange-500 text-white font-black uppercase tracking-widest text-caption sm:text-[10px] py-3 sm:py-4 px-4 sm:px-8 rounded-2xl shadow-lg shadow-orange-500/20 hover:bg-orange-600 transition-all flex items-center justify-center gap-2"
             text="Add Money"
             email={userEmail || `user_${Date.now()}@novacrest.local`}
             amount={defaultAmount * 100} // in kobo
@@ -101,24 +102,24 @@ const WithdrawButtonWrapper = ({ walletBalance, setWalletBalance, setTransaction
             <button
                 type="button"
                 onClick={() => setShowModal(true)}
-                className="bg-white text-neutral-900 font-black uppercase tracking-widest text-[10px] py-4 px-8 rounded-2xl shadow-lg hover:bg-neutral-100 transition-colors border border-neutral-200 focus:outline-none focus:ring-2 focus:ring-orange-500/40"
+                className="bg-white text-neutral-900 font-black uppercase tracking-widest text-caption sm:text-[10px] py-3 sm:py-4 px-4 sm:px-8 rounded-2xl shadow-lg hover:bg-neutral-100 transition-colors border border-neutral-200 focus:outline-none focus:ring-2 focus:ring-orange-500/40"
             >
-                <span className="flex items-center gap-2"><FaMinus className="text-[10px]" /> Withdraw</span>
+                <span className="flex items-center gap-2"><FaMinus className="text-caption sm:text-[10px]" /> Withdraw</span>
             </button>
 
-            {showModal && (
+            {showModal && createPortal(
                 <div
-                    className="fixed inset-0 z-50 flex items-center justify-center bg-neutral-950/60 backdrop-blur-sm p-4"
+                    className="fixed inset-0 z-[6000] flex items-center justify-center bg-neutral-950/60 backdrop-blur-sm p-4"
                     onClick={(event) => {
                         if (event.target === event.currentTarget) {
                             setShowModal(false);
                         }
                     }}
                 >
-                    <div className="w-full max-w-md rounded-[2rem] bg-white p-6 shadow-2xl border border-neutral-100 relative z-10">
+                    <div className="app-dialog w-full max-w-md rounded-2xl sm:rounded-[2rem] bg-white card-padding sm:p-6 shadow-2xl border border-neutral-100 relative z-10">
                         <div className="flex items-center justify-between mb-4">
                             <div>
-                                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-neutral-400">Withdraw</p>
+                                <p className="text-caption sm:text-[10px] font-black uppercase tracking-label sm:tracking-[0.2em] text-neutral-400">Withdraw</p>
                                 <h3 className="text-xl font-black text-neutral-900 tracking-tight">Enter amount</h3>
                             </div>
                             <button
@@ -131,7 +132,7 @@ const WithdrawButtonWrapper = ({ walletBalance, setWalletBalance, setTransaction
                             </button>
                         </div>
 
-                        <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-neutral-400 mb-2">Amount (₦)</label>
+                        <label className="block text-caption sm:text-[10px] font-black uppercase tracking-label sm:tracking-[0.2em] text-neutral-400 mb-2">Amount (₦)</label>
                         <input
                             type="number"
                             min="100"
@@ -146,7 +147,7 @@ const WithdrawButtonWrapper = ({ walletBalance, setWalletBalance, setTransaction
                             <button
                                 type="button"
                                 onClick={() => setShowModal(false)}
-                                className="flex-1 rounded-2xl border border-neutral-200 bg-white px-4 py-3 text-[10px] font-black uppercase tracking-widest text-neutral-700"
+                                className="flex-1 rounded-2xl border border-neutral-200 bg-white px-4 py-3 text-caption sm:text-[10px] font-black uppercase tracking-widest text-neutral-700"
                             >
                                 Cancel
                             </button>
@@ -154,13 +155,14 @@ const WithdrawButtonWrapper = ({ walletBalance, setWalletBalance, setTransaction
                                 type="button"
                                 onClick={handleWithdraw}
                                 disabled={isSubmitting}
-                                className="flex-1 rounded-2xl bg-orange-500 px-4 py-3 text-[10px] font-black uppercase tracking-widest text-white disabled:opacity-60"
+                                className="flex-1 rounded-2xl bg-orange-500 px-4 py-3 text-caption sm:text-[10px] font-black uppercase tracking-widest text-white disabled:opacity-60"
                             >
                                 {isSubmitting ? 'Submitting...' : 'Confirm'}
                             </button>
                         </div>
                     </div>
-                </div>
+                </div>,
+                document.body
             )}
         </>
     );
@@ -173,7 +175,7 @@ const TransactionItem = ({ transaction }) => {
     <Motion.div
       initial={{ opacity: 0, x: -10 }}
       animate={{ opacity: 1, x: 0 }}
-      className="flex items-center justify-between p-5 bg-white/50 backdrop-blur-sm border border-neutral-100 rounded-2xl hover:bg-white hover:border-orange-500/30 transition-all group"
+      className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 p-3 sm:p-5 bg-white/50 backdrop-blur-sm border border-neutral-100 rounded-2xl hover:bg-white hover:border-orange-500/30 transition-all group"
     >
       <div className="flex items-center gap-4">
         <div className={`p-3 rounded-xl ${isIncoming ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'} group-hover:scale-110 transition-transform`}>
@@ -185,12 +187,12 @@ const TransactionItem = ({ transaction }) => {
         </div>
         <div>
           <div className="font-bold text-neutral-800 text-sm tracking-tight">{transaction.description}</div>
-          <div className="flex items-center gap-3 mt-0.5">
-            <div className="text-[10px] font-black uppercase tracking-widest text-neutral-400">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3 mt-0.5">
+            <div className="text-caption sm:text-[10px] font-black uppercase tracking-widest text-neutral-400">
               {new Date(transaction.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
             </div>
-            <div className="text-[10px] font-bold text-neutral-300">|</div>
-            <div className="text-[10px] font-black uppercase tracking-widest text-neutral-300 truncate max-w-[120px]">
+            <div className="text-caption sm:text-[10px] font-bold text-neutral-300">|</div>
+            <div className="text-caption sm:text-[10px] font-black uppercase tracking-widest text-neutral-300 truncate max-w-[120px]">
               {transaction.reference}
             </div>
           </div>
@@ -263,31 +265,31 @@ const Wallet = () => {
         nav={<OtherNav userrole={user?.role} />}
       />
 
-      <div className="mt-20 pt-12 px-6 lg:px-20 pb-20">
-        <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-8">
+      <div className="mt-14 sm:mt-20 pt-5 sm:pt-12 page-gutter sm:px-6 lg:px-20 pb-20">
+        <div className="max-w-7xl mx-auto flex flex-col lg:flex-row content-gap sm:gap-8">
 
           {/* Sidebar */}
           <aside className="w-full lg:w-80 space-y-6">
             <Motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
-              className="bg-neutral-900 rounded-[2.5rem] p-8 text-center relative overflow-hidden shadow-2xl"
+              className="bg-neutral-900 rounded-2xl sm:rounded-[2.5rem] card-padding sm:p-8 text-center relative overflow-hidden shadow-2xl"
             >
               <div className="absolute top-0 right-0 w-32 h-32 bg-orange-500/10 rounded-full blur-3xl -mr-16 -mt-16" />
               <div className="absolute bottom-0 left-0 w-24 h-24 bg-orange-500/5 rounded-full blur-2xl -ml-12 -mb-12" />
 
               <div className="relative z-10">
-                <div className="text-[10px] font-black uppercase tracking-[0.2em] text-orange-500/80 mb-2">{getRoleDisplay()}</div>
+                <div className="text-caption sm:text-[10px] font-black uppercase tracking-label sm:tracking-[0.2em] text-orange-500/80 mb-2">{getRoleDisplay()}</div>
                 <div className="text-2xl font-black text-white tracking-tight mb-6">{user?.firstname || 'User'}</div>
 
-                <div className="p-6 bg-white/5 backdrop-blur-md rounded-3xl border border-white/5 shadow-inner">
-                  <div className="text-[10px] font-black uppercase tracking-widest text-neutral-500 mb-2">Available Balance</div>
+                <div className="card-padding sm:p-6 bg-white/5 backdrop-blur-md rounded-3xl border border-white/5 shadow-inner">
+                  <div className="text-caption sm:text-[10px] font-black uppercase tracking-widest text-neutral-500 mb-2">Available Balance</div>
                   <div className="text-3xl font-black text-white tracking-tighter">₦{walletBalance.toLocaleString()}</div>
                 </div>
               </div>
             </Motion.div>
 
-            <div className="bg-white/80 backdrop-blur-3xl rounded-[2.5rem] p-4 border border-white/20 shadow-xl">
+            <div className="bg-white/80 backdrop-blur-3xl rounded-2xl sm:rounded-[2.5rem] p-4 border border-white/20 shadow-xl">
               <SidebarButton active={activeTab === 'overview'} onClick={() => setActiveTab('overview')} icon={FaWallet}>
                 Overview
               </SidebarButton>
@@ -298,7 +300,7 @@ const Wallet = () => {
           </aside>
 
           {/* Main Content Area */}
-          <main className="flex-1 bg-white/80 backdrop-blur-3xl rounded-[2.5rem] p-8 md:p-12 shadow-2xl border border-white/20 relative overflow-hidden">
+          <main className="min-w-0 flex-1 bg-white/80 backdrop-blur-3xl rounded-2xl sm:rounded-[2.5rem] card-padding sm:p-8 md:p-12 shadow-2xl border border-white/20 relative overflow-hidden">
             <div className="relative z-10">
               <AnimatePresence mode="wait">
                 <Motion.div
@@ -309,7 +311,7 @@ const Wallet = () => {
                   transition={{ duration: 0.3 }}
                 >
                   {activeTab === 'overview' && (
-                    <div className="space-y-10">
+                    <div className="space-y-6 sm:space-y-10">
                       <div className="flex justify-between items-center gap-4 flex-wrap">
                         <div className="flex items-center gap-4">
                           <Motion.button
@@ -337,25 +339,25 @@ const Wallet = () => {
                       </div>
 
                       {/* Stat Cards */}
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div className="group p-8 bg-neutral-900 rounded-[2.5rem] border border-neutral-800 shadow-2xl relative overflow-hidden">
+                      <div className="grid grid-cols-1 md:grid-cols-2 content-gap sm:gap-6">
+                        <div className="group card-padding sm:p-8 bg-neutral-900 rounded-2xl sm:rounded-[2.5rem] border border-neutral-800 shadow-2xl relative overflow-hidden">
                           <div className="absolute top-0 right-0 w-32 h-32 bg-green-500/5 rounded-full blur-3xl" />
                           <div className="relative z-10">
                             <div className="p-3 bg-green-500/10 rounded-2xl w-fit mb-4">
                               <FaMoneyBillWave className="text-green-500" />
                             </div>
-                            <div className="text-[10px] font-black uppercase tracking-widest text-neutral-500 mb-1">Total Earned</div>
+                            <div className="text-caption sm:text-[10px] font-black uppercase tracking-widest text-neutral-500 mb-1">Total Earned</div>
                             <div className="text-3xl font-black text-white tracking-tighter">₦{totalEarned.toLocaleString()}</div>
                           </div>
                         </div>
 
-                        <div className="group p-8 bg-neutral-900 rounded-[2.5rem] border border-neutral-800 shadow-2xl relative overflow-hidden">
+                        <div className="group card-padding sm:p-8 bg-neutral-900 rounded-2xl sm:rounded-[2.5rem] border border-neutral-800 shadow-2xl relative overflow-hidden">
                           <div className="absolute top-0 right-0 w-32 h-32 bg-red-500/5 rounded-full blur-3xl" />
                           <div className="relative z-10">
                             <div className="p-3 bg-red-500/10 rounded-2xl w-fit mb-4">
                               <FaCreditCard className="text-red-500" />
                             </div>
-                            <div className="text-[10px] font-black uppercase tracking-widest text-neutral-500 mb-1">Total Spent</div>
+                            <div className="text-caption sm:text-[10px] font-black uppercase tracking-widest text-neutral-500 mb-1">Total Spent</div>
                             <div className="text-3xl font-black text-white tracking-tighter">₦{totalSpent.toLocaleString()}</div>
                           </div>
                         </div>
@@ -364,8 +366,8 @@ const Wallet = () => {
                       {/* Recent Activities */}
                       <div className="space-y-6">
                         <div className="flex justify-between items-center">
-                          <div className="text-[10px] font-black uppercase tracking-[0.2em] text-neutral-400 font-bold">Recent Activities</div>
-                          <button onClick={() => setActiveTab('transactions')} className="text-[10px] font-black uppercase tracking-widest text-orange-500 hover:text-orange-600 transition-colors">View All History</button>
+                          <div className="text-caption sm:text-[10px] font-black uppercase tracking-label sm:tracking-[0.2em] text-neutral-400 font-bold">Recent Activities</div>
+                          <button onClick={() => setActiveTab('transactions')} className="text-caption sm:text-[10px] font-black uppercase tracking-widest text-orange-500 hover:text-orange-600 transition-colors">View All History</button>
                         </div>
                         <div className="space-y-3">
                           {transactions.slice(0, 3).map((transaction) => (
@@ -377,7 +379,7 @@ const Wallet = () => {
                   )}
 
                   {activeTab === 'transactions' && (
-                    <div className="space-y-8">
+                    <div className="space-y-6 sm:space-y-8">
                       <div>
                         <h3 className="text-2xl font-black text-neutral-900 tracking-tight">Transaction History</h3>
                         <p className="text-sm text-neutral-500 mt-1">A detailed list of all your financial activities.</p>
@@ -387,11 +389,11 @@ const Wallet = () => {
                           <TransactionItem key={transaction._id} transaction={transaction} />
                         ))}
                         {transactions.length === 0 && (
-                          <div className="py-20 text-center">
+                          <div className="py-8 sm:py-20 text-center">
                             <div className="w-16 h-16 bg-neutral-100 rounded-full flex items-center justify-center mx-auto mb-4">
                               <FaHistory className="text-neutral-300 text-xl" />
                             </div>
-                            <div className="text-[10px] font-black uppercase tracking-widest text-neutral-400">No transactions recorded yet</div>
+                            <div className="text-caption sm:text-[10px] font-black uppercase tracking-widest text-neutral-400">No transactions recorded yet</div>
                           </div>
                         )}
                       </div>

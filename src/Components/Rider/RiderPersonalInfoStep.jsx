@@ -17,7 +17,7 @@ const RiderPersonalInfoStep = ({
 }) => {
   return (
     <div className="space-y-6">
-      <div className="text-center mb-8">
+      <div className="text-center mb-6 sm:mb-8">
         <div className="w-24 md:w-28 h-24 md:h-28 bg-neutral-800 border-2 border-orange-500/40 rounded-full mx-auto mb-4 flex items-center justify-center shadow-lg shadow-orange-500/10">
           {profilePicture ? (
             <img
@@ -47,7 +47,7 @@ const RiderPersonalInfoStep = ({
         </div>
         {showCameraModal && (
           <div className="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center z-50 p-4">
-            <div className="bg-neutral-900 border border-white/10 p-6 rounded-3xl max-w-md w-full shadow-2xl">
+            <div className="bg-neutral-900 border border-white/10 card-padding sm:p-6 rounded-3xl max-w-md w-full shadow-2xl">
               <h3 className="text-base font-black uppercase tracking-wider mb-4 text-center text-white">
                 Take Profile Photo
               </h3>
@@ -70,14 +70,14 @@ const RiderPersonalInfoStep = ({
                 <button
                   type="button"
                   onClick={captureImage}
-                  className="bg-orange-500 text-white px-6 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-orange-600 active:scale-95 transition-all shadow-lg shadow-orange-500/25"
+                  className="bg-orange-500 text-white px-4 sm:px-6 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-orange-600 active:scale-95 transition-all shadow-lg shadow-orange-500/25"
                 >
                   Capture
                 </button>
                 <button
                   type="button"
                   onClick={stopCamera}
-                  className="bg-neutral-800 text-neutral-300 border border-white/5 px-6 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-neutral-700 active:scale-95 transition-all"
+                  className="bg-neutral-800 text-neutral-300 border border-white/5 px-4 sm:px-6 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-neutral-700 active:scale-95 transition-all"
                 >
                   Cancel
                 </button>
@@ -127,7 +127,7 @@ const RiderPersonalInfoStep = ({
       />
 
       <div className="mb-6">
-        <label className="block mb-2 text-[10px] font-black uppercase tracking-[0.2em] text-neutral-400">
+        <label className="block mb-2 text-caption sm:text-[10px] font-black uppercase tracking-label sm:tracking-[0.2em] text-neutral-400">
           Date of Birth <span className="text-orange-500">*</span>
         </label>
         <DatePicker
@@ -135,7 +135,7 @@ const RiderPersonalInfoStep = ({
           onChange={(date) => formik.setFieldValue('dateOfBirth', date)}
           onBlur={formik.handleBlur}
           name="dateOfBirth"
-          className="w-full px-5 py-4 rounded-[1.25rem] bg-neutral-800/40 border-2 border-neutral-800 text-white placeholder:text-neutral-600 focus:bg-neutral-800 focus:border-orange-500/50 outline-none transition-all duration-300 font-bold text-sm"
+          className="w-full px-5 py-3 sm:py-4 rounded-[1.25rem] bg-neutral-800/40 border-2 border-neutral-800 text-white placeholder:text-neutral-600 focus:bg-neutral-800 focus:border-orange-500/50 outline-none transition-all duration-300 font-bold text-sm"
           dateFormat="yyyy-MM-dd"
           placeholderText="Select date of birth"
           showYearDropdown
@@ -144,14 +144,14 @@ const RiderPersonalInfoStep = ({
           maxDate={new Date()}
         />
         {formik.touched.dateOfBirth && formik.errors.dateOfBirth && (
-          <p className="mt-2 text-[10px] font-bold text-red-500 italic uppercase tracking-wider">
+          <p className="mt-2 text-caption sm:text-[10px] font-bold text-red-500 italic uppercase tracking-wider">
             {formik.errors.dateOfBirth}
           </p>
         )}
       </div>
 
       <div className="mb-6">
-        <label className="block mb-2 text-[10px] font-black uppercase tracking-[0.2em] text-neutral-400">
+        <label className="block mb-2 text-caption sm:text-[10px] font-black uppercase tracking-label sm:tracking-[0.2em] text-neutral-400">
           Address <span className="text-orange-500">*</span>
         </label>
         <textarea
@@ -159,21 +159,21 @@ const RiderPersonalInfoStep = ({
           value={formik.values.address}
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
-          className={`w-full px-5 py-4 rounded-[1.25rem] bg-neutral-800/40 border-2 text-white placeholder:text-neutral-600 focus:bg-neutral-800 focus:border-orange-500/50 outline-none transition-all duration-300 font-bold text-sm ${
+          className={`w-full px-5 py-3 sm:py-4 rounded-[1.25rem] bg-neutral-800/40 border-2 text-white placeholder:text-neutral-600 focus:bg-neutral-800 focus:border-orange-500/50 outline-none transition-all duration-300 font-bold text-sm ${
             formik.touched.address && formik.errors.address ? 'border-red-500/50 bg-red-500/5' : 'border-neutral-800'
           }`}
           rows={3}
           placeholder="Enter your full address"
         ></textarea>
         {formik.touched.address && formik.errors.address && (
-          <p className="mt-2 text-[10px] font-bold text-red-500 italic uppercase tracking-wider">
+          <p className="mt-2 text-caption sm:text-[10px] font-bold text-red-500 italic uppercase tracking-wider">
             {formik.errors.address}
           </p>
         )}
       </div>
 
       <div className="mt-10 pt-6 border-t border-white/10">
-        <h3 className="text-xs font-black uppercase tracking-[0.2em] text-orange-400 mb-6">
+        <h3 className="text-xs font-black uppercase tracking-label sm:tracking-[0.2em] text-orange-400 mb-6">
           Next of Kin Details
         </h3>
         <div className="space-y-4">
@@ -199,7 +199,7 @@ const RiderPersonalInfoStep = ({
             error={formik.touched.nextOfKinPhone && formik.errors.nextOfKinPhone}
           />
           <div className="mb-6">
-            <label className="block mb-2 text-[10px] font-black uppercase tracking-[0.2em] text-neutral-400">
+            <label className="block mb-2 text-caption sm:text-[10px] font-black uppercase tracking-label sm:tracking-[0.2em] text-neutral-400">
               Next of Kin Address <span className="text-orange-500">*</span>
             </label>
             <textarea
@@ -207,14 +207,14 @@ const RiderPersonalInfoStep = ({
               value={formik.values.nextOfKinAddress}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              className={`w-full px-5 py-4 rounded-[1.25rem] bg-neutral-800/40 border-2 text-white placeholder:text-neutral-600 focus:bg-neutral-800 focus:border-orange-500/50 outline-none transition-all duration-300 font-bold text-sm ${
+              className={`w-full px-5 py-3 sm:py-4 rounded-[1.25rem] bg-neutral-800/40 border-2 text-white placeholder:text-neutral-600 focus:bg-neutral-800 focus:border-orange-500/50 outline-none transition-all duration-300 font-bold text-sm ${
                 formik.touched.nextOfKinAddress && formik.errors.nextOfKinAddress ? 'border-red-500/50 bg-red-500/5' : 'border-neutral-800'
               }`}
               rows={3}
               placeholder="Enter next of kin address"
             ></textarea>
             {formik.touched.nextOfKinAddress && formik.errors.nextOfKinAddress && (
-              <p className="mt-2 text-[10px] font-bold text-red-500 italic uppercase tracking-wider">
+              <p className="mt-2 text-caption sm:text-[10px] font-bold text-red-500 italic uppercase tracking-wider">
                 {formik.errors.nextOfKinAddress}
               </p>
             )}

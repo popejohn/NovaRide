@@ -15,19 +15,19 @@ const InstallmentTerms = () => {
         <Navbar userrole={user?.role} userverified={true} profilePic={user?.profilePic} nav={<OtherNav userrole={user?.role} />} />
       )}
 
-      <div className="max-w-4xl mx-auto px-6 py-16 md:py-24">
+      <div className="max-w-4xl mx-auto page-gutter sm:px-6 py-8 sm:py-16 md:py-24">
         <button
           onClick={() => navigate(-1)}
-          className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-widest text-neutral-500 hover:text-orange-500 mb-8 transition-colors"
+          className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-widest text-neutral-500 hover:text-orange-500 mb-6 sm:mb-8 transition-colors"
         >
           <FaArrowLeft /> Back
         </button>
 
-        <div className="bg-white rounded-[2.5rem] border border-neutral-200/80 shadow-2xl p-8 md:p-14 relative overflow-hidden">
+        <div className="bg-white rounded-2xl sm:rounded-[2.5rem] border border-neutral-200/80 shadow-2xl card-padding sm:p-8 md:p-14 relative overflow-hidden">
           <div className="absolute top-0 right-0 w-64 h-64 bg-orange-500/5 blur-3xl rounded-full -mr-32 -mt-32 pointer-events-none" />
 
           {/* Header */}
-          <div className="border-b border-neutral-100 pb-8 mb-10">
+          <div className="border-b border-neutral-100 pb-8 mb-6 sm:mb-10">
             <div className="inline-flex items-center gap-2 bg-orange-100/80 text-orange-600 px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-wider mb-4">
               <FaShieldAlt /> Version 1.0 (2026)
             </div>
@@ -41,8 +41,8 @@ const InstallmentTerms = () => {
           </div>
 
           {/* Agreement Sections */}
-          <div className="space-y-8 text-neutral-700 text-sm leading-relaxed">
-            <section className="bg-orange-50/50 p-6 rounded-2xl border border-orange-100">
+          <div className="space-y-6 sm:space-y-8 text-neutral-700 text-sm leading-relaxed">
+            <section className="bg-orange-50/50 card-padding sm:p-6 rounded-2xl border border-orange-100">
               <h2 className="text-base font-black text-neutral-900 uppercase tracking-wider mb-2 flex items-center gap-2">
                 <FaFileContract className="text-orange-500" /> 1. Financial Commitment & Repayment Plan
               </h2>
@@ -74,7 +74,7 @@ const InstallmentTerms = () => {
               </p>
             </section>
 
-            <section className="bg-red-50/60 p-6 rounded-2xl border border-red-100 space-y-3">
+            <section className="bg-red-50/60 card-padding sm:p-6 rounded-2xl border border-red-100 space-y-3">
               <h2 className="text-base font-black text-red-900 uppercase tracking-wider flex items-center gap-2">
                 <FaExclamationTriangle className="text-red-500" /> 4. Default, Non-Payment & Vehicle Retrieval
               </h2>
@@ -113,7 +113,7 @@ const InstallmentTerms = () => {
               </p>
             </section>
 
-            <section className="bg-neutral-900 text-white p-6 rounded-2xl space-y-2">
+            <section className="bg-neutral-900 text-white card-padding sm:p-6 rounded-2xl space-y-2">
               <h2 className="text-sm font-black uppercase tracking-widest text-orange-400">
                 8. Rider Attestation & Confirmation
               </h2>
@@ -127,7 +127,7 @@ const InstallmentTerms = () => {
           <div className="mt-12 pt-8 border-t border-neutral-100 flex justify-end">
             <button
               onClick={() => navigate(-1)}
-              className="px-8 py-4 bg-neutral-900 hover:bg-orange-500 text-white rounded-2xl font-black text-xs uppercase tracking-widest transition-all shadow-xl"
+              className="px-4 sm:px-8 py-3 sm:py-4 bg-neutral-900 hover:bg-orange-500 text-white rounded-2xl font-black text-xs uppercase tracking-widest transition-all shadow-xl"
             >
               I Understand & Return
             </button>

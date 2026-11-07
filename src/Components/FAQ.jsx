@@ -174,10 +174,10 @@ const FAQ = () => {
       />
 
       {/* Main Container */}
-      <main className="flex-1 pt-24 md:pt-32 pb-20 px-4 sm:px-6 md:px-12 lg:px-20 max-w-7xl mx-auto w-full">
+      <main className="flex-1 pt-20 sm:pt-24 md:pt-32 pb-10 sm:pb-20 page-gutter sm:px-6 md:px-12 lg:px-20 max-w-7xl mx-auto w-full">
         {/* Hero Header */}
         <section className="text-center mb-16 relative">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-orange-500/10 blur-[120px] rounded-full pointer-events-none" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-96 h-96 bg-orange-500/10 blur-[120px] rounded-full pointer-events-none" />
 
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -230,12 +230,12 @@ const FAQ = () => {
         {/* ========================================================================= */}
         {/* SECTION 1: BECOME A RIDER (DRIVE & EARN) */}
         {/* ========================================================================= */}
-        <section id="bearider" className="scroll-mt-28 mb-28">
-          <div className="bg-gradient-to-b from-neutral-900/90 to-neutral-950/90 border border-neutral-800 rounded-[2.5rem] p-6 sm:p-10 md:p-14 relative overflow-hidden shadow-2xl">
+        <section id="bearider" className="scroll-mt-20 sm:scroll-mt-28 mb-12 sm:mb-28">
+          <div className="bg-gradient-to-b from-neutral-900/90 to-neutral-950/90 border border-neutral-800 rounded-2xl sm:rounded-[2.5rem] card-padding sm:p-10 md:p-14 relative overflow-hidden shadow-2xl">
             <div className="absolute -top-24 -right-24 w-80 h-80 bg-orange-500/10 rounded-full blur-[90px] pointer-events-none" />
 
             {/* Header / Intro */}
-            <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8 pb-10 border-b border-neutral-800/80">
+            <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between content-gap sm:gap-8 pb-10 border-b border-neutral-800/80">
               <div className="space-y-3 max-w-2xl">
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-500/10 border border-orange-500/30 text-orange-400 text-xs font-black uppercase tracking-widest">
                   <FaCarSide /> Driver & Rider Empowerment
@@ -251,7 +251,7 @@ const FAQ = () => {
 
               <div className="w-full lg:w-auto flex flex-col sm:flex-row gap-4">
                 <Link to={getRiderCtaDestination()} className="w-full sm:w-auto">
-                  <button className="w-full sm:w-auto px-8 py-4 bg-orange-500 hover:bg-orange-600 active:scale-95 text-white font-black text-sm uppercase tracking-widest rounded-2xl shadow-xl shadow-orange-500/20 transition-all flex items-center justify-center gap-3 cursor-pointer">
+                  <button className="w-full sm:w-auto px-4 sm:px-8 py-3 sm:py-4 bg-orange-500 hover:bg-orange-600 active:scale-95 text-white font-black text-sm uppercase tracking-widest rounded-2xl shadow-xl shadow-orange-500/20 transition-all flex items-center justify-center gap-3 cursor-pointer">
                     Get Started as Rider <FaArrowRight />
                   </button>
                 </Link>
@@ -264,8 +264,8 @@ const FAQ = () => {
                 <FaRoute className="text-orange-500" /> How Ride Booking & Earnings Work
               </h3>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <div className="p-6 rounded-3xl bg-neutral-900/60 border border-neutral-800 hover:border-neutral-700 transition-all space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 content-gap sm:gap-6">
+                <div className="card-padding sm:p-6 rounded-3xl bg-neutral-900/60 border border-neutral-800 hover:border-neutral-700 transition-all space-y-4">
                   <div className="w-12 h-12 rounded-2xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center text-orange-500 font-black text-lg">
                     1
                   </div>
@@ -275,7 +275,7 @@ const FAQ = () => {
                   </p>
                 </div>
 
-                <div className="p-6 rounded-3xl bg-neutral-900/60 border border-neutral-800 hover:border-neutral-700 transition-all space-y-4">
+                <div className="card-padding sm:p-6 rounded-3xl bg-neutral-900/60 border border-neutral-800 hover:border-neutral-700 transition-all space-y-4">
                   <div className="w-12 h-12 rounded-2xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center text-orange-500 font-black text-lg">
                     2
                   </div>
@@ -285,7 +285,7 @@ const FAQ = () => {
                   </p>
                 </div>
 
-                <div className="p-6 rounded-3xl bg-neutral-900/60 border border-neutral-800 hover:border-neutral-700 transition-all space-y-4">
+                <div className="card-padding sm:p-6 rounded-3xl bg-neutral-900/60 border border-neutral-800 hover:border-neutral-700 transition-all space-y-4">
                   <div className="w-12 h-12 rounded-2xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center text-orange-500 font-black text-lg">
                     3
                   </div>
@@ -295,7 +295,7 @@ const FAQ = () => {
                   </p>
                 </div>
 
-                <div className="p-6 rounded-3xl bg-neutral-900/60 border border-neutral-800 hover:border-neutral-700 transition-all space-y-4">
+                <div className="card-padding sm:p-6 rounded-3xl bg-neutral-900/60 border border-neutral-800 hover:border-neutral-700 transition-all space-y-4">
                   <div className="w-12 h-12 rounded-2xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center text-orange-500 font-black text-lg">
                     4
                   </div>
@@ -308,14 +308,14 @@ const FAQ = () => {
             </div>
 
             {/* 4-Step Rider Onboarding Breakdown */}
-            <div className="mt-14 pt-12 border-t border-neutral-800/80">
-              <h3 className="text-xl sm:text-2xl font-black uppercase tracking-tight text-white mb-8 flex items-center gap-3">
+            <div className="mt-8 sm:mt-14 pt-6 sm:pt-12 border-t border-neutral-800/80">
+              <h3 className="text-xl sm:text-2xl font-black uppercase tracking-tight text-white mb-6 sm:mb-8 flex items-center gap-3">
                 <FaIdCard className="text-orange-500" /> Complete Rider Registration & Setup Process
               </h3>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 content-gap sm:gap-6">
                 {/* Step 1 */}
-                <div className="p-6 rounded-3xl bg-neutral-900/40 border border-neutral-800/80 flex gap-5 items-start">
+                <div className="card-padding sm:p-6 rounded-3xl bg-neutral-900/40 border border-neutral-800/80 flex gap-5 items-start">
                   <div className="p-3 bg-neutral-800 text-orange-400 rounded-2xl text-xl flex-shrink-0">
                     <FaUserTie />
                   </div>
@@ -329,7 +329,7 @@ const FAQ = () => {
                 </div>
 
                 {/* Step 2 */}
-                <div className="p-6 rounded-3xl bg-neutral-900/40 border border-neutral-800/80 flex gap-5 items-start">
+                <div className="card-padding sm:p-6 rounded-3xl bg-neutral-900/40 border border-neutral-800/80 flex gap-5 items-start">
                   <div className="p-3 bg-neutral-800 text-orange-400 rounded-2xl text-xl flex-shrink-0">
                     <FaCarSide />
                   </div>
@@ -343,7 +343,7 @@ const FAQ = () => {
                 </div>
 
                 {/* Step 3 */}
-                <div className="p-6 rounded-3xl bg-neutral-900/40 border border-neutral-800/80 flex gap-5 items-start">
+                <div className="card-padding sm:p-6 rounded-3xl bg-neutral-900/40 border border-neutral-800/80 flex gap-5 items-start">
                   <div className="p-3 bg-neutral-800 text-orange-400 rounded-2xl text-xl flex-shrink-0">
                     <FaFileContract />
                   </div>
@@ -357,7 +357,7 @@ const FAQ = () => {
                 </div>
 
                 {/* Step 4 */}
-                <div className="p-6 rounded-3xl bg-neutral-900/40 border border-neutral-800/80 flex gap-5 items-start">
+                <div className="card-padding sm:p-6 rounded-3xl bg-neutral-900/40 border border-neutral-800/80 flex gap-5 items-start">
                   <div className="p-3 bg-neutral-800 text-orange-400 rounded-2xl text-xl flex-shrink-0">
                     <FaWallet />
                   </div>
@@ -399,7 +399,7 @@ const FAQ = () => {
               <Link to={getRiderCtaDestination()}>
                 <Button
                   text={'Get Started Now'}
-                  classes={'font-black py-3 px-8 rounded-xl text-white bg-orange-500 hover:bg-orange-600 shadow-lg shadow-orange-500/20 text-xs uppercase tracking-widest cursor-pointer'}
+                  classes={'font-black py-3 px-4 sm:px-8 rounded-xl text-white bg-orange-500 hover:bg-orange-600 shadow-lg shadow-orange-500/20 text-xs uppercase tracking-widest cursor-pointer'}
                 />
               </Link>
             </div>
@@ -409,12 +409,12 @@ const FAQ = () => {
         {/* ========================================================================= */}
         {/* SECTION 2: MARUWA INSTALLMENTS (HIRE-PURCHASE) */}
         {/* ========================================================================= */}
-        <section id="installment" className="scroll-mt-28 mb-28">
-          <div className="bg-gradient-to-b from-neutral-900/90 to-neutral-950/90 border border-neutral-800 rounded-[2.5rem] p-6 sm:p-10 md:p-14 relative overflow-hidden shadow-2xl">
+        <section id="installment" className="scroll-mt-20 sm:scroll-mt-28 mb-12 sm:mb-28">
+          <div className="bg-gradient-to-b from-neutral-900/90 to-neutral-950/90 border border-neutral-800 rounded-2xl sm:rounded-[2.5rem] card-padding sm:p-10 md:p-14 relative overflow-hidden shadow-2xl">
             <div className="absolute -top-24 -left-24 w-80 h-80 bg-amber-500/10 rounded-full blur-[90px] pointer-events-none" />
 
             {/* Header / Intro */}
-            <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8 pb-10 border-b border-neutral-800/80">
+            <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between content-gap sm:gap-8 pb-10 border-b border-neutral-800/80">
               <div className="space-y-3 max-w-2xl">
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-black uppercase tracking-widest">
                   <FaHandshake /> Asset Ownership Program
@@ -433,7 +433,7 @@ const FAQ = () => {
 
               <div className="w-full lg:w-auto flex flex-col sm:flex-row gap-4">
                 <Link to={getInstallmentCtaDestination()} className="w-full sm:w-auto">
-                  <button className="w-full sm:w-auto px-8 py-4 bg-amber-500 hover:bg-amber-600 active:scale-95 text-neutral-950 font-black text-sm uppercase tracking-widest rounded-2xl shadow-xl shadow-amber-500/20 transition-all flex items-center justify-center gap-3 cursor-pointer">
+                  <button className="w-full sm:w-auto px-4 sm:px-8 py-3 sm:py-4 bg-amber-500 hover:bg-amber-600 active:scale-95 text-neutral-950 font-black text-sm uppercase tracking-widest rounded-2xl shadow-xl shadow-amber-500/20 transition-all flex items-center justify-center gap-3 cursor-pointer">
                     Apply for Installment <FaArrowRight />
                   </button>
                 </Link>
@@ -446,9 +446,9 @@ const FAQ = () => {
                 <FaShieldAlt className="text-amber-500" /> Eligibility & Key Requirements
               </h3>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 content-gap sm:gap-6">
                 {/* Highlight 1: Downpayment */}
-                <div className="p-8 rounded-[2rem] bg-neutral-900/80 border-2 border-amber-500/30 relative overflow-hidden space-y-4">
+                <div className="card-padding sm:p-8 rounded-2xl sm:rounded-[2rem] bg-neutral-900/80 border-2 border-amber-500/30 relative overflow-hidden space-y-4">
                   <div className="w-12 h-12 rounded-2xl bg-amber-500/10 text-amber-400 flex items-center justify-center text-xl">
                     <FaMoneyBillWave />
                   </div>
@@ -460,7 +460,7 @@ const FAQ = () => {
                 </div>
 
                 {/* Highlight 2: Two Guarantors */}
-                <div className="p-8 rounded-[2rem] bg-neutral-900/80 border border-neutral-800 space-y-4">
+                <div className="card-padding sm:p-8 rounded-2xl sm:rounded-[2rem] bg-neutral-900/80 border border-neutral-800 space-y-4">
                   <div className="w-12 h-12 rounded-2xl bg-orange-500/10 text-orange-400 flex items-center justify-center text-xl">
                     <FaUserTie />
                   </div>
@@ -472,7 +472,7 @@ const FAQ = () => {
                 </div>
 
                 {/* Highlight 3: Identity & Documentation */}
-                <div className="p-8 rounded-[2rem] bg-neutral-900/80 border border-neutral-800 space-y-4">
+                <div className="card-padding sm:p-8 rounded-2xl sm:rounded-[2rem] bg-neutral-900/80 border border-neutral-800 space-y-4">
                   <div className="w-12 h-12 rounded-2xl bg-neutral-800 text-neutral-300 flex items-center justify-center text-xl">
                     <FaIdCard />
                   </div>
@@ -486,8 +486,8 @@ const FAQ = () => {
             </div>
 
             {/* Installment Packages Breakdown */}
-            <div className="mt-14 pt-12 border-t border-neutral-800/80">
-              <div className="text-center max-w-2xl mx-auto mb-10 space-y-2">
+            <div className="mt-8 sm:mt-14 pt-6 sm:pt-12 border-t border-neutral-800/80">
+              <div className="text-center max-w-2xl mx-auto mb-6 sm:mb-10 space-y-2">
                 <h3 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-white">
                   Choose Your Repayment Package
                 </h3>
@@ -496,11 +496,11 @@ const FAQ = () => {
                 </p>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 content-gap sm:gap-6">
                 {/* Plan 1: Nova Sprint */}
-                <div className="p-8 rounded-[2.5rem] bg-neutral-900/90 border border-neutral-800 hover:border-amber-500/40 transition-all flex flex-col justify-between space-y-6">
+                <div className="card-padding sm:p-8 rounded-2xl sm:rounded-[2.5rem] bg-neutral-900/90 border border-neutral-800 hover:border-amber-500/40 transition-all flex flex-col justify-between space-y-6">
                   <div className="space-y-4">
-                    <div className="inline-block px-3 py-1 rounded-full bg-neutral-800 text-[10px] font-black uppercase tracking-widest text-amber-400">
+                    <div className="inline-block px-3 py-1 rounded-full bg-neutral-800 text-caption sm:text-[10px] font-black uppercase tracking-widest text-amber-400">
                       Fast Track
                     </div>
                     <h4 className="text-2xl font-black text-white">Nova Sprint</h4>
@@ -531,12 +531,12 @@ const FAQ = () => {
                 </div>
 
                 {/* Plan 2: Nova Stability (Popular) */}
-                <div className="p-8 rounded-[2.5rem] bg-gradient-to-b from-amber-500/10 via-neutral-900 to-neutral-900 border-2 border-amber-500 shadow-2xl shadow-amber-500/10 flex flex-col justify-between space-y-6 relative">
-                  <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-amber-500 text-neutral-950 font-black text-[10px] uppercase tracking-widest px-4 py-1 rounded-full">
+                <div className="card-padding sm:p-8 rounded-2xl sm:rounded-[2.5rem] bg-gradient-to-b from-amber-500/10 via-neutral-900 to-neutral-900 border-2 border-amber-500 shadow-2xl shadow-amber-500/10 flex flex-col justify-between space-y-6 relative">
+                  <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-amber-500 text-neutral-950 font-black text-caption sm:text-[10px] uppercase tracking-widest px-4 py-1 rounded-full">
                     Most Popular
                   </div>
                   <div className="space-y-4">
-                    <div className="inline-block px-3 py-1 rounded-full bg-amber-500/20 text-[10px] font-black uppercase tracking-widest text-amber-300">
+                    <div className="inline-block px-3 py-1 rounded-full bg-amber-500/20 text-caption sm:text-[10px] font-black uppercase tracking-widest text-amber-300">
                       Balanced Choice
                     </div>
                     <h4 className="text-2xl font-black text-white">Nova Stability</h4>
@@ -567,9 +567,9 @@ const FAQ = () => {
                 </div>
 
                 {/* Plan 3: Nova Friend */}
-                <div className="p-8 rounded-[2.5rem] bg-neutral-900/90 border border-neutral-800 hover:border-amber-500/40 transition-all flex flex-col justify-between space-y-6">
+                <div className="card-padding sm:p-8 rounded-2xl sm:rounded-[2.5rem] bg-neutral-900/90 border border-neutral-800 hover:border-amber-500/40 transition-all flex flex-col justify-between space-y-6">
                   <div className="space-y-4">
-                    <div className="inline-block px-3 py-1 rounded-full bg-neutral-800 text-[10px] font-black uppercase tracking-widest text-amber-400">
+                    <div className="inline-block px-3 py-1 rounded-full bg-neutral-800 text-caption sm:text-[10px] font-black uppercase tracking-widest text-amber-400">
                       Maximum Ease
                     </div>
                     <h4 className="text-2xl font-black text-white">Nova Friend</h4>
@@ -602,14 +602,14 @@ const FAQ = () => {
             </div>
 
             {/* Inclusions & Safety Guarantee */}
-            <div className="mt-12 bg-neutral-900/60 border border-neutral-800 rounded-3xl p-6 sm:p-8 grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div className="mt-12 bg-neutral-900/60 border border-neutral-800 rounded-3xl card-padding sm:p-8 grid grid-cols-1 md:grid-cols-4 content-gap sm:gap-6">
               <div className="flex items-start gap-4">
                 <div className="p-3 bg-amber-500/10 text-amber-400 rounded-xl text-lg flex-shrink-0">
                   <FaTools />
                 </div>
                 <div>
                   <h5 className="font-bold text-white text-sm">Servicing Support</h5>
-                  <p className="text-[11px] text-neutral-400 mt-1">Scheduled routine technical maintenance checks.</p>
+                  <p className="text-caption sm:text-[11px] text-neutral-400 mt-1">Scheduled routine technical maintenance checks.</p>
                 </div>
               </div>
 
@@ -619,7 +619,7 @@ const FAQ = () => {
                 </div>
                 <div>
                   <h5 className="font-bold text-white text-sm">Comprehensive Insurance</h5>
-                  <p className="text-[11px] text-neutral-400 mt-1">Protection against accidents, theft, and third-party liabilities.</p>
+                  <p className="text-caption sm:text-[11px] text-neutral-400 mt-1">Protection against accidents, theft, and third-party liabilities.</p>
                 </div>
               </div>
 
@@ -629,7 +629,7 @@ const FAQ = () => {
                 </div>
                 <div>
                   <h5 className="font-bold text-white text-sm">Pre-fitted GPS Tracker</h5>
-                  <p className="text-[11px] text-neutral-400 mt-1">24/7 anti-theft tracking and geo-fencing included.</p>
+                  <p className="text-caption sm:text-[11px] text-neutral-400 mt-1">24/7 anti-theft tracking and geo-fencing included.</p>
                 </div>
               </div>
 
@@ -639,7 +639,7 @@ const FAQ = () => {
                 </div>
                 <div>
                   <h5 className="font-bold text-white text-sm">Ownership Transfer</h5>
-                  <p className="text-[11px] text-neutral-400 mt-1">Full vehicle particulars legally transferred upon completion.</p>
+                  <p className="text-caption sm:text-[11px] text-neutral-400 mt-1">Full vehicle particulars legally transferred upon completion.</p>
                 </div>
               </div>
             </div>
@@ -652,7 +652,7 @@ const FAQ = () => {
               <Link to={getInstallmentCtaDestination()}>
                 <Button
                   text={'Get Started Now'}
-                  classes={'font-black py-3 px-8 rounded-xl text-neutral-950 bg-amber-500 hover:bg-amber-400 shadow-lg shadow-amber-500/20 text-xs uppercase tracking-widest cursor-pointer'}
+                  classes={'font-black py-3 px-4 sm:px-8 rounded-xl text-neutral-950 bg-amber-500 hover:bg-amber-400 shadow-lg shadow-amber-500/20 text-xs uppercase tracking-widest cursor-pointer'}
                 />
               </Link>
             </div>
@@ -662,12 +662,12 @@ const FAQ = () => {
         {/* ========================================================================= */}
         {/* SECTION 3: HOW RIDE BOOKING WORKS (SERVICES & SCHEDULE) */}
         {/* ========================================================================= */}
-        <section id="bookride" className="scroll-mt-28 mb-28">
-          <div className="bg-neutral-900/50 border border-neutral-800 rounded-[2.5rem] p-6 sm:p-10 md:p-14 relative overflow-hidden">
+        <section id="bookride" className="scroll-mt-20 sm:scroll-mt-28 mb-12 sm:mb-28">
+          <div className="bg-neutral-900/50 border border-neutral-800 rounded-2xl sm:rounded-[2.5rem] card-padding sm:p-10 md:p-14 relative overflow-hidden">
             <div id="services" className="scroll-mt-32" />
             <div id="later" className="scroll-mt-32" />
 
-            <div className="max-w-3xl mb-12 space-y-3">
+            <div className="max-w-3xl mb-6 sm:mb-12 space-y-3">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-500/10 border border-orange-500/30 text-orange-400 text-xs font-black uppercase tracking-widest">
                 <FaMapMarkerAlt /> Passenger & Commuter Services
               </div>
@@ -679,8 +679,8 @@ const FAQ = () => {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="p-6 rounded-3xl bg-neutral-950/80 border border-neutral-800 space-y-3">
+            <div className="grid grid-cols-1 md:grid-cols-3 content-gap sm:gap-6">
+              <div className="card-padding sm:p-6 rounded-3xl bg-neutral-950/80 border border-neutral-800 space-y-3">
                 <div className="w-10 h-10 rounded-xl bg-orange-500/10 text-orange-400 flex items-center justify-center font-bold text-sm">
                   1
                 </div>
@@ -690,7 +690,7 @@ const FAQ = () => {
                 </p>
               </div>
 
-              <div className="p-6 rounded-3xl bg-neutral-950/80 border border-neutral-800 space-y-3">
+              <div className="card-padding sm:p-6 rounded-3xl bg-neutral-950/80 border border-neutral-800 space-y-3">
                 <div className="w-10 h-10 rounded-xl bg-orange-500/10 text-orange-400 flex items-center justify-center font-bold text-sm">
                   2
                 </div>
@@ -700,7 +700,7 @@ const FAQ = () => {
                 </p>
               </div>
 
-              <div className="p-6 rounded-3xl bg-neutral-950/80 border border-neutral-800 space-y-3">
+              <div className="card-padding sm:p-6 rounded-3xl bg-neutral-950/80 border border-neutral-800 space-y-3">
                 <div className="w-10 h-10 rounded-xl bg-orange-500/10 text-orange-400 flex items-center justify-center font-bold text-sm">
                   3
                 </div>
@@ -718,7 +718,7 @@ const FAQ = () => {
               <Link to={isAuthenticated ? '/bookride' : '/signup'}>
                 <Button
                   text={'Book a Ride'}
-                  classes={'font-black py-3 px-8 rounded-xl text-white bg-orange-500 hover:bg-orange-600 shadow-lg shadow-orange-500/20 text-xs uppercase tracking-widest cursor-pointer'}
+                  classes={'font-black py-3 px-4 sm:px-8 rounded-xl text-white bg-orange-500 hover:bg-orange-600 shadow-lg shadow-orange-500/20 text-xs uppercase tracking-widest cursor-pointer'}
                 />
               </Link>
             </div>
@@ -728,8 +728,8 @@ const FAQ = () => {
         {/* ========================================================================= */}
         {/* SECTION 4: FREQUENTLY ASKED QUESTIONS (ACCORDION & SEARCH) */}
         {/* ========================================================================= */}
-        <section id="general-faq" className="scroll-mt-28">
-          <div className="text-center max-w-2xl mx-auto mb-10 space-y-3">
+        <section id="general-faq" className="scroll-mt-20 sm:scroll-mt-28">
+          <div className="text-center max-w-2xl mx-auto mb-6 sm:mb-10 space-y-3">
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-black uppercase tracking-tight text-white">
               Frequently Asked Questions
             </h2>
@@ -739,7 +739,7 @@ const FAQ = () => {
           </div>
 
           {/* Search Bar & Category Filters */}
-          <div className="max-w-3xl mx-auto mb-10 space-y-6">
+          <div className="max-w-3xl mx-auto mb-6 sm:mb-10 space-y-6">
             {/* Search Input */}
             <div className="relative">
               <FaSearch className="absolute left-5 top-1/2 -translate-y-1/2 text-neutral-500 text-sm" />
@@ -748,7 +748,7 @@ const FAQ = () => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search topics (e.g., guarantors, deposit, driver license, wallet, earnings)..."
-                className="w-full pl-12 pr-6 py-4 rounded-2xl bg-neutral-900 border border-neutral-800 focus:border-orange-500 focus:outline-none text-white text-sm placeholder-neutral-500 transition-all shadow-inner"
+                className="w-full pl-12 pr-6 py-3 sm:py-4 rounded-2xl bg-neutral-900 border border-neutral-800 focus:border-orange-500 focus:outline-none text-white text-sm placeholder-neutral-500 transition-all shadow-inner"
               />
               {searchQuery && (
                 <button
@@ -800,7 +800,7 @@ const FAQ = () => {
                   >
                     <button
                       onClick={() => toggleFaq(idx)}
-                      className="w-full p-6 text-left flex items-center justify-between gap-4 cursor-pointer"
+                      className="w-full card-padding sm:p-6 text-left flex items-center justify-between gap-4 cursor-pointer"
                     >
                       <span className="font-bold text-sm sm:text-base text-white leading-snug">
                         {item.question}
@@ -822,7 +822,7 @@ const FAQ = () => {
                           transition={{ duration: 0.3 }}
                           className="overflow-hidden"
                         >
-                          <div className="px-6 pb-6 pt-2 text-xs sm:text-sm text-neutral-400 font-medium leading-relaxed border-t border-neutral-800/50">
+                          <div className="px-4 sm:px-6 pb-6 pt-2 text-xs sm:text-sm text-neutral-400 font-medium leading-relaxed border-t border-neutral-800/50">
                             {item.answer}
                           </div>
                         </motion.div>
@@ -832,7 +832,7 @@ const FAQ = () => {
                 );
               })
             ) : (
-              <div className="text-center py-16 bg-neutral-900/30 rounded-3xl border border-neutral-800">
+              <div className="text-center py-8 sm:py-16 bg-neutral-900/30 rounded-3xl border border-neutral-800">
                 <FaQuestionCircle className="text-4xl text-neutral-600 mx-auto mb-3" />
                 <p className="text-neutral-400 font-bold text-sm">No questions match your query.</p>
                 <button
@@ -850,7 +850,7 @@ const FAQ = () => {
         </section>
 
         {/* Global Bottom CTA Card */}
-        <section className="mt-28 bg-gradient-to-r from-orange-600 via-orange-500 to-amber-500 rounded-[2.5rem] p-8 sm:p-12 md:p-16 text-center text-white relative overflow-hidden shadow-2xl">
+        <section className="mt-12 sm:mt-28 bg-gradient-to-r from-orange-600 via-orange-500 to-amber-500 rounded-2xl sm:rounded-[2.5rem] card-padding sm:p-12 md:p-16 text-center text-white relative overflow-hidden shadow-2xl">
           <div className="max-w-3xl mx-auto space-y-6 relative z-10">
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-black uppercase tracking-tight text-neutral-950">
               Ready to Take Control of Your Financial Future?
@@ -860,12 +860,12 @@ const FAQ = () => {
             </p>
             <div className="flex flex-col sm:flex-row justify-center items-center gap-4 pt-4">
               <Link to={getRiderCtaDestination()} className="w-full sm:w-auto">
-                <button className="w-full sm:w-auto px-8 py-4 bg-neutral-950 text-white hover:bg-neutral-900 font-black text-xs uppercase tracking-widest rounded-2xl shadow-xl transition-all cursor-pointer">
+                <button className="w-full sm:w-auto px-4 sm:px-8 py-3 sm:py-4 bg-neutral-950 text-white hover:bg-neutral-900 font-black text-xs uppercase tracking-widest rounded-2xl shadow-xl transition-all cursor-pointer">
                   Register as Rider
                 </button>
               </Link>
               <Link to={getInstallmentCtaDestination()} className="w-full sm:w-auto">
-                <button className="w-full sm:w-auto px-8 py-4 bg-white text-neutral-950 hover:bg-neutral-100 font-black text-xs uppercase tracking-widest rounded-2xl shadow-xl transition-all cursor-pointer">
+                <button className="w-full sm:w-auto px-4 sm:px-8 py-3 sm:py-4 bg-white text-neutral-950 hover:bg-neutral-100 font-black text-xs uppercase tracking-widest rounded-2xl shadow-xl transition-all cursor-pointer">
                   Apply for Installment
                 </button>
               </Link>

@@ -61,12 +61,12 @@ const Bookride = () => {
           <Link to={'/installment-profile-setup'}>
             <Button
               text={'Own a Ride'}
-              classes={'h-11 py-1 px-5 rounded-2xl bg-neutral-900 text-white hover:bg-black transition-all font-bold text-[10px] uppercase tracking-widest shadow-xl shadow-neutral-900/10'}
+              classes={'h-11 py-1 px-5 rounded-2xl bg-neutral-900 text-white hover:bg-black transition-all font-bold text-caption sm:text-[10px] uppercase tracking-widest shadow-xl shadow-neutral-900/10'}
             />
           </Link>
         }
       />
-      <div className='mt-20 pt-12 px-6 lg:px-20 flex flex-col lg:flex-row pb-10 gap-12 bg-neutral-50 min-h-screen items-stretch'>
+      <div className='mt-14 sm:mt-20 pt-5 sm:pt-12 page-gutter sm:px-6 lg:px-20 flex flex-col lg:flex-row pb-10 content-gap sm:gap-12 bg-neutral-50 min-h-screen items-stretch'>
         <RideBookingSidebar
           user={user}
           loading={loading}
@@ -122,12 +122,12 @@ const Bookride = () => {
               initial={{ scale: 0.9, y: 20 }}
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.9, y: 20 }}
-              className="bg-white w-full h-[85vh] rounded-[2.5rem] overflow-hidden relative shadow-2xl"
+              className="bg-white w-full h-[85vh] rounded-2xl sm:rounded-[2.5rem] overflow-hidden relative shadow-2xl"
             >
-              <div className="absolute top-0 left-0 right-0 p-6 flex justify-between items-center z-[7000] bg-gradient-to-b from-black/20 to-transparent">
+              <div className="absolute top-0 left-0 right-0 p-3 sm:p-6 flex justify-between items-center z-[7000] bg-gradient-to-b from-black/20 to-transparent">
                 <div className="bg-white/90 backdrop-blur-md px-4 py-2 rounded-full flex items-center gap-2 shadow-lg">
                   <FaMapMarkedAlt className="text-orange-500" />
-                  <span className="text-[10px] font-black uppercase tracking-widest text-neutral-800">Set Location on Map</span>
+                  <span className="text-caption sm:text-[10px] font-black uppercase tracking-widest text-neutral-800">Set Location on Map</span>
                 </div>
                 <button
                   onClick={() => setIsMapModalOpen(false)}

@@ -38,7 +38,7 @@ const LocationSearch = ({
                     ? 'bg-white/10 backdrop-blur-sm border-white/5' 
                     : 'bg-neutral-100 border-neutral-200'
             }`}>
-                <Icon className='text-orange-400' />
+                <Icon className='shrink-0 text-orange-400' />
                 <input
                     type="text"
                     placeholder={placeholder}
@@ -46,9 +46,9 @@ const LocationSearch = ({
                     onChange={(e) => onValueChange(e.target.value)}
                     ref={inputRef}
                     disabled={disabled}
-                    className={`p-3 w-full border-0 outline-0 bg-transparent ${isDark ? 'text-white placeholder:text-neutral-400' : 'text-neutral-900 placeholder:text-neutral-500'} ${disabled ? 'opacity-70 cursor-not-allowed' : ''}`}
+                    className={`p-3 min-w-0 flex-1 w-full border-0 outline-0 bg-transparent ${isDark ? 'text-white placeholder:text-neutral-400' : 'text-neutral-900 placeholder:text-neutral-500'} ${disabled ? 'opacity-70 cursor-not-allowed' : ''}`}
                 />
-                <div className="flex items-center gap-2">
+                <div className="flex shrink-0 items-center gap-1 sm:gap-2">
                     {type === 'pickup' && onUseMyLocation && (
                         <motion.button
                             onClick={handleUseMyLocation}
@@ -56,14 +56,14 @@ const LocationSearch = ({
                             whileHover={{ scale: 1.1 }}
                             whileTap={{ scale: 0.95 }}
                             title="Use my current location"
-                            className={`transition-colors flex items-center gap-1 px-2 py-1 rounded ${
+                            className={`min-h-11 min-w-11 sm:min-h-0 sm:min-w-0 justify-center transition-colors flex items-center gap-1 px-2 py-1 rounded ${
                                 isDark 
                                     ? 'text-neutral-400 hover:text-orange-400 disabled:text-orange-300 hover:bg-white/5' 
                                     : 'text-neutral-500 hover:text-orange-500 disabled:text-orange-300 hover:bg-neutral-200/50'
                             }`}
                         >
                             <FaLocationArrow className={`text-sm ${isLoadingLocation ? 'animate-pulse' : ''}`} />
-                            {isLoadingLocation && <span className="text-[10px] font-bold">...</span>}
+                            {isLoadingLocation && <span className="text-caption sm:text-[10px] font-bold">...</span>}
                         </motion.button>
                     )}
                     {value && (

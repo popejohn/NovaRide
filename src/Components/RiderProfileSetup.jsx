@@ -91,14 +91,14 @@ const RiderProfileSetup = () => {
   const currentFormik = formHook.getCurrentFormik();
 
   return (
-    <div className="min-h-screen bg-neutral-950 text-white py-12 px-4 sm:px-8 relative overflow-hidden">
+    <div className="min-h-screen bg-neutral-950 text-white py-6 sm:py-12 page-gutter sm:px-8 relative overflow-hidden">
       {/* Decorative Background Elements */}
       <div className="absolute top-0 left-0 w-full h-[500px] bg-gradient-to-b from-orange-500/10 via-orange-500/5 to-transparent pointer-events-none" />
       <div className="absolute top-[15%] right-[-5%] w-[450px] h-[450px] bg-orange-500/10 blur-[130px] rounded-full pointer-events-none" />
       <div className="absolute bottom-[10%] left-[-5%] w-[400px] h-[400px] bg-orange-500/5 blur-[100px] rounded-full pointer-events-none" />
 
       <div className="max-w-4xl mx-auto relative z-10">
-        <div className="mb-10 text-center">
+        <div className="mb-6 sm:mb-10 text-center">
           <h1 className="text-3xl md:text-5xl font-black text-white tracking-tighter mb-3 leading-tight">
             {user?.firstname ? `${user.firstname}, ` : ''}Complete Your <span className="text-orange-500">Rider Profile</span>
           </h1>
@@ -108,8 +108,8 @@ const RiderProfileSetup = () => {
         </div>
 
         {/* Progress Steps */}
-        <div className="mb-10">
-          <div className="flex items-center justify-between bg-neutral-900/80 backdrop-blur-xl p-4 md:p-6 rounded-[2rem] border border-white/10 shadow-2xl">
+        <div className="mb-6 sm:mb-10">
+          <div className="flex items-center justify-between bg-neutral-900/80 backdrop-blur-xl p-4 md:p-6 rounded-2xl sm:rounded-[2rem] border border-white/10 shadow-2xl">
             {steps.map((step, index) => {
               const isCurrent = step.id === formHook.currentStep;
               const isCompleted = step.id < formHook.currentStep;
@@ -133,16 +133,16 @@ const RiderProfileSetup = () => {
                       </div>
                     )}
                   </div>
-                  <div className="ml-3 mr-4 hidden md:block">
+                  <div className="ml-3 mr-4 hidden lg:block">
                     <div
-                      className={`text-[10px] font-black uppercase tracking-[0.2em] mb-0.5 ${
+                      className={`text-caption sm:text-[10px] font-black uppercase tracking-label sm:tracking-[0.2em] mb-0.5 ${
                         isCurrent || isCompleted ? 'text-white' : 'text-neutral-600'
                       }`}
                     >
                       Step 0{step.id}
                     </div>
                     <div
-                      className={`text-[11px] font-bold ${
+                      className={`text-caption sm:text-[11px] font-bold ${
                         isCurrent ? 'text-orange-400' : isCompleted ? 'text-neutral-300' : 'text-neutral-600'
                       }`}
                     >
@@ -165,7 +165,7 @@ const RiderProfileSetup = () => {
         </div>
 
         {/* Form Content */}
-        <div className="bg-neutral-900/90 border border-white/10 backdrop-blur-xl rounded-[2.5rem] p-6 md:p-12 shadow-2xl shadow-black/60 relative overflow-hidden">
+        <div className="bg-neutral-900/90 border border-white/10 backdrop-blur-xl rounded-2xl sm:rounded-[2.5rem] card-padding sm:p-6 md:p-12 shadow-2xl shadow-black/60 relative overflow-hidden">
           {/* Accent glow behind form */}
           <div className="absolute top-0 right-0 w-64 h-64 bg-orange-500/5 blur-[90px] rounded-full -mr-20 -mt-20 pointer-events-none" />
 
@@ -173,11 +173,11 @@ const RiderProfileSetup = () => {
             {renderStepContent()}
 
             {/* Navigation Buttons */}
-            <div className="flex justify-between items-center mt-10 pt-8 border-t border-white/10">
+            <div className="flex flex-wrap justify-between items-center gap-3 mt-6 sm:mt-10 pt-5 sm:pt-8 border-t border-white/10">
               <Button
                 type="button"
                 text="Previous"
-                classes={`px-6 py-4.5 rounded-xl font-bold text-xs uppercase tracking-[0.15em] transition-all duration-300 ${
+                classes={`px-4 sm:px-6 py-4.5 rounded-xl font-bold text-xs uppercase tracking-label sm:tracking-[0.15em] transition-all duration-300 ${
                   formHook.currentStep === 1
                     ? 'bg-neutral-800/50 text-neutral-600 cursor-not-allowed border border-white/5'
                     : 'bg-white/10 text-white hover:bg-white/20 active:scale-95 border border-white/10'
@@ -189,7 +189,7 @@ const RiderProfileSetup = () => {
               <Button
                 type="submit"
                 text={formHook.currentStep === 4 ? 'Complete Setup' : 'Next Step'}
-                classes="bg-orange-500 text-white px-8 py-4.5 rounded-xl font-black text-xs uppercase tracking-[0.2em] hover:bg-orange-600 active:scale-95 transition-all shadow-lg shadow-orange-500/25"
+                classes="bg-orange-500 text-white px-4 sm:px-8 py-4.5 rounded-xl font-black text-xs uppercase tracking-label sm:tracking-[0.2em] hover:bg-orange-600 active:scale-95 transition-all shadow-lg shadow-orange-500/25"
                 disabled={!currentFormik.isValid}
               />
             </div>

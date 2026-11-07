@@ -59,7 +59,7 @@ const LiveTracking = () => {
 
   if (!rideDetails) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-black text-white p-6">
+      <div className="min-h-screen flex items-center justify-center bg-black text-white card-padding sm:p-6">
         <div className="text-center">
           <h2 className="text-3xl font-black mb-4 uppercase italic">Ride Not Found</h2>
           <Button text="Go Back" onClick={() => navigate('/bookride')} />
@@ -80,10 +80,10 @@ const LiveTracking = () => {
     <div className="min-h-screen bg-neutral-950 text-white selection:bg-orange-500 selection:text-white">
       <Navbar userrole={userRoles} userverified={true} profilePic={user?.profilePic || "/placeholderProfile.jpg"} nav={<OtherNav userrole={userRoles} />} />
 
-      <div className="pt-28 px-4 md:px-8 pb-12">
+      <div className="pt-20 sm:pt-28 page-gutter sm:px-4 md:px-8 pb-12">
         <div className="max-w-7xl mx-auto">
           {/* Header */}
-          <div className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div className="mb-6 sm:mb-8 flex flex-col md:flex-row md:items-center justify-between content-gap sm:gap-6">
             <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
               <h1 className="text-4xl font-black uppercase tracking-tighter italic">Live <span className="text-orange-500">Tracking</span></h1>
             </motion.div>
@@ -91,7 +91,7 @@ const LiveTracking = () => {
               <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="flex items-center gap-4 bg-white/5 border border-white/10 px-8 py-4 rounded-3xl backdrop-blur-2xl shadow-2xl"
+                className="flex items-center gap-4 bg-white/5 border border-white/10 px-4 sm:px-8 py-3 sm:py-4 rounded-3xl backdrop-blur-2xl shadow-2xl"
               >
                 <div className="relative">
                   <div className={`w-3 h-3 rounded-full ${rideDetails.rideStatus === 'completed' ? 'bg-green-500' : 'bg-orange-500 shadow-[0_0_15px_rgba(249,115,22,0.6)] animate-pulse'}`} />
@@ -101,20 +101,20 @@ const LiveTracking = () => {
             )}
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-12 content-gap sm:gap-8">
             {shouldShowMap && (
               <div className="hidden md:block lg:col-span-8 order-2 lg:order-1">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="bg-white/5 rounded-[3rem] border border-white/10 shadow-3xl overflow-hidden h-[500px] lg:h-[700px] relative group"
+                className="bg-white/5 rounded-2xl sm:rounded-[3rem] border border-white/10 shadow-3xl overflow-hidden h-[500px] lg:h-[700px] relative group"
               >
                 <MapSection
                   rideDetails={rideDetails}
                   driverLocation={driverCoords}
                   pickupLocation={pickupCoords}
                   destinationLocation={destinationCoords}
-                  containerClassName="h-[500px] lg:h-[700px] rounded-[3rem]"
+                  containerClassName="h-[500px] lg:h-[700px] rounded-2xl sm:rounded-[3rem]"
                 />
               </motion.div>
               </div>
@@ -126,16 +126,16 @@ const LiveTracking = () => {
               <motion.div
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
-                className="bg-white/5 backdrop-blur-3xl rounded-[2.5rem] p-8 border border-white/10 shadow-3xl relative overflow-hidden"
+                className="bg-white/5 backdrop-blur-3xl rounded-2xl sm:rounded-[2.5rem] card-padding sm:p-8 border border-white/10 shadow-3xl relative overflow-hidden"
               >
-                <div className="flex items-center justify-between mb-8">
+                <div className="flex items-center justify-between mb-6 sm:mb-8">
                   <h3 className="text-xl font-black uppercase tracking-tight italic">{isRider ? 'Your Passenger' : 'Your Rider'}</h3>
                   <div className="w-12 h-12 bg-orange-500/10 rounded-2xl flex items-center justify-center text-orange-500 border border-orange-500/20">
                     <FaCar className="text-xl" />
                   </div>
                 </div>
 
-                <div className="flex items-center gap-6 p-5 bg-white/5 rounded-3xl border border-white/5 mb-8 hover:bg-white/10 transition-colors">
+                <div className="flex items-center content-gap sm:gap-6 p-5 bg-white/5 rounded-3xl border border-white/5 mb-6 sm:mb-8 hover:bg-white/10 transition-colors">
                   <img
                     src={(isRider ? rideDetails.user?.profilePic : rideDetails.assignedDriver?.riderInfo?.profilePic) || '/placeholderProfile.jpg'}
                     alt="User"
@@ -156,7 +156,7 @@ const LiveTracking = () => {
                       <div className="flex text-orange-500">
                         <FaStar /><FaStar /><FaStar /><FaStar /><FaStar />
                       </div>
-                      <span className="text-[10px] font-black uppercase tracking-widest text-neutral-500">4.9 Star</span>
+                      <span className="text-caption sm:text-[10px] font-black uppercase tracking-widest text-neutral-500">4.9 Star</span>
                     </div>
                   </div>
                 </div>

@@ -137,11 +137,11 @@ const IncomingRideRequest = () => {
     <div className="min-h-screen">
       <Navbar userrole="rider" userverified={true} profilePic={rideDetails.user?.profilePic || "/placeholderProfile.jpg"} nav={<OtherNav userrole="rider" />} />
 
-      <div className="mt-24 px-8">
+      <div className="mt-20 sm:mt-24 page-gutter sm:px-8">
         <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 content-gap sm:gap-6">
             {/* Ride Request Card */}
-            <div className="bg-black text-white rounded-lg shadow-lg p-6">
+            <div className="bg-black text-white rounded-lg shadow-lg card-padding sm:p-6">
               <div className="flex items-center justify-between mb-6">
                 <h1 className="text-2xl font-bold">Ride Recommendation</h1>
                 <div className="text-center">

@@ -37,9 +37,9 @@ const RideBookingSidebar = ({
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5 }}
-            className='flex flex-col w-full lg:w-2/5'
+            className='flex min-w-0 flex-col w-full lg:w-2/5'
         >
-            <div className='inputs-class bg-black/90 backdrop-blur-xl rounded-2xl px-8 pt-8 pb-10 relative border border-white/10 shadow-2xl'>
+            <div className='inputs-class bg-black/90 backdrop-blur-xl rounded-2xl px-4 sm:px-8 pt-5 sm:pt-8 pb-5 sm:pb-10 relative border border-white/10 shadow-2xl'>
                 <div className='font-bold text-3xl text-white leading-tight'>
                     <span className='text-orange-400'>Hello {user?.firstname || 'User'}</span>, <br />
                     where are you going today?
@@ -50,7 +50,7 @@ const RideBookingSidebar = ({
                     <button
                         onClick={isDisabled ? undefined : onOpenMap}
                         disabled={isDisabled}
-                        className={`w-full h-14 border rounded-xl flex items-center justify-between px-6 transition-all group ${
+                        className={`w-full h-12 sm:h-14 border rounded-xl flex items-center justify-between px-4 sm:px-6 transition-all group ${
                             isDisabled
                                 ? 'bg-white/5 border-white/5 opacity-40 cursor-not-allowed'
                                 : 'bg-white/5 border-white/10 hover:bg-white/10'
@@ -92,7 +92,7 @@ const RideBookingSidebar = ({
                         text={loading
                             ? <div className="flex justify-center items-center w-full"><ClipLoader color="#fff" size={20} /></div>
                             : 'Find Rides'}
-                        classes={`flex-1 h-14 rounded-xl transition-all duration-300 font-bold text-lg shadow-lg ${
+                        classes={`flex-1 h-12 sm:h-14 rounded-xl transition-all duration-300 font-bold text-sm sm:text-lg shadow-lg ${
                             isDisabled
                                 ? 'bg-neutral-800 text-neutral-500 cursor-not-allowed opacity-60'
                                 : 'bg-orange-500 text-white hover:bg-orange-600 active:scale-95 cursor-pointer'
@@ -108,7 +108,7 @@ const RideBookingSidebar = ({
                         >
                             <Button
                                 text={'Clear'}
-                                classes={`h-14 px-6 rounded-xl transition-all font-semibold border ${
+                                classes={`h-12 sm:h-14 px-4 sm:px-6 rounded-xl transition-all font-semibold border ${
                                     isDisabled
                                         ? 'bg-white/5 text-neutral-500 border-white/5 opacity-40 cursor-not-allowed'
                                         : 'bg-white/10 text-white hover:bg-white/20 border-white/10 cursor-pointer'

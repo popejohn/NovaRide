@@ -8,10 +8,10 @@ const BecomeRiderSection = () => {
   const destination = "/FAQ#bearider";
 
   return (
-    <section className="px-4 sm:px-8 md:px-16 lg:px-36 bg-white flex flex-col md:flex-row justify-center items-center w-full gap-4 md:gap-8 lg:gap-26 mt-20 md:mt-40">
+    <section className="page-gutter sm:px-8 md:px-16 lg:px-36 bg-white flex flex-col md:flex-row justify-center items-center w-full gap-4 md:gap-8 lg:gap-26 mt-10 sm:mt-20 md:mt-40">
       <div className="w-full md:w-1/2">
-        <h2 className="text-3xl md:text-5xl leading-14 font-bold text-start mb-12">Help people Get To Their Destinations And Earn Big!</h2>
-        <p className="-mt-10 text-sm md:text-md text-stone-500 font-semibold">
+        <h2 className="text-3xl md:text-5xl leading-tight sm:leading-14 font-bold text-start mb-3 sm:mb-12">Help people Get To Their Destinations And Earn Big!</h2>
+        <p className="sm:-mt-10 text-sm md:text-md text-stone-500 font-semibold">
           Make money with ease and at your own convenience by using your ride on your own terms while you also help others or goods get to their destinations
         </p>
         <Link to={destination}>

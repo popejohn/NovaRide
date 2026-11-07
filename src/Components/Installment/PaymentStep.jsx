@@ -5,15 +5,15 @@ import Input from '../Input';
 
 const PaymentStep = ({ formik }) => {
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 sm:space-y-8">
       {/* Section E: Settlement / Bank Details */}
-      <div className="bg-neutral-50/70 p-8 rounded-[2rem] border-2 border-neutral-100 space-y-6">
+      <div className="bg-neutral-50/70 card-padding sm:p-8 rounded-2xl sm:rounded-[2rem] border-2 border-neutral-100 space-y-6">
         <div className="flex items-center gap-3 mb-2">
           <div className="w-10 h-10 rounded-xl bg-orange-100 text-orange-600 flex items-center justify-center font-black">
             <FaMoneyBillWave />
           </div>
           <div>
-            <h3 className="text-sm font-black uppercase tracking-[0.2em] text-neutral-900">Section E — Payment & Settlement Details</h3>
+            <h3 className="text-sm font-black uppercase tracking-label sm:tracking-[0.2em] text-neutral-900">Section E — Payment & Settlement Details</h3>
             <p className="text-xs font-bold text-neutral-500">Provide your verified bank account details for settlement & records</p>
           </div>
         </div>
@@ -29,7 +29,7 @@ const PaymentStep = ({ formik }) => {
           error={formik.touched.bankName && formik.errors.bankName}
         />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 content-gap sm:gap-6">
           <Input
             label="Account Number (10 Digits) *"
             variant="light"
@@ -54,7 +54,7 @@ const PaymentStep = ({ formik }) => {
       </div>
 
       {/* Section F: Terms and Conditions Attestation */}
-      <div className="bg-white p-8 rounded-[2rem] border-2 border-orange-500/30 shadow-xl space-y-6 relative overflow-hidden">
+      <div className="bg-white card-padding sm:p-8 rounded-2xl sm:rounded-[2rem] border-2 border-orange-500/30 shadow-xl space-y-6 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-32 h-32 bg-orange-500/5 blur-2xl rounded-full -mr-16 -mt-16 pointer-events-none" />
 
         <div className="flex items-center gap-3">
@@ -102,7 +102,7 @@ const PaymentStep = ({ formik }) => {
             </span>
           </label>
           {formik.touched.termsAccepted && formik.errors.termsAccepted && (
-            <p className="text-[10px] font-black text-red-500 uppercase tracking-wider mt-2">
+            <p className="text-caption sm:text-[10px] font-black text-red-500 uppercase tracking-wider mt-2">
               {formik.errors.termsAccepted}
             </p>
           )}

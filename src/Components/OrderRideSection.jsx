@@ -31,11 +31,11 @@ const OrderRideSection = ({ bookLater, setBookLater, startDate, setStartDate }) 
   };
 
   return (
-    <section className="px-4 sm:px-8 md:px-16 lg:px-36 bg-white flex flex-col md:flex-row justify-center items-center w-full gap-4 md:gap-8 lg:gap-26 mt-8 md:mt-16 lg:mt-40">
+    <section className="page-gutter sm:px-8 md:px-16 lg:px-36 bg-white flex flex-col md:flex-row justify-center items-center w-full gap-4 md:gap-8 lg:gap-26 mt-8 md:mt-16 lg:mt-40">
       <div className="w-full md:w-1/2">
         <div className="heading">
-          <h2 className="text-3xl md:text-5xl leading-14 font-bold text-start mb-12">Go Anywhere with Nova Ride</h2>
-          <p className="-mt-10 text-sm md:text-md text-stone-500 font-semibold">Order a maruwa to any destination of your choice</p>
+          <h2 className="text-3xl md:text-5xl leading-tight sm:leading-14 font-bold text-start mb-3 sm:mb-12">Go Anywhere with Nova Ride</h2>
+          <p className="sm:-mt-10 text-sm md:text-md text-stone-500 font-semibold">Order a maruwa to any destination of your choice</p>
         </div>
 
         <div className="mt-8 w-full md:w-3/4 space-y-4">
@@ -74,7 +74,7 @@ const OrderRideSection = ({ bookLater, setBookLater, startDate, setStartDate }) 
               </div>
             </>
           )}
-          <div className="flex justify-start items-end gap-3 mt-5 group">
+          <div className="flex flex-wrap justify-start items-center sm:items-end gap-3 mt-5 group">
             <Button 
               text={'Order Ride'} 
               classes={'bg-black font-bold py-2 px-4 md:py-3 md:px-5 rounded-md text-white hover:scale-105 active:scale-95 transition-all'} 

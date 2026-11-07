@@ -39,9 +39,9 @@ const DocumentsStep = ({ formik }) => {
   };
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 sm:space-y-8">
       {/* Applicant Passport Photograph */}
-      <div className="bg-neutral-50/70 p-6 rounded-2xl border-2 border-neutral-100 flex flex-col sm:flex-row items-center gap-6">
+      <div className="bg-neutral-50/70 card-padding sm:p-6 rounded-2xl border-2 border-neutral-100 flex flex-col sm:flex-row items-center content-gap sm:gap-6">
         <div className="w-24 h-24 rounded-2xl bg-neutral-200 overflow-hidden border-2 border-white shadow-lg flex items-center justify-center shrink-0">
           {formik.values.applicantPhotoUrl ? (
             <img src={formik.values.applicantPhotoUrl} alt="Applicant" className="w-full h-full object-cover" />
@@ -71,26 +71,26 @@ const DocumentsStep = ({ formik }) => {
             {formik.values.applicantPhotoUrl ? 'Replace Photo' : 'Upload Passport Photo'}
           </label>
           {formik.touched.applicantPhotoUrl && formik.errors.applicantPhotoUrl && (
-            <p className="text-[10px] font-bold text-red-500 mt-2">{formik.errors.applicantPhotoUrl}</p>
+            <p className="text-caption sm:text-[10px] font-bold text-red-500 mt-2">{formik.errors.applicantPhotoUrl}</p>
           )}
         </div>
       </div>
 
       {/* ID Selection & Upload */}
-      <div className="bg-neutral-50/70 p-6 rounded-2xl border-2 border-neutral-100 space-y-6">
-        <h4 className="text-xs font-black uppercase tracking-[0.2em] text-orange-500 flex items-center gap-2">
+      <div className="bg-neutral-50/70 card-padding sm:p-6 rounded-2xl border-2 border-neutral-100 space-y-6">
+        <h4 className="text-xs font-black uppercase tracking-label sm:tracking-[0.2em] text-orange-500 flex items-center gap-2">
           <FaIdCard /> Government-Issued Identification Document
         </h4>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 content-gap sm:gap-6">
           <div>
-            <label className="block mb-2 text-[10px] font-black uppercase tracking-[0.2em] text-neutral-400">Means of ID *</label>
+            <label className="block mb-2 text-caption sm:text-[10px] font-black uppercase tracking-label sm:tracking-[0.2em] text-neutral-400">Means of ID *</label>
             <select
               name="idType"
               value={formik.values.idType}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              className="w-full px-6 py-4 rounded-[1.25rem] border-2 border-neutral-100 bg-white font-bold text-sm outline-none focus:border-orange-500/30"
+              className="w-full px-4 sm:px-6 py-3 sm:py-4 rounded-[1.25rem] border-2 border-neutral-100 bg-white font-bold text-sm outline-none focus:border-orange-500/30"
             >
               <option value="">Select ID Type</option>
               <option value="national-id">National Identification Number (NIN / Slip / Card)</option>
@@ -99,7 +99,7 @@ const DocumentsStep = ({ formik }) => {
               <option value="voters-card">Voter's Card</option>
             </select>
             {formik.touched.idType && formik.errors.idType && (
-              <p className="mt-2 text-[10px] font-bold text-red-500 italic px-1 uppercase tracking-wider">{formik.errors.idType}</p>
+              <p className="mt-2 text-caption sm:text-[10px] font-bold text-red-500 italic px-1 uppercase tracking-wider">{formik.errors.idType}</p>
             )}
           </div>
 
@@ -121,7 +121,7 @@ const DocumentsStep = ({ formik }) => {
             <FaFileAlt className="text-2xl text-orange-500" />
             <div>
               <p className="text-xs font-black text-neutral-900">Upload Valid ID Document (Image or PDF) *</p>
-              <p className="text-[10px] font-bold text-neutral-500">Corresponding to the ID selected above</p>
+              <p className="text-caption sm:text-[10px] font-bold text-neutral-500">Corresponding to the ID selected above</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -142,17 +142,17 @@ const DocumentsStep = ({ formik }) => {
           </div>
         </div>
         {formik.touched.idDocumentUrl && formik.errors.idDocumentUrl && (
-          <p className="text-[10px] font-bold text-red-500">{formik.errors.idDocumentUrl}</p>
+          <p className="text-caption sm:text-[10px] font-bold text-red-500">{formik.errors.idDocumentUrl}</p>
         )}
       </div>
 
       {/* Driver's license document upload if provided */}
-      <div className="bg-neutral-50/70 p-6 rounded-2xl border-2 border-neutral-100 space-y-6">
-        <h4 className="text-xs font-black uppercase tracking-[0.2em] text-neutral-600">
+      <div className="bg-neutral-50/70 card-padding sm:p-6 rounded-2xl border-2 border-neutral-100 space-y-6">
+        <h4 className="text-xs font-black uppercase tracking-label sm:tracking-[0.2em] text-neutral-600">
           Driver's License (Optional / Where Applicable)
         </h4>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 content-gap sm:gap-6">
           <Input
             label="Driver's License Number"
             variant="light"
@@ -173,7 +173,7 @@ const DocumentsStep = ({ formik }) => {
             />
             <label
               htmlFor="driver-license-doc"
-              className="cursor-pointer w-full py-4 rounded-[1.25rem] border-2 border-dashed border-neutral-300 hover:border-orange-500 text-neutral-600 hover:text-orange-500 flex items-center justify-center gap-2 text-xs font-black uppercase tracking-wider transition-all bg-white"
+              className="cursor-pointer w-full py-3 sm:py-4 rounded-[1.25rem] border-2 border-dashed border-neutral-300 hover:border-orange-500 text-neutral-600 hover:text-orange-500 flex items-center justify-center gap-2 text-xs font-black uppercase tracking-wider transition-all bg-white"
             >
               {uploadingLicenseDoc ? <FaSpinner className="animate-spin" /> : (formik.values.driverLicenseUrl ? <FaCheckCircle className="text-green-600" /> : <FaUpload />)}
               {formik.values.driverLicenseUrl ? 'Driver License Uploaded ✓' : "Upload Driver's License Document"}
@@ -183,7 +183,7 @@ const DocumentsStep = ({ formik }) => {
       </div>
 
       {/* BVN & NIN */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 content-gap sm:gap-6">
         <Input
           label="Bank Verification Number (BVN) *"
           variant="light"

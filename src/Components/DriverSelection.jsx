@@ -45,9 +45,9 @@ const DriverSelection = () => {
       {/* Premium Header/Background */}
       <div className="fixed top-0 inset-x-0 h-[40vh] bg-gradient-to-b from-orange-500/10 to-transparent pointer-events-none z-0"></div>
 
-      <div className="relative z-10 max-w-4xl mx-auto px-6 pt-12 pb-24">
+      <div className="relative z-10 max-w-4xl mx-auto page-gutter sm:px-6 pt-6 sm:pt-12 pb-24">
         {/* Top Navigation */}
-        <div className="flex items-center justify-between mb-10">
+        <div className="flex items-center justify-between mb-6 sm:mb-10">
           <button
             onClick={() => navigate(-1)}
             className="p-3 bg-white/5 rounded-full border border-white/10 hover:bg-white/10 transition-all group"
@@ -56,7 +56,7 @@ const DriverSelection = () => {
           </button>
           <div className="text-center">
             <h1 className="text-2xl font-black uppercase tracking-tighter">Nova <span className="text-orange-500">Selection</span></h1>
-            <p className="text-[10px] text-neutral-500 font-bold uppercase tracking-widest">Find your perfect ride</p>
+            <p className="text-caption sm:text-[10px] text-neutral-500 font-bold uppercase tracking-widest">Find your perfect ride</p>
           </div>
           <div className="w-11"></div> {/* Spacer */}
         </div>
@@ -67,7 +67,7 @@ const DriverSelection = () => {
         {/* Drivers Section */}
         <div className="mb-6 flex items-center justify-between">
           <h2 className="text-xl font-black uppercase tracking-tight">Available Riders</h2>
-          <span className="bg-orange-500 text-white text-[10px] font-black px-2 py-1 rounded-full">
+          <span className="bg-orange-500 text-white text-caption sm:text-[10px] font-black px-2 py-1 rounded-full">
             {drivers.length} {isExpandedSearch ? 'CLOSEST (EXTENDED)' : 'NEARBY'}
           </span>
         </div>

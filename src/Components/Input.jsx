@@ -8,21 +8,21 @@ export default function Input({ label, error, required, variant = "dark", icon: 
   const inputProps = field ? { ...field, ...restProps } : restProps;
 
   return (
-    <div className={`mb-6 w-full group/input ${customClassName || ''}`}>
+    <div className={`mb-4 sm:mb-6 min-w-0 w-full group/input ${customClassName || ''}`}>
       {label && (
-        <label className={`block mb-2 text-[10px] font-black uppercase tracking-[0.2em] transition-colors duration-300 ${error ? 'text-red-500' : isDark ? 'text-neutral-500 group-focus-within/input:text-orange-500' : 'text-neutral-400 group-focus-within/input:text-orange-600'}`}>
+        <label className={`block mb-2 text-caption sm:text-[10px] font-black uppercase tracking-label sm:tracking-[0.2em] transition-colors duration-300 ${error ? 'text-red-500' : isDark ? 'text-neutral-500 group-focus-within/input:text-orange-500' : 'text-neutral-400 group-focus-within/input:text-orange-600'}`}>
           {label}{required && <span className="text-orange-500 ml-0.5">*</span>}
         </label>
       )}
       <div className="relative">
         {Icon && (
-          <div className={`absolute left-6 top-1/2 -translate-y-1/2 z-10 transition-colors duration-300 pointer-events-none ${error ? 'text-red-500' : isDark ? 'text-neutral-600 group-focus-within/input:text-orange-500' : 'text-neutral-400 group-focus-within/input:text-orange-500'}`}>
-            <Icon className="text-xl" />
+          <div className={`absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 z-10 transition-colors duration-300 pointer-events-none ${error ? 'text-red-500' : isDark ? 'text-neutral-600 group-focus-within/input:text-orange-500' : 'text-neutral-400 group-focus-within/input:text-orange-500'}`}>
+            <Icon className="text-base sm:text-xl" />
           </div>
         )}
         <input
           {...inputProps}
-          className={`w-full ${Icon ? 'pl-16' : 'px-8'} pr-8 py-5 rounded-[1.25rem] border-2 transition-all duration-300 outline-none font-bold text-sm
+          className={`app-input w-full ${Icon ? 'pl-10 sm:pl-16' : 'px-3 sm:px-8'} pr-3 sm:pr-8 py-2.5 sm:py-5 rounded-xl sm:rounded-[1.25rem] border-2 transition-all duration-300 outline-none font-bold text-base sm:text-sm
             ${isDark
               ? 'bg-neutral-800/40 border-neutral-800 text-white placeholder:text-neutral-700 focus:bg-neutral-800 focus:border-orange-500/50'
               : 'bg-white/40 backdrop-blur-xl border-neutral-200 text-neutral-900 placeholder:text-neutral-400 focus:bg-white focus:border-orange-500/30'}
@@ -35,7 +35,7 @@ export default function Input({ label, error, required, variant = "dark", icon: 
         <motion.p
           initial={{ opacity: 0, y: -5 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mt-2 text-[10px] font-bold text-red-500 italic flex items-center gap-2 px-1 uppercase tracking-wider"
+          className="mt-2 text-caption sm:text-[10px] font-bold text-red-500 italic flex items-center gap-2 px-1 uppercase tracking-wider"
         >
           <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span> {error}
         </motion.p>

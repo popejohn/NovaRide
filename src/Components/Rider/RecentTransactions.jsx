@@ -7,11 +7,11 @@ const RecentTransactions = ({ items = [] }) => (
     <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="p-8 bg-white/40 backdrop-blur-2xl rounded-[2.5rem] border border-white/20 shadow-2xl mt-8"
+        className="card-padding sm:p-8 bg-white/40 backdrop-blur-2xl rounded-2xl sm:rounded-[2.5rem] border border-white/20 shadow-2xl mt-8"
     >
-        <div className="flex justify-between items-center mb-8">
+        <div className="flex justify-between items-center mb-6 sm:mb-8">
             <div>
-                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-neutral-400 mb-1">Activity</p>
+                <p className="text-caption sm:text-[10px] font-black uppercase tracking-label sm:tracking-[0.2em] text-neutral-400 mb-1">Activity</p>
                 <h3 className="text-2xl font-black text-neutral-900">Wallet History</h3>
             </div>
             <div className="p-3 bg-neutral-900 text-white rounded-2xl">
@@ -20,11 +20,11 @@ const RecentTransactions = ({ items = [] }) => (
         </div>
 
         {items.length === 0 ? (
-            <div className="py-12 text-center">
+            <div className="py-6 sm:py-12 text-center">
                 <div className="w-16 h-16 bg-neutral-100 rounded-full flex items-center justify-center mx-auto mb-4">
                     <FaWallet className="text-neutral-300 text-2xl" />
                 </div>
-                <p className="text-[10px] font-black uppercase tracking-widest text-neutral-400">No recent transactions</p>
+                <p className="text-caption sm:text-[10px] font-black uppercase tracking-widest text-neutral-400">No recent transactions</p>
             </div>
         ) : (
             <div className="space-y-4">
@@ -42,7 +42,7 @@ const RecentTransactions = ({ items = [] }) => (
                             </div>
                             <div>
                                 <div className="font-bold text-neutral-900 text-sm">{t.description}</div>
-                                <div className="text-[10px] font-black uppercase tracking-widest text-neutral-400 mt-1">
+                                <div className="text-caption sm:text-[10px] font-black uppercase tracking-widest text-neutral-400 mt-1">
                                     {new Date(t.createdAt).toLocaleDateString()} • {t.status}
                                 </div>
                             </div>

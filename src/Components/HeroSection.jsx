@@ -62,7 +62,7 @@ const HeroSection = ({ messages, index }) => {
 
   return (
     <section
-      className={`relative isolate text-white bg-cover bg-center bg-no-repeat mt-16 md:mt-20`}
+      className={`relative isolate text-white bg-cover bg-center bg-no-repeat mt-14 sm:mt-16 md:mt-20`}
       style={{
         minHeight: "50vh",
         height: "600px",
@@ -90,7 +90,7 @@ const HeroSection = ({ messages, index }) => {
       )}
       <div className="absolute inset-0 z-[2] bg-black/45 mix-blend-multiply" />
 
-      <div className="relative z-10 flex flex-col justify-center items-center text-center px-4 py-8" style={{ minHeight: "50vh", height: "600px" }}>
+      <div className="relative z-10 flex flex-col justify-center items-center text-center px-4 py-6 sm:py-8" style={{ minHeight: "50vh", height: "600px" }}>
         <Motion.h1
           key={displayedIndex ?? "loading"}
           initial={{ opacity: 0, y: 20 }}

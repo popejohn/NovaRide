@@ -16,7 +16,7 @@ const DriversList = ({
 }) => {
   if (loading) {
     return (
-      <div className="flex flex-col items-center py-20">
+      <div className="flex flex-col items-center py-8 sm:py-20">
         <div className="relative">
           <ClipLoader color="#f97316" size={60} />
           <div className="absolute inset-0 flex items-center justify-center">
@@ -39,7 +39,7 @@ const DriversList = ({
           {resetToVicinitySearch && (
             <button
               onClick={resetToVicinitySearch}
-              className="text-neutral-400 hover:text-white underline text-[11px] ml-2 shrink-0 transition-colors"
+              className="text-neutral-400 hover:text-white underline text-caption sm:text-[11px] ml-2 shrink-0 transition-colors"
             >
               Reset
             </button>
@@ -59,7 +59,7 @@ const DriversList = ({
       </AnimatePresence>
 
       {drivers.length === 0 && !isExpandedSearch && (
-        <div className="text-center py-12 px-6 bg-white/5 rounded-3xl border border-dashed border-white/10 relative overflow-hidden">
+        <div className="text-center py-6 sm:py-12 px-4 sm:px-6 bg-white/5 rounded-3xl border border-dashed border-white/10 relative overflow-hidden">
           <div className="absolute top-0 right-0 w-48 h-48 bg-orange-500/5 blur-[60px] rounded-full pointer-events-none" />
           <FaUser className="mx-auto text-4xl text-neutral-600 mb-3" />
           <h3 className="text-lg font-bold text-white mb-1">No riders in your vicinity</h3>
@@ -70,7 +70,7 @@ const DriversList = ({
             <button
               onClick={fetchClosestRiders}
               disabled={expandingSearch}
-              className="px-6 py-3.5 bg-orange-500 hover:bg-orange-600 active:scale-95 disabled:opacity-60 rounded-xl text-white font-bold text-sm shadow-lg shadow-orange-500/20 transition-all flex items-center gap-2"
+              className="px-4 sm:px-6 py-3.5 bg-orange-500 hover:bg-orange-600 active:scale-95 disabled:opacity-60 rounded-xl text-white font-bold text-sm shadow-lg shadow-orange-500/20 transition-all flex items-center gap-2"
             >
               {expandingSearch ? (
                 <>
@@ -85,14 +85,14 @@ const DriversList = ({
               )}
             </button>
           </div>
-          <p className="text-[11px] text-neutral-500 mt-4 flex items-center justify-center gap-1">
+          <p className="text-caption sm:text-[11px] text-neutral-500 mt-4 flex items-center justify-center gap-1">
             <span className="text-orange-400 font-semibold">*Note:</span> Added pickup funds of ₦500 per km apply for distant riders.
           </p>
         </div>
       )}
 
       {drivers.length === 0 && isExpandedSearch && (
-        <div className="text-center py-16 bg-white/5 rounded-3xl border border-dashed border-white/10">
+        <div className="text-center py-8 sm:py-16 bg-white/5 rounded-3xl border border-dashed border-white/10">
           <FaUser className="mx-auto text-4xl text-neutral-700 mb-3" />
           <p className="text-neutral-400 font-medium">No available riders found in expanded search.</p>
           <p className="text-xs text-neutral-600 mt-1">Please wait a few moments or try again later.</p>

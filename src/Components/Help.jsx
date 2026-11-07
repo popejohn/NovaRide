@@ -48,10 +48,10 @@ const Help = () => {
         profilePic={user?.profilePic || "/placeholderProfile.jpg"}
         nav={<OtherNav userrole={userRoles} userverified={isAuthenticated} />}
       />
-      <div className="pt-24 md:pt-28 px-4 md:px-8 pb-16">
+      <div className="pt-20 sm:pt-24 md:pt-28 page-gutter sm:px-4 md:px-8 pb-16">
         <div className="max-w-6xl mx-auto">
           {/* Header */}
-          <div className="text-center mb-12">
+          <div className="text-center mb-6 sm:mb-12">
             <motion.div
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -66,13 +66,13 @@ const Help = () => {
             </motion.div>
           </div>
           {/* Contact Cards Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+          <div className="grid grid-cols-1 md:grid-cols-3 content-gap sm:gap-8 mb-16">
             {/* Email Card */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="bg-white/5 border border-white/10 rounded-[2.5rem] p-8 text-center flex flex-col items-center hover:bg-white/10 transition-colors"
+              className="bg-white/5 border border-white/10 rounded-2xl sm:rounded-[2.5rem] card-padding sm:p-8 text-center flex flex-col items-center hover:bg-white/10 transition-colors"
             >
               <div className="w-16 h-16 bg-orange-500/10 rounded-2xl flex items-center justify-center text-orange-500 border border-orange-500/20 mb-6">
                 <FaEnvelope className="text-2xl" />
@@ -83,7 +83,7 @@ const Help = () => {
               </p>
               <a
                 href="mailto:novacrestmultico@gmail.com"
-                className="bg-orange-500 hover:bg-orange-600 text-white font-black uppercase tracking-widest text-xs py-3 px-6 rounded-full transition-colors"
+                className="bg-orange-500 hover:bg-orange-600 text-white font-black uppercase tracking-widest text-xs py-3 px-4 sm:px-6 rounded-full transition-colors"
               >
                 novacrestmultico@gmail.com
               </a>
@@ -93,7 +93,7 @@ const Help = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="bg-white/5 border border-white/10 rounded-[2.5rem] p-8 text-center flex flex-col items-center hover:bg-white/10 transition-colors"
+              className="bg-white/5 border border-white/10 rounded-2xl sm:rounded-[2.5rem] card-padding sm:p-8 text-center flex flex-col items-center hover:bg-white/10 transition-colors"
             >
               <div className="w-16 h-16 bg-blue-500/10 rounded-2xl flex items-center justify-center text-blue-500 border border-blue-500/20 mb-6">
                 <FaPhone className="text-2xl" />
@@ -104,7 +104,7 @@ const Help = () => {
               </p>
               <a
                 href="tel:+2349033438300"
-                className="bg-blue-500 hover:bg-blue-600 text-white font-black uppercase tracking-widest text-xs py-3 px-6 rounded-full transition-colors"
+                className="bg-blue-500 hover:bg-blue-600 text-white font-black uppercase tracking-widest text-xs py-3 px-4 sm:px-6 rounded-full transition-colors"
               >
                 +234 903 343 8300
               </a>
@@ -114,7 +114,7 @@ const Help = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
-              className="bg-white/5 border border-white/10 rounded-[2.5rem] p-8 text-center flex flex-col items-center hover:bg-white/10 transition-colors"
+              className="bg-white/5 border border-white/10 rounded-2xl sm:rounded-[2.5rem] card-padding sm:p-8 text-center flex flex-col items-center hover:bg-white/10 transition-colors"
             >
               <div className="w-16 h-16 bg-green-500/10 rounded-2xl flex items-center justify-center text-green-500 border border-green-500/20 mb-6">
                 <FaComments className="text-2xl" />
@@ -128,15 +128,15 @@ const Help = () => {
                   const chatBtn = document.getElementById('floating-chat-trigger');
                   if (chatBtn) chatBtn.click();
                 }}
-                className="bg-green-500 hover:bg-green-600 text-white font-black uppercase tracking-widest text-xs py-3 px-6 rounded-full transition-colors"
+                className="bg-green-500 hover:bg-green-600 text-white font-black uppercase tracking-widest text-xs py-3 px-4 sm:px-6 rounded-full transition-colors"
               >
                 Start Live Chat
               </button>
             </motion.div>
           </div>
           {/* FAQs Accordion */}
-          <div className="bg-white/5 border border-white/10 rounded-[3rem] p-8 md:p-12">
-            <h2 className="text-2xl md:text-3xl font-black uppercase tracking-tighter italic mb-8 text-center md:text-left">
+          <div className="bg-white/5 border border-white/10 rounded-2xl sm:rounded-[3rem] card-padding sm:p-8 md:p-12">
+            <h2 className="text-2xl md:text-3xl font-black uppercase tracking-tighter italic mb-6 sm:mb-8 text-center md:text-left">
               Frequently Asked <span className="text-orange-500">Questions</span>
             </h2>
             <div className="space-y-4">

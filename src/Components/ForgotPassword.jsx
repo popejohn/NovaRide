@@ -137,8 +137,8 @@ function ForgotPassword() {
       </div>
 
       {/* Form Section */}
-      <div className="flex-1 flex flex-col justify-center items-center p-6 md:p-12 bg-neutral-900 lg:bg-neutral-950">
-        <div className="w-full max-w-sm space-y-10">
+      <div className="min-w-0 flex-1 flex flex-col justify-center items-center card-padding sm:p-6 md:p-12 bg-neutral-900 lg:bg-neutral-950">
+        <div className="w-full max-w-sm space-y-6 sm:space-y-10">
 
           {/* Mobile Header */}
           <div className="lg:hidden text-center">
@@ -165,7 +165,7 @@ function ForgotPassword() {
 
           <form
             onSubmit={step === 1 ? phoneFormik.handleSubmit : otpFormik.handleSubmit}
-            className="space-y-8"
+            className="space-y-6 sm:space-y-8"
           >
             <fieldset disabled={isLoading || otpVerifying} className="border-0 p-0 m-0 min-w-0">
             {step === 1 ? (
@@ -185,7 +185,7 @@ function ForgotPassword() {
                 <Button
                   type="submit"
                   text={isLoading ? <Loader color="#ffffff" /> : "Send Reset Code"}
-                  classes="w-full py-5 bg-orange-500 hover:bg-white hover:text-neutral-950 text-white rounded-2xl font-black text-[11px] uppercase tracking-[0.3em] shadow-2xl shadow-orange-500/20 transition-all duration-500 active:scale-95 border-2 border-transparent hover:border-white disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-orange-500 disabled:hover:text-white disabled:hover:border-transparent"
+                  classes="w-full py-3 sm:py-5 bg-orange-500 hover:bg-white hover:text-neutral-950 text-white rounded-2xl font-black text-caption sm:text-[11px] uppercase tracking-label sm:tracking-[0.3em] shadow-2xl shadow-orange-500/20 transition-all duration-500 active:scale-95 border-2 border-transparent hover:border-white disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-orange-500 disabled:hover:text-white disabled:hover:border-transparent"
                   disabled={isLoading || !phoneFormik.isValid || !phoneFormik.dirty}
                 />
               </div>
@@ -195,12 +195,12 @@ function ForgotPassword() {
                 {/* Countdown badge */}
                 <div className="flex justify-center">
                   {countdownSeconds > 0 ? (
-                    <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-neutral-800 border border-neutral-700 text-[11px] font-black uppercase tracking-widest text-neutral-400">
+                    <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-neutral-800 border border-neutral-700 text-caption sm:text-[11px] font-black uppercase tracking-widest text-neutral-400">
                       <span className="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse inline-block" />
                       Expires in <span className="text-orange-500">{mm}:{ss}</span>
                     </span>
                   ) : (
-                    <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-red-500/10 border border-red-500/30 text-[11px] font-black uppercase tracking-widest text-red-400">
+                    <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-red-500/10 border border-red-500/30 text-caption sm:text-[11px] font-black uppercase tracking-widest text-red-400">
                       OTP Expired
                     </span>
                   )}
@@ -221,7 +221,7 @@ function ForgotPassword() {
                           type="text"
                           maxLength={1}
                           value={digit}
-                          className={`w-12 h-14 md:w-14 md:h-16 text-center text-2xl font-black rounded-2xl border-2 outline-none transition-all duration-200 bg-neutral-900 text-white
+                          className={`min-w-0 w-0 flex-1 sm:flex-none sm:w-12 h-12 sm:h-14 md:w-14 md:h-16 text-center text-2xl font-black rounded-2xl border-2 outline-none transition-all duration-200 bg-neutral-900 text-white
                             ${isFilled
                               ? 'border-orange-500 shadow-[0_0_12px_rgba(249,115,22,0.25)]'
                               : 'border-neutral-700 focus:border-orange-500/70'
@@ -285,7 +285,7 @@ function ForgotPassword() {
                 </div>
 
                 {otpFormik.touched.otp && otpFormik.errors.otp && (
-                  <p className="text-[10px] font-bold text-red-400 italic px-1">? {otpFormik.errors.otp}</p>
+                  <p className="text-caption sm:text-[10px] font-bold text-red-400 italic px-1">? {otpFormik.errors.otp}</p>
                 )}
 
                 {canResendOtp && (
@@ -293,7 +293,7 @@ function ForgotPassword() {
                     type="button"
                     onClick={resendOtp}
                     disabled={isLoading || otpVerifying}
-                    className="w-full flex items-center justify-center gap-2 text-[11px] font-black uppercase tracking-[0.2em] text-neutral-500 hover:text-orange-500 transition-colors disabled:opacity-40"
+                    className="w-full flex items-center justify-center gap-2 text-caption sm:text-[11px] font-black uppercase tracking-label sm:tracking-[0.2em] text-neutral-500 hover:text-orange-500 transition-colors disabled:opacity-40"
                   >
                     <IoRefresh className={`transition-transform duration-200 ${isLoading ? 'animate-spin' : ''}`} />
                     Resend OTP
@@ -303,7 +303,7 @@ function ForgotPassword() {
                 <button
                   type="button"
                   onClick={() => setStep(1)}
-                  className="w-full text-[10px] font-black uppercase tracking-[0.2em] text-neutral-600 hover:text-orange-500 transition-colors text-center"
+                  className="w-full text-caption sm:text-[10px] font-black uppercase tracking-label sm:tracking-[0.2em] text-neutral-600 hover:text-orange-500 transition-colors text-center"
                 >
                   ? Use a different number
                 </button>
@@ -313,7 +313,7 @@ function ForgotPassword() {
           </form>
 
           <footer className="pt-10 border-t border-neutral-800 text-center">
-            <p className="text-[10px] font-black text-neutral-600 uppercase tracking-[0.2em]">
+            <p className="text-caption sm:text-[10px] font-black text-neutral-600 uppercase tracking-label sm:tracking-[0.2em]">
               Remember your password?
               <Link
                 to="/login"

@@ -28,7 +28,7 @@ const BookingConfirmation = ({ selectedDriver, bookingStatus, handleConfirmBooki
           exit={{ y: 100, opacity: 0 }}
           className="fixed bottom-10 inset-x-6 z-50 md:relative md:bottom-auto md:inset-x-0 md:mt-12"
         >
-          <div className="bg-orange-500 p-1 rounded-[2rem] shadow-[0_20px_50px_rgba(249,115,22,0.3)]">
+          <div className="bg-orange-500 p-1 rounded-2xl sm:rounded-[2rem] shadow-[0_20px_50px_rgba(249,115,22,0.3)]">
             <div className="bg-[#121212] flex items-center justify-between p-4 rounded-[1.8rem]">
               <div className="flex items-center space-x-4">
                 <div className="bg-orange-500/20 p-3 rounded-2xl">
@@ -50,7 +50,7 @@ const BookingConfirmation = ({ selectedDriver, bookingStatus, handleConfirmBooki
               {bookingStatus === 'idle' && (
                 <Button
                   text="Confirm Booking"
-                  classes="bg-orange-500 hover:bg-orange-600 text-white px-8 py-4 rounded-2xl font-black text-sm transition-all active:scale-95 shadow-lg shadow-orange-500/20"
+                  classes="bg-orange-500 hover:bg-orange-600 text-white px-4 sm:px-8 py-3 sm:py-4 rounded-2xl font-black text-sm transition-all active:scale-95 shadow-lg shadow-orange-500/20"
                   onClick={handleConfirmClick}
                 />
               )}
@@ -59,7 +59,7 @@ const BookingConfirmation = ({ selectedDriver, bookingStatus, handleConfirmBooki
                 <Button
                   text="Confirming..."
                   disabled={true}
-                  classes="bg-neutral-600 text-white px-8 py-4 rounded-2xl font-black text-sm transition-all shadow-lg"
+                  classes="bg-neutral-600 text-white px-4 sm:px-8 py-3 sm:py-4 rounded-2xl font-black text-sm transition-all shadow-lg"
                 />
               )}
 
@@ -67,7 +67,7 @@ const BookingConfirmation = ({ selectedDriver, bookingStatus, handleConfirmBooki
                 <Button
                   text="Waiting for Rider..."
                   disabled={true}
-                  classes="bg-neutral-600 text-white px-8 py-4 rounded-2xl font-black text-sm transition-all shadow-lg"
+                  classes="bg-neutral-600 text-white px-4 sm:px-8 py-3 sm:py-4 rounded-2xl font-black text-sm transition-all shadow-lg"
                 />
               )}
 
@@ -75,7 +75,7 @@ const BookingConfirmation = ({ selectedDriver, bookingStatus, handleConfirmBooki
                 <Button
                   text="Redirecting..."
                   disabled={true}
-                  classes="bg-green-600 text-white px-8 py-4 rounded-2xl font-black text-sm transition-all shadow-lg"
+                  classes="bg-green-600 text-white px-4 sm:px-8 py-3 sm:py-4 rounded-2xl font-black text-sm transition-all shadow-lg"
                 />
               )}
             </div>

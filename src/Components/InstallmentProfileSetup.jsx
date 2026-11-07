@@ -265,17 +265,17 @@ const InstallmentProfileSetup = () => {
 
       <Navbar userrole={user?.role} userverified={true} profilePic={user?.profilePic} nav={<OtherNav userrole={user?.role} />} />
 
-      <div className="pt-32 pb-24 px-4 md:px-8 lg:px-12 max-w-5xl mx-auto relative z-10">
+      <div className="pt-20 sm:pt-32 pb-24 page-gutter sm:px-4 md:px-8 lg:px-12 max-w-5xl mx-auto relative z-10">
 
         {/* ── Page Header ── */}
         <motion.div
           initial={{ opacity: 0, y: -16 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-12"
+          className="mb-6 sm:mb-12"
         >
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-orange-500/10 border border-orange-500/20 mb-5">
             <span className="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse" />
-            <span className="text-[10px] font-black uppercase tracking-[0.25em] text-orange-500">
+            <span className="text-caption sm:text-[10px] font-black uppercase tracking-label sm:tracking-[0.25em] text-orange-500">
               Novacrest Hire-Purchase Registration
             </span>
           </div>
@@ -293,10 +293,10 @@ const InstallmentProfileSetup = () => {
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="mb-10"
+          className="mb-6 sm:mb-10"
         >
           <div className="bg-neutral-900/80 backdrop-blur-md border border-white/[0.06] rounded-[1.75rem] p-4 md:p-5">
-            <div className="flex items-center justify-between gap-2">
+            <div className="flex min-w-0 items-center justify-between gap-1 sm:gap-2">
               {steps.map((step, idx) => {
                 const isActive    = step.id === currentStep;
                 const isCompleted = step.id < currentStep;
@@ -305,7 +305,7 @@ const InstallmentProfileSetup = () => {
                     <button
                       type="button"
                       onClick={() => isCompleted && setCurrentStep(step.id)}
-                      className={`flex-1 flex flex-col sm:flex-row items-center gap-2 sm:gap-3 py-2 px-1 sm:px-3 rounded-xl transition-all duration-300 ${
+                      className={`flex-1 flex flex-col sm:flex-row items-center gap-2 sm:gap-3 py-2 px-0 sm:px-3 rounded-xl transition-all duration-300 ${
                         isCompleted ? 'cursor-pointer opacity-100' : 'cursor-default'
                       }`}
                     >
@@ -318,11 +318,11 @@ const InstallmentProfileSetup = () => {
                       }`}>
                         {isCompleted ? <FaCheckCircle className="text-sm" /> : <step.icon className="text-sm" />}
                       </div>
-                      <div className="hidden md:block text-left">
-                        <p className={`text-[9px] font-black uppercase tracking-widest ${isActive ? 'text-orange-500' : isCompleted ? 'text-neutral-400' : 'text-neutral-700'}`}>
+                      <div className="hidden lg:block text-left">
+                        <p className={`text-caption sm:text-[9px] font-black uppercase tracking-widest ${isActive ? 'text-orange-500' : isCompleted ? 'text-neutral-400' : 'text-neutral-700'}`}>
                           Step {String(step.id).padStart(2, '0')}
                         </p>
-                        <p className={`text-[11px] font-bold leading-tight ${isActive ? 'text-white' : isCompleted ? 'text-neutral-400' : 'text-neutral-600'}`}>
+                        <p className={`text-caption sm:text-[11px] font-bold leading-tight ${isActive ? 'text-white' : isCompleted ? 'text-neutral-400' : 'text-neutral-600'}`}>
                           {step.short}
                         </p>
                       </div>
@@ -340,7 +340,7 @@ const InstallmentProfileSetup = () => {
 
             {/* Mobile step label */}
             <div className="sm:hidden mt-3 pt-3 border-t border-white/5 text-center">
-              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-orange-500">
+              <p className="text-caption sm:text-[10px] font-black uppercase tracking-label sm:tracking-[0.2em] text-orange-500">
                 Step {currentStep} / {steps.length}: {steps[currentStep - 1]?.title}
               </p>
             </div>
@@ -355,16 +355,16 @@ const InstallmentProfileSetup = () => {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -18 }}
             transition={{ duration: 0.25 }}
-            className="bg-neutral-900 border border-white/[0.07] rounded-[2rem] shadow-2xl overflow-hidden"
+            className="bg-neutral-900 border border-white/[0.07] rounded-2xl sm:rounded-[2rem] shadow-2xl overflow-hidden"
           >
             {/* Card Header */}
-            <div className="px-8 md:px-12 pt-10 pb-8 border-b border-white/[0.06]">
+            <div className="px-4 sm:px-8 md:px-12 pt-5 sm:pt-10 pb-4 sm:pb-8 border-b border-white/[0.06]">
               <div className="flex items-center gap-4">
                 <div className="w-11 h-11 rounded-2xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center text-orange-500 shrink-0">
                   {React.createElement(steps[currentStep - 1].icon)}
                 </div>
                 <div>
-                  <p className="text-[10px] font-black uppercase tracking-[0.25em] text-orange-500/80 mb-0.5">
+                  <p className="text-caption sm:text-[10px] font-black uppercase tracking-label sm:tracking-[0.25em] text-orange-500/80 mb-0.5">
                     Step {String(currentStep).padStart(2, '0')} of {steps.length}
                   </p>
                   <h2 className="text-xl md:text-2xl font-black text-white tracking-tight">
@@ -376,17 +376,17 @@ const InstallmentProfileSetup = () => {
 
             {/* Step Content */}
             <form onSubmit={currentFormik.handleSubmit}>
-              <div className="px-8 md:px-12 py-10">
+              <div className="px-4 sm:px-8 md:px-12 py-5 sm:py-10">
                 {renderStep()}
               </div>
 
               {/* Navigation */}
-              <div className="px-8 md:px-12 pb-10 flex flex-col sm:flex-row gap-4 justify-between items-center border-t border-white/[0.06] pt-8">
+              <div className="px-4 sm:px-8 md:px-12 pb-5 sm:pb-10 flex flex-col sm:flex-row gap-4 justify-between items-center border-t border-white/[0.06] pt-8">
                 <button
                   type="button"
                   onClick={() => setCurrentStep(p => p - 1)}
                   disabled={currentStep === 1 || submitting}
-                  className={`w-full sm:w-auto px-8 py-4 rounded-xl font-black text-xs uppercase tracking-widest transition-all duration-300 ${
+                  className={`w-full sm:w-auto px-4 sm:px-8 py-3 sm:py-4 rounded-xl font-black text-xs uppercase tracking-widest transition-all duration-300 ${
                     currentStep === 1
                       ? 'bg-neutral-800 text-neutral-600 cursor-not-allowed'
                       : 'bg-neutral-800 hover:bg-neutral-700 text-white active:scale-95'
@@ -398,7 +398,7 @@ const InstallmentProfileSetup = () => {
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="w-full sm:w-auto bg-orange-500 hover:bg-orange-400 disabled:bg-orange-500/50 text-white px-10 py-4 rounded-xl font-black text-xs uppercase tracking-widest transition-all duration-300 shadow-xl shadow-orange-500/20 active:scale-95 flex items-center justify-center gap-2"
+                  className="w-full sm:w-auto bg-orange-500 hover:bg-orange-400 disabled:bg-orange-500/50 text-white px-4 sm:px-10 py-3 sm:py-4 rounded-xl font-black text-xs uppercase tracking-widest transition-all duration-300 shadow-xl shadow-orange-500/20 active:scale-95 flex items-center justify-center gap-2"
                 >
                   {submitting ? (
                     <>

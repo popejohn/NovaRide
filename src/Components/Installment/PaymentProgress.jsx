@@ -53,55 +53,55 @@ export const PaymentProgress = ({ installment, onPaymentSuccess }) => {
   const getStatusBadge = () => {
     if (isDepositPending) {
       return (
-        <span className="px-3 py-1 bg-amber-100 text-amber-700 text-[10px] font-black uppercase tracking-wider rounded-full flex items-center gap-1.5">
+        <span className="px-3 py-1 bg-amber-100 text-amber-700 text-caption sm:text-[10px] font-black uppercase tracking-wider rounded-full flex items-center gap-1.5">
           <FaClock /> Deposit Pending
         </span>
       );
     }
     if (today.status === 'awaiting_vehicle_assignment') {
       return (
-        <span className="px-3 py-1 bg-blue-100 text-blue-700 text-[10px] font-black uppercase tracking-wider rounded-full flex items-center gap-1.5">
+        <span className="px-3 py-1 bg-blue-100 text-blue-700 text-caption sm:text-[10px] font-black uppercase tracking-wider rounded-full flex items-center gap-1.5">
           <FaClock /> Awaiting Vehicle Assignment
         </span>
       );
     }
     if (today.status === 'paid' || today.isPaidToday) {
       return (
-        <span className="px-3 py-1 bg-green-100 text-green-700 text-[10px] font-black uppercase tracking-wider rounded-full flex items-center gap-1.5">
+        <span className="px-3 py-1 bg-green-100 text-green-700 text-caption sm:text-[10px] font-black uppercase tracking-wider rounded-full flex items-center gap-1.5">
           <FaCheckCircle /> Paid Today
         </span>
       );
     }
     if (today.status === 'overdue') {
       return (
-        <span className="px-3 py-1 bg-red-100 text-red-700 text-[10px] font-black uppercase tracking-wider rounded-full flex items-center gap-1.5">
+        <span className="px-3 py-1 bg-red-100 text-red-700 text-caption sm:text-[10px] font-black uppercase tracking-wider rounded-full flex items-center gap-1.5">
           <FaExclamationCircle /> Overdue
         </span>
       );
     }
     if (today.status === 'weekend') {
       return (
-        <span className="px-3 py-1 bg-blue-100 text-blue-700 text-[10px] font-black uppercase tracking-wider rounded-full flex items-center gap-1.5">
+        <span className="px-3 py-1 bg-blue-100 text-blue-700 text-caption sm:text-[10px] font-black uppercase tracking-wider rounded-full flex items-center gap-1.5">
           <FaSun /> Weekend (No Payment Due)
         </span>
       );
     }
     return (
-      <span className="px-3 py-1 bg-orange-100 text-orange-700 text-[10px] font-black uppercase tracking-wider rounded-full flex items-center gap-1.5">
+      <span className="px-3 py-1 bg-orange-100 text-orange-700 text-caption sm:text-[10px] font-black uppercase tracking-wider rounded-full flex items-center gap-1.5">
         <FaClock /> Due Today
       </span>
     );
   };
 
   return (
-    <div className="p-8 bg-neutral-900 rounded-[2rem] border border-neutral-800 shadow-xl shadow-black/30 relative overflow-hidden space-y-6">
+    <div className="card-padding sm:p-8 bg-neutral-900 rounded-2xl sm:rounded-[2rem] border border-neutral-800 shadow-xl shadow-black/30 relative overflow-hidden space-y-6">
       <div className="absolute top-0 right-0 w-40 h-40 bg-orange-500/5 blur-3xl rounded-full pointer-events-none" />
 
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-neutral-800 pb-6">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-neutral-500">Repayment Plan</span>
+            <span className="text-caption sm:text-[10px] font-black uppercase tracking-label sm:tracking-[0.2em] text-neutral-500">Repayment Plan</span>
             {getStatusBadge()}
           </div>
           <h3 className="text-2xl font-black text-white tracking-tight">
@@ -117,7 +117,7 @@ export const PaymentProgress = ({ installment, onPaymentSuccess }) => {
 
       {/* Progress Bar */}
       <div className="space-y-2">
-        <div className="flex justify-between text-[11px] font-black uppercase tracking-widest">
+        <div className="flex justify-between text-caption sm:text-[11px] font-black uppercase tracking-widest">
           <span className="text-neutral-500">Progress: {schedule.completedDays || 0} of {schedule.totalScheduledDays || 389} Days</span>
           <span className="text-orange-400">{progressPercent}%</span>
         </div>
@@ -134,11 +134,11 @@ export const PaymentProgress = ({ installment, onPaymentSuccess }) => {
       {/* Balance Grid */}
       <div className="grid grid-cols-2 gap-4 py-3 border-y border-neutral-800">
         <div>
-          <p className="text-[10px] font-black uppercase tracking-widest text-neutral-500 mb-0.5">Remaining Balance</p>
+          <p className="text-caption sm:text-[10px] font-black uppercase tracking-widest text-neutral-500 mb-0.5">Remaining Balance</p>
           <p className="text-base font-black text-white">₦{remainingBalance.toLocaleString()}</p>
         </div>
         <div className="text-right">
-          <p className="text-[10px] font-black uppercase tracking-widest text-neutral-500 mb-0.5">Next Payment Date</p>
+          <p className="text-caption sm:text-[10px] font-black uppercase tracking-widest text-neutral-500 mb-0.5">Next Payment Date</p>
           <p className="text-base font-black text-white">
             {schedule.nextPaymentDate ? new Date(schedule.nextPaymentDate).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' }) : 'Pending Deposit'}
           </p>
@@ -156,7 +156,7 @@ export const PaymentProgress = ({ installment, onPaymentSuccess }) => {
               Pay the initial deposit of <strong>₦500,000</strong> to activate your commercial Maruwa lease and receive vehicle delivery.
             </p>
             <PaystackButton
-              className="w-full py-4 bg-amber-500 hover:bg-amber-600 text-white rounded-xl font-black text-xs uppercase tracking-widest transition-all shadow-lg shadow-amber-500/20 active:scale-95 cursor-pointer"
+              className="w-full py-3 sm:py-4 bg-amber-500 hover:bg-amber-600 text-white rounded-xl font-black text-xs uppercase tracking-widest transition-all shadow-lg shadow-amber-500/20 active:scale-95 cursor-pointer"
               text={processing ? "Verifying Deposit..." : "Pay Initial Deposit (₦500,000)"}
               email={user.email || 'partner@novaride.ng'}
               amount={500000 * 100}
@@ -172,7 +172,7 @@ export const PaymentProgress = ({ installment, onPaymentSuccess }) => {
             <FaClock className="text-2xl text-blue-500 shrink-0" />
             <div>
               <p className="text-xs font-black uppercase tracking-wider text-blue-900">Awaiting Vehicle Assignment</p>
-              <p className="text-[11px] font-bold text-blue-700">{today.message || 'Your deposit was received. Daily installments begin once your Maruwa is assigned by the admin.'}</p>
+              <p className="text-caption sm:text-[11px] font-bold text-blue-700">{today.message || 'Your deposit was received. Daily installments begin once your Maruwa is assigned by the admin.'}</p>
             </div>
           </div>
         ) : today.isPaidToday || today.status === 'paid' ? (
@@ -180,7 +180,7 @@ export const PaymentProgress = ({ installment, onPaymentSuccess }) => {
             <FaCheckCircle className="text-2xl text-green-600 shrink-0" />
             <div>
               <p className="text-xs font-black uppercase tracking-wider text-green-900">Today's Installment Completed</p>
-              <p className="text-[11px] font-bold text-green-700">Next payment of ₦18,000 will be due on the next scheduled business day.</p>
+              <p className="text-caption sm:text-[11px] font-bold text-green-700">Next payment of ₦18,000 will be due on the next scheduled business day.</p>
             </div>
           </div>
         ) : today.status === 'weekend' ? (
@@ -188,7 +188,7 @@ export const PaymentProgress = ({ installment, onPaymentSuccess }) => {
             <FaSun className="text-2xl text-blue-500 shrink-0" />
             <div>
               <p className="text-xs font-black uppercase tracking-wider text-blue-900">Weekend Free Day</p>
-              <p className="text-[11px] font-bold text-blue-700">No scheduled payment due today. Enjoy your weekend!</p>
+              <p className="text-caption sm:text-[11px] font-bold text-blue-700">No scheduled payment due today. Enjoy your weekend!</p>
             </div>
           </div>
         ) : (
@@ -198,7 +198,7 @@ export const PaymentProgress = ({ installment, onPaymentSuccess }) => {
               <span className="text-sm font-black text-orange-600">₦{amountToPay.toLocaleString()}</span>
             </div>
             <PaystackButton
-              className="w-full py-4 bg-orange-500 hover:bg-orange-600 text-white rounded-xl font-black text-xs uppercase tracking-widest transition-all shadow-lg shadow-orange-500/20 active:scale-95 cursor-pointer flex items-center justify-center gap-2"
+              className="w-full py-3 sm:py-4 bg-orange-500 hover:bg-orange-600 text-white rounded-xl font-black text-xs uppercase tracking-widest transition-all shadow-lg shadow-orange-500/20 active:scale-95 cursor-pointer flex items-center justify-center gap-2"
               text={processing ? "Verifying Payment..." : `Pay Today's Installment (₦${amountToPay.toLocaleString()})`}
               email={user.email || 'partner@novaride.ng'}
               amount={amountToPay * 100}

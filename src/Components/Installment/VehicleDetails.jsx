@@ -11,15 +11,15 @@ export const VehicleDetails = ({ vehicle = {}, depositPaid = false, vehicleAssig
 
   if (!vehicleAssigned) {
     return (
-      <div className="p-8 bg-neutral-900 rounded-[2rem] border border-neutral-800 shadow-xl shadow-black/30 relative overflow-hidden space-y-4">
+      <div className="card-padding sm:p-8 bg-neutral-900 rounded-2xl sm:rounded-[2rem] border border-neutral-800 shadow-xl shadow-black/30 relative overflow-hidden space-y-4">
         <div className="flex items-center gap-5 border-b border-neutral-800 pb-6">
           <div className="w-20 h-20 rounded-2xl bg-neutral-800/60 flex items-center justify-center text-neutral-500 text-3xl shrink-0 border-2 border-neutral-800 shadow-md">
             <FaHourglassHalf />
           </div>
           <div>
-            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-neutral-500">Assigned Vehicle</span>
+            <span className="text-caption sm:text-[10px] font-black uppercase tracking-label sm:tracking-[0.2em] text-neutral-500">Assigned Vehicle</span>
             <h4 className="text-lg font-black text-white leading-tight mt-0.5">Awaiting Assignment</h4>
-            <div className="mt-2 inline-flex px-3 py-1 rounded-lg bg-black text-neutral-400 border border-neutral-800 text-[11px] font-mono font-black">
+            <div className="mt-2 inline-flex px-3 py-1 rounded-lg bg-black text-neutral-400 border border-neutral-800 text-caption sm:text-[11px] font-mono font-black">
               Plate: PENDING_ASSIGNMENT
             </div>
           </div>
@@ -34,7 +34,7 @@ export const VehicleDetails = ({ vehicle = {}, depositPaid = false, vehicleAssig
   }
 
   return (
-    <div className="p-8 bg-neutral-900 rounded-[2rem] border border-neutral-800 shadow-xl shadow-black/30 relative overflow-hidden space-y-6">
+    <div className="card-padding sm:p-8 bg-neutral-900 rounded-2xl sm:rounded-[2rem] border border-neutral-800 shadow-xl shadow-black/30 relative overflow-hidden space-y-6">
       <div className="flex items-center gap-5 border-b border-neutral-800 pb-6">
         <div className="w-20 h-20 rounded-2xl bg-orange-500/10 flex items-center justify-center text-orange-400 font-black text-3xl shrink-0 border-2 border-neutral-800 shadow-md">
           {vehicle.image ? (
@@ -44,9 +44,9 @@ export const VehicleDetails = ({ vehicle = {}, depositPaid = false, vehicleAssig
           )}
         </div>
         <div>
-          <span className="text-[10px] font-black uppercase tracking-[0.2em] text-neutral-500">Assigned Vehicle</span>
+          <span className="text-caption sm:text-[10px] font-black uppercase tracking-label sm:tracking-[0.2em] text-neutral-500">Assigned Vehicle</span>
           <h4 className="text-lg font-black text-white leading-tight mt-0.5">{vehicle.name || 'TVS King Deluxe 200cc'}</h4>
-          <div className="mt-2 inline-flex px-3 py-1 rounded-lg bg-black text-orange-300 border border-neutral-800 text-[11px] font-mono font-black">
+          <div className="mt-2 inline-flex px-3 py-1 rounded-lg bg-black text-orange-300 border border-neutral-800 text-caption sm:text-[11px] font-mono font-black">
             Plate: {vehicle.plateNumber || 'PENDING_ASSIGNMENT'}
           </div>
         </div>
@@ -54,19 +54,19 @@ export const VehicleDetails = ({ vehicle = {}, depositPaid = false, vehicleAssig
 
       <div className="grid grid-cols-2 gap-4 text-xs font-bold text-neutral-300">
         <div className="p-3 bg-black/40 rounded-xl border border-neutral-800">
-          <p className="text-[9px] font-black uppercase tracking-wider text-neutral-500">Vehicle Type</p>
+          <p className="text-caption sm:text-[9px] font-black uppercase tracking-wider text-neutral-500">Vehicle Type</p>
           <p className="font-black text-white">{vehicle.type || 'Commercial Tricycle (Maruwa)'}</p>
         </div>
         <div className="p-3 bg-black/40 rounded-xl border border-neutral-800">
-          <p className="text-[9px] font-black uppercase tracking-wider text-neutral-500">Color</p>
+          <p className="text-caption sm:text-[9px] font-black uppercase tracking-wider text-neutral-500">Color</p>
           <p className="font-black text-white">{vehicle.color || 'Commercial Yellow'}</p>
         </div>
         <div className="p-3 bg-black/40 rounded-xl border border-neutral-800">
-          <p className="text-[9px] font-black uppercase tracking-wider text-neutral-500">Ownership Title</p>
+          <p className="text-caption sm:text-[9px] font-black uppercase tracking-wider text-neutral-500">Ownership Title</p>
           <p className="font-black text-white">{vehicle.ownership || 'Company Lease-to-Own'}</p>
         </div>
         <div className="p-3 bg-black/40 rounded-xl border border-neutral-800">
-          <p className="text-[9px] font-black uppercase tracking-wider text-neutral-500">Engine / Capacity</p>
+          <p className="text-caption sm:text-[9px] font-black uppercase tracking-wider text-neutral-500">Engine / Capacity</p>
           <p className="font-black text-white">{specs.engine || '200cc High Torque'}</p>
         </div>
       </div>
